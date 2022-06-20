@@ -1,12 +1,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/app/exceptions.dart';
+import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/login/register_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
 import '../const.dart';
+import '../homepage/home_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -159,7 +161,9 @@ class LoginPage extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      signInWithEmailandPassword(context);
+                    },
                   )
                 ],
               )
@@ -254,5 +258,33 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future signInWithEmailandPassword(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      try {
+        UserC? userC =
+            await userModel.signInWithEmailandPassword(mail!, password!);
+        if (userC != null) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomePage()));
+        }
+      } catch (e) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: 'Hay Aksi!',
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkIcon: Icons.cancel,
+                btnOkColor: Colors.red)
+            .show();
+      }
+    }
   }
 }

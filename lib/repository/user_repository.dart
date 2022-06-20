@@ -41,9 +41,15 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<UserC?> signInWithEmailandPassword(String mail, String password) {
-    // TODO: implement signInWithEmailandPassword
-    throw UnimplementedError();
+  Future<UserC?> signInWithEmailandPassword(
+      String mail, String password) async {
+    UserC? userC =
+        await _firebaseAuthService.signInWithEmailandPassword(mail, password);
+    if (userC != null) {
+      return await _firestoreService.readUser(userC.id!);
+    } else {
+      return null;
+    }
   }
 
   @override

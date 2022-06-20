@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/ui/homepage/home_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +15,7 @@ class LandingPage extends StatelessWidget {
       if (_userModel.user == null) {
         return LoginPage();
       } else {
-        return const Center(
-          child: Text("Home Page"),
-        );
+        return const HomePage();
       }
     } else {
       return const Scaffold(
