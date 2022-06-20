@@ -1,6 +1,12 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/services/validator.dart';
+import 'package:mvrg_app/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
+import '../../app/exceptions.dart';
+import '../../model/userC.dart';
 import '../const.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -108,7 +114,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         color: Colors.white,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      _generateNewUser(context);
+                    },
                   )
                 ],
               )
@@ -171,5 +179,101 @@ class _RegisterPageState extends State<RegisterPage> {
         ],
       ),
     );
+  }
+
+  Future _generateNewUser(BuildContext context) async {
+    if (formKey.currentState!.validate()) {
+      AwesomeDialog(
+        context: context,
+        animType: AnimType.LEFTSLIDE,
+        headerAnimationLoop: false,
+        dialogType: DialogType.INFO,
+        showCloseIcon: true,
+        title: "Üye Kayıt Ediliyor...",
+        desc: "Üye kayıt edilirken lütfen bekleyiniz",
+        btnOkOnPress: () {},
+        btnOkText: "Tamam",
+      ).show();
+
+      UserModel userModel = Provider.of<UserModel>(context, listen: false);
+      try {
+        UserC? userC = await userModel.createUserWithEmailandPassword(
+            nameController.text,
+            surnameController.text,
+            mailController.text,
+            passwordController.text);
+        if (userC != null) {
+          Navigator.pop(context);
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.SUCCES,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: "Kaydınız Başarıyla Gerçekleştirildi 👍",
+                  desc:
+                      "Giriş ekranına dönerek e-posta adresiniz ve şifreniz ile "
+                      "giriş yapabilirsiniz",
+                  btnOkOnPress: () {
+                    Navigator.pop(context);
+                  },
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.green)
+              .show();
+        } else {
+          Navigator.pop(context);
+          AwesomeDialog(
+            context: context,
+            dialogType: DialogType.WARNING,
+            animType: AnimType.LEFTSLIDE,
+            headerAnimationLoop: false,
+            showCloseIcon: true,
+            title: "Üye Kayıt Edilirken HATA 😕",
+            desc: "Üye kayıt edilirken bir sorun oluştu.\n"
+                "Lütfen internet bağlantınızı kontrol edin",
+            btnOkOnPress: () {},
+            btnOkText: "Tamam",
+          ).show();
+        }
+      } on FirebaseAuthException {
+        Navigator.pop(context);
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.WARNING,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Bu hesap kullanımda",
+                desc: "Bu e-posta ile ilişkili bir hesap bulunmaktadır",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkIcon: Icons.cancel,
+                btnOkColor: Colors.red)
+            .show();
+      } catch (e) {
+        Navigator.pop(context);
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.LEFTSLIDE,
+          headerAnimationLoop: false,
+          showCloseIcon: true,
+          title: "",
+          desc: Exceptions.goster(e.toString()),
+          btnOkOnPress: () {},
+          btnOkText: "Tamam",
+        ).show();
+      }
+    } else {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Değerleri Doğru Giriniz",
+              desc: "Lütfen istenilen değerleri tam ve doğru giriniz",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
   }
 }

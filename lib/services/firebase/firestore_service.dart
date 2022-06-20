@@ -17,4 +17,18 @@ class FirestoreService {
         .get()
         .then((snapshot) => snapshot.data()!)) as UserC;
   }
+
+  Future<bool> setUser(UserC userC) async {
+    try {
+      await usersRef.doc(userC.id).set(userC);
+      return true;
+    } catch (e) {
+      printError("setUser", e);
+      return false;
+    }
+  }
+
+  printError(String methodName, Object e) {
+    print("firestore $methodName hata: " + e.toString());
+  }
 }

@@ -12,9 +12,17 @@ class UserRepository implements AuthBase {
 
   @override
   Future<UserC?> createUserWithEmailandPassword(
-      String name, String surname, String mail, String password) {
-    // TODO: implement createUserWithEmailandPassword
-    throw UnimplementedError();
+      String name, String surname, String mail, String password) async {
+    UserC userC = await _firebaseAuthService.createUserWithEmailandPassword(
+        name, surname, mail, password);
+
+    bool sonuc = await _firestoreService.setUser(userC);
+
+    if (sonuc) {
+      return await _firestoreService.readUser(userC.id!);
+    } else {
+      return null;
+    }
   }
 
   @override

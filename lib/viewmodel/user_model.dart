@@ -27,9 +27,17 @@ class UserModel with ChangeNotifier implements AuthBase {
 
   @override
   Future<UserC?> createUserWithEmailandPassword(
-      String name, String surname, String mail, String password) {
-    // TODO: implement createUserWithEmailandPassword
-    throw UnimplementedError();
+      String name, String surname, String mail, String password) async {
+    try {
+      state = ViewState.busy;
+      return await _userRepository.createUserWithEmailandPassword(
+          name, surname, mail, password);
+    } catch (e) {
+      printError("createUserWithEmailandPassword", e);
+      rethrow;
+    } finally {
+      state = ViewState.idle;
+    }
   }
 
   @override
