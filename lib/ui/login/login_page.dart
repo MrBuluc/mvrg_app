@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/app/exceptions.dart';
 import 'package:mvrg_app/services/validator.dart';
+import 'package:mvrg_app/ui/login/register_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,17 @@ class LoginPage extends StatelessWidget {
                 buildHeader(),
                 Theme(
                     data: ThemeData(primaryColor: Colors.indigo.shade200),
-                    child: buildFormField(context))
+                    child: buildFormField(context)),
+                const SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  child: hesapOlustur(),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterPage())),
+                )
               ],
             ),
           ),
@@ -222,5 +233,26 @@ class LoginPage extends StatelessWidget {
         ).show();
       }
     }
+  }
+
+  Widget hesapOlustur() {
+    return Center(
+      child: SizedBox(
+        height: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: const [
+            Text(
+              "Hesap Oluştur",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

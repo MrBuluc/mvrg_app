@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 LinearGradient loginPageBg = const LinearGradient(
@@ -28,6 +29,32 @@ LinearGradient indigoButton = const LinearGradient(
       Color.fromRGBO(124, 127, 225, 1)
     ]);
 
+LinearGradient registerpageBg = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    stops: const [
+      0.1,
+      0.5,
+      0.9
+    ],
+    colors: [
+      Colors.blue.shade100,
+      const Color.fromRGBO(255, 241, 151, 1),
+      const Color.fromRGBO(250, 164, 26, 1)
+    ]);
+
+LinearGradient orangeButton = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    stops: const [
+      0.3,
+      0.9
+    ],
+    colors: [
+      Colors.blue.shade100,
+      const Color.fromRGBO(255, 241, 151, 1),
+    ]);
+
 const TextStyle headerText = TextStyle(
     color: Colors.white,
     fontSize: 42,
@@ -51,3 +78,5 @@ const TextStyle miniHeader = TextStyle(
         color: Color.fromARGB(43, 43, 43, 0),
       )
     ]);
+
+Color textFieldPrimaryColor = const Color.fromRGBO(30, 227, 167, 1);
