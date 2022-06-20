@@ -80,3 +80,21 @@ const TextStyle miniHeader = TextStyle(
     ]);
 
 Color textFieldPrimaryColor = const Color.fromRGBO(30, 227, 167, 1);
+
+Decoration gradient = const BoxDecoration(
+    gradient: LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+      Color.fromRGBO(116, 235, 213, 1),
+      Color.fromRGBO(172, 182, 229, 1)
+    ]));
+
+List<Map> drawerItems = [
+  {"icon": Icons.person, "title": "Profil"},
+  {"icon": Icons.lock_open, "title": "Şifremi Güncelle"}
+];
+
+List<Map> adminDrawerItems = [
+  {"icon": Icons.add, "title": "Yeni Rozet Oluştur"}
+];
