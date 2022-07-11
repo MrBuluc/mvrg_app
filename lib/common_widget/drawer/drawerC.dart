@@ -71,29 +71,44 @@ class _DrawerCState extends State<DrawerC> {
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Column(
                   children: [
-                    for (final map in drawerItems)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Row(
-                          children: [
-                            TextButton.icon(
-                              label: Text(
-                                map["title"],
-                                style: const TextStyle(
-                                    color: Colors.white60,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              icon: Icon(
-                                map["icon"],
-                                color: Colors.white60,
-                                size: 24,
-                              ),
-                              onPressed: () {},
-                            )
-                          ],
-                        ),
+                    ExpansionTile(
+                      leading: const Icon(Icons.account_box),
+                      title: const Text("Hesap Bilgilerim"),
+                      trailing: const Icon(Icons.arrow_drop_down),
+                      children: [
+                        buildListTile("Kullanıcı Bilgilerim"),
+                        buildListTile("Şifre Değişikliği")
+                      ],
+                    ),
+                    if (admin)
+                      ListTile(
+                        leading: const Icon(Icons.badge),
+                        title: const Text("Yeni Rozet Ekle"),
+                        onTap: () {},
                       ),
-                    //adminDrawerItems
+                    const Divider(
+                      height: 1,
+                      color: Colors.grey,
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.logout,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {},
+                        ),
+                        TextButton(
+                          child: const Text(
+                            "Çıkış Yap",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                          onPressed: () {},
+                        )
+                      ],
+                    )
                   ],
                 ),
               )
@@ -114,5 +129,13 @@ class _DrawerCState extends State<DrawerC> {
         admin = userC.admin!;
       });
     }
+  }
+
+  Widget buildListTile(String title) {
+    return ListTile(
+      title: Text(title),
+      trailing: const Icon(Icons.arrow_right),
+      onTap: () {},
+    );
   }
 }

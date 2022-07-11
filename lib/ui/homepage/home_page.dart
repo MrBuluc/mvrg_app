@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         title: const Text(
           "Rozetler",
           style: TextStyle(color: Colors.white, fontSize: 22),
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         elevation: 2,
       ),
+      drawer: const DrawerC(),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: badgeStream,
