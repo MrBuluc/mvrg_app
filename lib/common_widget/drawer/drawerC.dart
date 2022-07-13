@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/ui/Profil/profil_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -76,8 +77,9 @@ class _DrawerCState extends State<DrawerC> {
                       title: const Text("Hesap Bilgilerim"),
                       trailing: const Icon(Icons.arrow_drop_down),
                       children: [
-                        buildListTile("Kullanıcı Bilgilerim"),
-                        buildListTile("Şifre Değişikliği")
+                        buildListTile(
+                            "Kullanıcı Bilgilerim", const ProfilPage()),
+                        buildListTile("Şifre Değişikliği", const ProfilPage())
                       ],
                     ),
                     if (admin)
@@ -131,11 +133,13 @@ class _DrawerCState extends State<DrawerC> {
     }
   }
 
-  Widget buildListTile(String title) {
+  Widget buildListTile(String title, Widget page) {
     return ListTile(
       title: Text(title),
       trailing: const Icon(Icons.arrow_right),
-      onTap: () {},
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+      },
     );
   }
 }
