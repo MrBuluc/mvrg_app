@@ -107,6 +107,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> updatePassword(String oldPassword, String newPassword) async {
+    try {
+      return await _userRepository.updatePassword(oldPassword, newPassword);
+    } catch (e) {
+      printError("updatePassword", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() {
     // TODO: implement signOut

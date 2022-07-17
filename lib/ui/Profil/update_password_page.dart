@@ -1,8 +1,11 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/exceptions.dart';
 
 class UpdatePasswordPage extends StatefulWidget {
   const UpdatePasswordPage({Key? key}) : super(key: key);
@@ -191,8 +194,57 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         try {
           bool sonuc = await Provider.of<UserModel>(context, listen: false)
               .updatePassword(oldPassCnt.text, newPassCnt.text);
-        } catch (e) {}
+          if (sonuc) {
+            AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.SUCCES,
+                    animType: AnimType.RIGHSLIDE,
+                    headerAnimationLoop: true,
+                    title: 'Şifreniz Güncellendi 👍',
+                    desc: 'Şifreniz başarılı bir şekilde güncellendi',
+                    btnOkOnPress: () {},
+                    btnOkText: "Tamam",
+                    btnOkColor: Colors.blue)
+                .show();
+          } else {
+            AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.WARNING,
+                    animType: AnimType.RIGHSLIDE,
+                    headerAnimationLoop: true,
+                    title: 'Şifreniz Güncellenemedi 😕',
+                    desc: 'Şifreniz güncellenirken bir sorun oluştu.\n' +
+                        'Lütfen internet bağlantınızı kontrol edin.',
+                    btnOkOnPress: () {},
+                    btnOkText: "Tamam",
+                    btnOkColor: Colors.blue)
+                .show();
+          }
+        } catch (e) {
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.WARNING,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: 'Şifre Güncelleme HATA',
+                  desc: Exceptions.goster(e.toString()),
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Yeni Şifreler Uyuşmuyor"),
+          duration: Duration(seconds: 3),
+        ));
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Lütfen İstenilen Değerleri Doğru Giriniz..."),
+        backgroundColor: colorTwo,
+        duration: const Duration(seconds: 3),
+      ));
     }
   }
 }

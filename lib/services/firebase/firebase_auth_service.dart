@@ -76,10 +76,32 @@ class FirebaseAuthService implements AuthBase {
     }
   }
 
+  Future<bool> updatePassword(String oldPassword, String newPassword) async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: user!.email!, password: oldPassword);
+      await user.updatePassword(newPassword).catchError((onError) {
+        printError(onError, "updatePassword catchError");
+        signOut();
+        throw onError;
+      });
+      return true;
+    } catch (e) {
+      printError(e, "updatePassword");
+      rethrow;
+    }
+  }
+
   @override
-  Future<bool> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<bool> signOut() async {
+    try {
+      await _firebaseAuth.signOut();
+      return true;
+    } catch (e) {
+      printError(e, "signOut");
+      rethrow;
+    }
   }
 
   printError(Object e, String methodName) {
