@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -200,7 +201,21 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
     return null;
   }
 
-  Future galeriResimUpload() async {}
+  Future galeriResimUpload() async {
+    try {
+      XFile? pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      setState(() {
+        image = File(pickedFile!.path);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Resim Seçilmedi 😕"),
+        duration: Duration(seconds: 2),
+      ));
+    }
+  }
 
   Widget buildBack() {
     return Padding(
