@@ -97,6 +97,7 @@ class LoginPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                keyboardType: TextInputType.emailAddress,
                 style: TextStyle(color: Colors.indigo.shade200),
                 decoration: InputDecoration(
                   prefixIcon: Icon(
