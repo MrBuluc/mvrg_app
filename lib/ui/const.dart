@@ -89,3 +89,5 @@ Decoration gradient = const BoxDecoration(
       Color.fromRGBO(116, 235, 213, 1),
       Color.fromRGBO(172, 182, 229, 1)
     ]));
+
+BorderRadius butonBorder = BorderRadius.circular(10);

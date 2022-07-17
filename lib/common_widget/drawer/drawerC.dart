@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/ui/Profil/profil_page.dart';
+import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -79,7 +80,8 @@ class _DrawerCState extends State<DrawerC> {
                       children: [
                         buildListTile(
                             "Kullanıcı Bilgilerim", const ProfilPage()),
-                        buildListTile("Şifre Değişikliği", const ProfilPage())
+                        buildListTile(
+                            "Şifre Değişikliği", const UpdatePasswordPage())
                       ],
                     ),
                     if (admin)
