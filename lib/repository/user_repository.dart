@@ -19,7 +19,9 @@ class UserRepository implements AuthBase {
     bool sonuc = await _firestoreService.setUser(userC);
 
     if (sonuc) {
-      return await _firestoreService.readUser(userC.id!);
+      userC = await _firestoreService.readUser(userC.id!);
+      userC.password = password;
+      return userC;
     } else {
       return null;
     }
@@ -46,7 +48,9 @@ class UserRepository implements AuthBase {
     UserC? userC =
         await _firebaseAuthService.signInWithEmailandPassword(mail, password);
     if (userC != null) {
-      return await _firestoreService.readUser(userC.id!);
+      userC = await _firestoreService.readUser(userC.id!);
+      userC.password = password;
+      return userC;
     } else {
       return null;
     }

@@ -14,6 +14,7 @@ class FirebaseAuthService implements AuthBase {
     return UserC(
         id: userCredential.user!.uid,
         mail: mail,
+        password: password,
         name: name,
         surname: surname,
         admin: false);

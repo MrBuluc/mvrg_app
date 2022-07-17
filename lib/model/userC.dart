@@ -4,8 +4,10 @@ class UserC {
   String? name;
   String? surname;
   bool? admin = false;
+  String? password;
 
-  UserC({this.id, this.mail, this.name, this.surname, this.admin});
+  UserC(
+      {this.id, this.mail, this.password, this.name, this.surname, this.admin});
 
   UserC.fromJson(Map<String, Object?> json)
       : this(
