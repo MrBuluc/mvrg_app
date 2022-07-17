@@ -87,6 +87,26 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> updateUser(String id, String name, String surname, String mail,
+      String password, bool admin) async {
+    try {
+      state = ViewState.busy;
+      bool sonuc = await _userRepository.updateUser(
+          id, name, surname, mail, password, admin);
+      if (sonuc) {
+        _user = UserC(
+            id: id, mail: mail, name: name, surname: surname, admin: admin);
+        return true;
+      }
+      return sonuc;
+    } catch (e) {
+      printError("updateUser", e);
+      rethrow;
+    } finally {
+      state = ViewState.idle;
+    }
+  }
+
   @override
   Future<bool> signOut() {
     // TODO: implement signOut

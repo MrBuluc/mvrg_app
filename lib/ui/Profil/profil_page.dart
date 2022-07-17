@@ -1,9 +1,12 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/exceptions.dart';
 
 class ProfilPage extends StatefulWidget {
   const ProfilPage({Key? key}) : super(key: key);
@@ -103,7 +106,8 @@ class _ProfilPageState extends State<ProfilPage> {
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
-                            onPressed: () {},
+                            onPressed: () =>
+                                changed ? showPasswordDialog(context) : null,
                           ),
                         )
                       ],
@@ -145,5 +149,119 @@ class _ProfilPageState extends State<ProfilPage> {
         onChanged: (String value) => changed = true,
       ),
     );
+  }
+
+  showPasswordDialog(BuildContext context) {
+    String oldMail = userC!.mail!;
+    if (oldMail != mailCnt.text) {
+      if (userC!.password == null) {
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context1) {
+              return SimpleDialog(
+                title: const Text("Email Güncellemek İçin Şifrenizi Giriniz"),
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(15, 10, 10, 0),
+                        child: TextFormField(
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.vpn_key,
+                                size: 22,
+                              ),
+                              labelText: "Şifre"),
+                          validator: Validator.passwordControl,
+                          onFieldSubmitted: (String? value) {
+                            Navigator.pop(context);
+                            save(context, password: value!);
+                          },
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              );
+            });
+      } else {
+        save(context, password: userC!.password!);
+      }
+    } else {
+      save(context);
+    }
+  }
+
+  Future save(BuildContext context, {String password = ""}) async {
+    if (formKey.currentState!.validate()) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.INFO,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: 'Kullanıcı Bilgileri Güncelleniyor...',
+              desc: 'Kullanıcı bilgileri güncellenirken lütfen bekleyiniz',
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+
+      try {
+        bool sonuc = await Provider.of<UserModel>(context, listen: false)
+            .updateUser(userC!.id!, nameCnt.text, surnameCnt.text, mailCnt.text,
+                password, userC!.admin!);
+        if (sonuc) {
+          Navigator.pop(context);
+          AwesomeDialog(
+            context: context,
+            dialogType: DialogType.SUCCES,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Güncelleme Başarıyla Gerçekleştirildi 👍',
+            desc: 'MvRG App\'ı tercih ettiğiniz için teşekkür ederiz 🤟',
+            btnOkText: "Tamam",
+            btnOkColor: Colors.blue,
+            btnOkOnPress: () {},
+          ).show();
+        } else {
+          Navigator.pop(context);
+          AwesomeDialog(
+            context: context,
+            dialogType: DialogType.WARNING,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Kullanıcı Güncellenirken HATA 😕',
+            desc: 'Kullanıcı güncellenirken bir sorun oluştu. \n' +
+                'Lütfen internet bağlantınızı kontrol edin',
+            btnOkText: "Tamam",
+            btnOkColor: Colors.blue,
+            btnOkOnPress: () {},
+          ).show();
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.WARNING,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'Kullanıcı Güncelleme HATA 😕',
+          desc: Exceptions.goster(e.toString()),
+          btnOkText: "Tamam",
+          btnOkColor: Colors.blue,
+          btnOkOnPress: () {},
+        ).show();
+      }
+    } else {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.WARNING,
+        animType: AnimType.BOTTOMSLIDE,
+        title: 'Değerleri Doğru Giriniz',
+        desc: 'Lütfen istenilen değerleri tam ve doğru giriniz',
+        btnOkText: "Tamam",
+        btnOkColor: Colors.blue,
+        btnOkOnPress: () {},
+      ).show();
+    }
   }
 }

@@ -56,6 +56,17 @@ class UserRepository implements AuthBase {
     }
   }
 
+  Future<bool> updateUser(String id, String name, String surname, String mail,
+      String password, bool admin) async {
+    bool sonuc =
+        await _firebaseAuthService.updateUser(name, surname, mail, password);
+    if (sonuc) {
+      return await _firestoreService.setUser(UserC(
+          id: id, mail: mail, name: name, surname: surname, admin: admin));
+    }
+    return sonuc;
+  }
+
   @override
   Future<bool> signOut() {
     // TODO: implement signOut
