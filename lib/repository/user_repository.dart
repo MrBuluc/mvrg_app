@@ -71,6 +71,10 @@ class UserRepository implements AuthBase {
     return await _firebaseAuthService.updatePassword(oldPassword, newPassword);
   }
 
+  Future<List<String>> getBadgeNames() async {
+    return await _firestoreService.getBadgeNames();
+  }
+
   @override
   Future<bool> signOut() {
     // TODO: implement signOut

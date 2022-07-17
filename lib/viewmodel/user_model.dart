@@ -116,6 +116,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<List<String>> getBadgeNames() async {
+    try {
+      return await _userRepository.getBadgeNames();
+    } catch (e) {
+      printError("getBadgeNames", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() {
     // TODO: implement signOut

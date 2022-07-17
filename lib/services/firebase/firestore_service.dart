@@ -28,6 +28,19 @@ class FirestoreService {
     }
   }
 
+  Future<List<String>> getBadgeNames() async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await _firestore.collection("Badges").get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docSnapshotList =
+        querySnapshot.docs;
+    List<String> badgeNames = [];
+
+    docSnapshotList.forEach((docSnapshot) {
+      badgeNames.add(docSnapshot.id);
+    });
+    return badgeNames;
+  }
+
   printError(String methodName, Object e) {
     print("firestore $methodName hata: " + e.toString());
   }

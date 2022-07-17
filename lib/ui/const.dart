@@ -81,6 +81,7 @@ const TextStyle miniHeader = TextStyle(
 
 Color textFieldPrimaryColor = const Color.fromRGBO(30, 227, 167, 1);
 Color colorTwo = const Color.fromRGBO(172, 182, 229, 1);
+Color newBadgeColor = const Color.fromRGBO(30, 227, 167, 1);
 
 Decoration gradient = const BoxDecoration(
     gradient: LinearGradient(

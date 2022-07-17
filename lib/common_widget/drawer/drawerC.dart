@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/ui/Profil/profil_page.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
+import 'package:mvrg_app/ui/create_badge/create_badge_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -88,7 +89,13 @@ class _DrawerCState extends State<DrawerC> {
                       ListTile(
                         leading: const Icon(Icons.badge),
                         title: const Text("Yeni Rozet Ekle"),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateBadgePage()));
+                        },
                       ),
                     const Divider(
                       height: 1,
