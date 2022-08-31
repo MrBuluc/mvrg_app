@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/ui/Profil/profil_page.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
@@ -6,8 +7,10 @@ import 'package:mvrg_app/ui/create_badge/create_badge_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../app/exceptions.dart';
 import '../../model/userC.dart';
 import '../../ui/const.dart';
+import '../../ui/login/login_page.dart';
 
 class DrawerC extends StatefulWidget {
   const DrawerC({Key? key}) : super(key: key);
@@ -108,7 +111,9 @@ class _DrawerCState extends State<DrawerC> {
                             Icons.logout,
                             color: Colors.black,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            areYouSureForSignOut();
+                          },
                         ),
                         TextButton(
                           child: const Text(
@@ -116,7 +121,9 @@ class _DrawerCState extends State<DrawerC> {
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            areYouSureForSignOut();
+                          },
                         )
                       ],
                     )
@@ -150,5 +157,43 @@ class _DrawerCState extends State<DrawerC> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => page));
       },
     );
+  }
+
+  Future areYouSureForSignOut() async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.INFO,
+      borderSide: const BorderSide(color: Colors.green, width: 2),
+      headerAnimationLoop: false,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Emin Misin?',
+      desc: 'Oturumunu kapatmak istediğine emin misin?',
+      btnCancelText: "Vazgeç",
+      btnCancelOnPress: () {},
+      btnOkText: "Evet",
+      btnOkOnPress: () {
+        signOut();
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => LoginPage()));
+      },
+    ).show();
+  }
+
+  Future signOut() async {
+    try {
+      await (Provider.of<UserModel>(context, listen: false).signOut());
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.WARNING,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: 'Oturum Kapatılırken HATA',
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
   }
 }

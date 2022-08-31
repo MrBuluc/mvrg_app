@@ -151,9 +151,20 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   @override
-  Future<bool> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<bool> signOut() async {
+    try {
+      state = ViewState.busy;
+      bool result = await _userRepository.signOut();
+      if (result) {
+        _user = null;
+      }
+      return result;
+    } catch (e) {
+      printError("signOut", e);
+      rethrow;
+    } finally {
+      state = ViewState.idle;
+    }
   }
 
   printError(String methodName, Object e) {

@@ -92,8 +92,7 @@ class UserRepository implements AuthBase {
   }
 
   @override
-  Future<bool> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<bool> signOut() async {
+    return await _firebaseAuthService.signOut();
   }
 }
