@@ -22,10 +22,11 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
 
   late Size size;
 
-  List<String> badgeNames = [];
+  List<String> names = [];
 
-  TextEditingController badgeNameCnt = TextEditingController();
-  TextEditingController badgeInfoCnt = TextEditingController();
+  TextEditingController nameCnt = TextEditingController();
+  TextEditingController infoCnt = TextEditingController();
+  TextEditingController imageUrlCnt = TextEditingController();
 
   File? image;
 
@@ -55,7 +56,7 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
   }
 
   Future getBadgeNames() async {
-    badgeNames =
+    names =
         await Provider.of<UserModel>(context, listen: false).getBadgeNames();
   }
 
@@ -113,21 +114,18 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildTextFormField(
-                          Colors.grey,
-                          badgeNameCnt,
-                          Icons.verified_outlined,
-                          "Rozet Adı",
-                          badgeNameControl),
+                      buildTextFormField(Colors.grey, nameCnt,
+                          Icons.verified_outlined, "Rozet Adı", nameControl),
                       SizedBox(
                         height: size.height * .03,
                       ),
-                      buildTextFormField(
-                          Colors.indigo.shade200,
-                          badgeInfoCnt,
-                          Icons.info_outline,
-                          "Rozetin Infosu",
-                          badgeInfoControl),
+                      buildTextFormField(Colors.indigo.shade200, infoCnt,
+                          Icons.info_outline, "Rozetin Infosu", infoControl),
+                      SizedBox(
+                        height: size.height * .03,
+                      ),
+                      buildTextFormField(Colors.indigo.shade200, imageUrlCnt,
+                          Icons.link, "Rozetin Resim Linki", urlControl),
                       SizedBox(
                         height: size.height * .03,
                       ),
@@ -188,8 +186,8 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
     );
   }
 
-  String? badgeNameControl(String? value) {
-    if (badgeNames.contains(value)) {
+  String? nameControl(String? value) {
+    if (names.contains(value)) {
       return "Bu rozet bulunmaktadır";
     } else if (value!.isEmpty) {
       return "Bir rozet adı belirtmelisiniz";
@@ -198,11 +196,24 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
     }
   }
 
-  String? badgeInfoControl(String? value) {
+  String? infoControl(String? value) {
     if (value!.isEmpty) {
       return "Rozetin Infosunu belirtmelisiniz";
     }
     return null;
+  }
+
+  String? urlControl(String? value) {
+    if (value != null && value.isNotEmpty) {
+      RegExp regex = RegExp("(http(s?):)([/|.|\\w|\\s|%|-])*\\.(?:jpg|png)");
+      if (!regex.hasMatch(value)) {
+        return "Sonu .jpg veya .png ile biten geçerli bir url belirtmelisiniz";
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   Future galeriResimUpload() async {
@@ -291,9 +302,10 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
       badgeInProgress = true;
     });
 
-    if (image == null) {
+    if (image == null && imageUrlCnt.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Lütfen rozet için bir resim seçiniz!!!"),
+        content: Text(
+            "Lütfen rozet için bir resim seçiniz veya resim linki giriniz!!!"),
         duration: Duration(seconds: 2),
       ));
 
@@ -305,13 +317,18 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
         UserModel userModel = Provider.of<UserModel>(context, listen: false);
 
         try {
-          String badgeImageUrl =
-              await userModel.uploadFile("Badges", image!, badgeNameCnt.text);
+          late String imageUrl;
+          if (imageUrlCnt.text.isEmpty) {
+            imageUrl =
+                await userModel.uploadFile("Badges", image!, nameCnt.text);
+          } else {
+            imageUrl = imageUrlCnt.text;
+          }
 
           bool sonuc = await userModel.setBadge(Badge(
-              imageUrl: badgeImageUrl,
-              name: badgeNameCnt.text,
-              info: badgeInfoCnt.text,
+              imageUrl: imageUrl,
+              name: nameCnt.text,
+              info: infoCnt.text,
               holders: []));
 
           if (sonuc) {
@@ -346,6 +363,9 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
           backgroundColor: colorTwo,
           duration: const Duration(seconds: 3),
         ));
+        setState(() {
+          badgeInProgress = false;
+        });
       }
     }
   }

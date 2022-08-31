@@ -39,9 +39,10 @@ class FirestoreService {
         querySnapshot.docs;
     List<String> badgeNames = [];
 
-    docSnapshotList.forEach((docSnapshot) {
+    for (QueryDocumentSnapshot<Map<String, dynamic>> docSnapshot
+        in docSnapshotList) {
       badgeNames.add(docSnapshot.id);
-    });
+    }
     return badgeNames;
   }
 
