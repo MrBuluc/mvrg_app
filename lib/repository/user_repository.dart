@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
+import 'package:mvrg_app/services/firebase/firebase_storage_service.dart';
 import 'package:mvrg_app/services/firebase/firestore_service.dart';
 
 import '../locator.dart';
@@ -9,6 +13,8 @@ class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
       locator<FirebaseAuthService>();
   final FirestoreService _firestoreService = locator<FirestoreService>();
+  final FirebaseStorageService _firebaseStorageService =
+      locator<FirebaseStorageService>();
 
   @override
   Future<UserC?> createUserWithEmailandPassword(
@@ -73,6 +79,16 @@ class UserRepository implements AuthBase {
 
   Future<List<String>> getBadgeNames() async {
     return await _firestoreService.getBadgeNames();
+  }
+
+  Future<String> uploadFile(
+      String anaKlasor, File image, String badgeName) async {
+    return await _firebaseStorageService.uploadFile(
+        anaKlasor, image, badgeName);
+  }
+
+  Future<bool> setBadge(Badge badge) async {
+    return await _firestoreService.setBadge(badge);
   }
 
   @override

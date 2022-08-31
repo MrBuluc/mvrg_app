@@ -1,10 +1,14 @@
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/exceptions.dart';
 
 class CreateBadgePage extends StatefulWidget {
   const CreateBadgePage({Key? key}) : super(key: key);
@@ -271,10 +275,78 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
                 size: 40,
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              if (!badgeInProgress) {
+                createBadge();
+              }
+            },
           )
         ],
       ),
     );
+  }
+
+  Future createBadge() async {
+    setState(() {
+      badgeInProgress = true;
+    });
+
+    if (image == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Lütfen rozet için bir resim seçiniz!!!"),
+        duration: Duration(seconds: 2),
+      ));
+
+      setState(() {
+        badgeInProgress = false;
+      });
+    } else {
+      if (formKey.currentState!.validate()) {
+        UserModel userModel = Provider.of<UserModel>(context, listen: false);
+
+        try {
+          String badgeImageUrl =
+              await userModel.uploadFile("Badges", image!, badgeNameCnt.text);
+
+          bool sonuc = await userModel.setBadge(Badge(
+              imageUrl: badgeImageUrl,
+              name: badgeNameCnt.text,
+              info: badgeInfoCnt.text,
+              holders: []));
+
+          if (sonuc) {
+            AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.SUCCES,
+                    animType: AnimType.RIGHSLIDE,
+                    headerAnimationLoop: true,
+                    title: 'Yeni Rozet Oluşturuldu 👍',
+                    desc: 'Yeni rozet başarılı bir şekilde oluşturuldu',
+                    btnOkOnPress: () {},
+                    btnOkText: "Tamam",
+                    btnOkColor: Colors.blue)
+                .show();
+          }
+        } catch (e) {
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.WARNING,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: 'Şifre Güncelleme HATA',
+                  desc: Exceptions.goster(e.toString()),
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Lütfen İstenilen Değerleri Doğru Giriniz..."),
+          backgroundColor: colorTwo,
+          duration: const Duration(seconds: 3),
+        ));
+      }
+    }
   }
 }

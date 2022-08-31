@@ -1,14 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference usersRef;
+  late CollectionReference usersRef, badgesRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
         fromFirestore: (snapshot, _) => UserC.fromJson(snapshot.data()!),
         toFirestore: (userC, _) => userC.toJson());
+    badgesRef = _firestore.collection("Badges").withConverter<Badge>(
+        fromFirestore: (snapshot, _) => Badge.fromJson(snapshot.data()!),
+        toFirestore: (badge, _) => badge.toJson());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -39,6 +43,16 @@ class FirestoreService {
       badgeNames.add(docSnapshot.id);
     });
     return badgeNames;
+  }
+
+  Future<bool> setBadge(Badge badge) async {
+    try {
+      await badgesRef.doc(badge.name).set(badge);
+      return true;
+    } catch (e) {
+      printError("setBadge", e);
+      rethrow;
+    }
   }
 
   printError(String methodName, Object e) {

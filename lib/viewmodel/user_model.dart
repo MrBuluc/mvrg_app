@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
+import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/repository/user_repository.dart';
 import 'package:mvrg_app/services/auth_base.dart';
@@ -121,6 +124,28 @@ class UserModel with ChangeNotifier implements AuthBase {
       return await _userRepository.getBadgeNames();
     } catch (e) {
       printError("getBadgeNames", e);
+      rethrow;
+    }
+  }
+
+  Future<String> uploadFile(
+      String anaKlasor, File image, String badgeName) async {
+    try {
+      state = ViewState.busy;
+      return await _userRepository.uploadFile(anaKlasor, image, badgeName);
+    } catch (e) {
+      printError("uploadFile", e);
+      rethrow;
+    } finally {
+      state = ViewState.idle;
+    }
+  }
+
+  Future<bool> setBadge(Badge badge) async {
+    try {
+      return await _userRepository.setBadge(badge);
+    } catch (e) {
+      printError("setBadge", e);
       rethrow;
     }
   }
