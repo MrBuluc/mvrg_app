@@ -106,6 +106,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Image.network(
                     badge.imageUrl!,
+                    loadingBuilder: loadingBuilder,
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
@@ -120,6 +121,17 @@ class _HomePageState extends State<HomePage> {
                 ],
               ))
           .toList(),
+    );
+  }
+
+  Widget loadingBuilder(
+      BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+    if (loadingProgress == null) return child;
+    return CircularProgressIndicator(
+      value: loadingProgress.expectedTotalBytes != null
+          ? loadingProgress.cumulativeBytesLoaded /
+              loadingProgress.expectedTotalBytes!
+          : null,
     );
   }
 }
