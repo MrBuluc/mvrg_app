@@ -1,4 +1,5 @@
 class Badge {
+  String? id;
   String? imageUrl;
   String? name;
   String? info;

@@ -41,14 +41,14 @@ class FirestoreService {
 
     for (QueryDocumentSnapshot<Map<String, dynamic>> docSnapshot
         in docSnapshotList) {
-      badgeNames.add(docSnapshot.id);
+      badgeNames.add(docSnapshot.data()["name"]);
     }
     return badgeNames;
   }
 
   Future<bool> setBadge(Badge badge) async {
     try {
-      await badgesRef.doc(badge.name).set(badge);
+      await badgesRef.add(badge);
       return true;
     } catch (e) {
       printError("setBadge", e);

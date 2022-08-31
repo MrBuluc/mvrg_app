@@ -61,7 +61,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> buildColumn(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     List<Badge> badges = snapshot.data!.docs.map((DocumentSnapshot document) {
-      return Badge.fromJson(document.data()! as Map<String, dynamic>);
+      Badge badge = Badge.fromJson(document.data()! as Map<String, dynamic>);
+      badge.id = document.id;
+      return badge;
     }).toList();
 
     List<Widget> widgets = [];
