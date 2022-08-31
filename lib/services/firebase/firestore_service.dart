@@ -46,6 +46,20 @@ class FirestoreService {
     return badgeNames;
   }
 
+  Future<List<String>> getUserNames() async {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docSnapshotList =
+        (await _firestore.collection("Users").get()).docs;
+    List<String> userNames = [];
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> queryDocumentSnapshot
+        in docSnapshotList) {
+      userNames.add(queryDocumentSnapshot.data()["name"] +
+          " " +
+          queryDocumentSnapshot.data()["surname"]);
+    }
+    return userNames;
+  }
+
   Future<bool> setBadge(Badge badge) async {
     try {
       await badgesRef.add(badge);

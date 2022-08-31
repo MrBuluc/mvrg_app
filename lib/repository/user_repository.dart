@@ -81,6 +81,10 @@ class UserRepository implements AuthBase {
     return await _firestoreService.getBadgeNames();
   }
 
+  Future<List<String>> getUserNames() async {
+    return await _firestoreService.getUserNames();
+  }
+
   Future<String> uploadFile(
       String anaKlasor, File image, String badgeName) async {
     return await _firebaseStorageService.uploadFile(

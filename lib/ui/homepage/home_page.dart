@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/ui/create_and_update_badge/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -124,6 +125,14 @@ class _HomePageState extends State<HomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => InfoBadgePage(badge: badge)));
+                },
+                onLongPress: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CreateAndUpdateBadgePage(
+                                badge: badge,
+                              )));
                 },
               ))
           .toList(),

@@ -128,6 +128,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<List<String>> getUserNames() async {
+    try {
+      return await _userRepository.getUserNames();
+    } catch (e) {
+      printError("getUserNames", e);
+      rethrow;
+    }
+  }
+
   Future<String> uploadFile(
       String anaKlasor, File image, String badgeName) async {
     try {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
@@ -10,19 +11,21 @@ import 'package:provider/provider.dart';
 
 import '../../app/exceptions.dart';
 
-class CreateBadgePage extends StatefulWidget {
-  const CreateBadgePage({Key? key}) : super(key: key);
+class CreateAndUpdateBadgePage extends StatefulWidget {
+  final Badge? badge;
+  const CreateAndUpdateBadgePage({Key? key, this.badge}) : super(key: key);
 
   @override
-  State<CreateBadgePage> createState() => _CreateBadgePageState();
+  State<CreateAndUpdateBadgePage> createState() =>
+      _CreateAndUpdateBadgePageState();
 }
 
-class _CreateBadgePageState extends State<CreateBadgePage> {
+class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   late Size size;
 
-  List<String> names = [];
+  List<String> badgeNames = [], userNames = [];
 
   TextEditingController nameCnt = TextEditingController();
   TextEditingController infoCnt = TextEditingController();
@@ -32,10 +35,22 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
 
   bool badgeInProgress = false;
 
+  Badge? badge;
+
   @override
   void initState() {
     super.initState();
     getBadgeNames();
+    badge = widget.badge;
+    if (badge != null) {
+      prepareCnts();
+    }
+  }
+
+  void prepareCnts() {
+    nameCnt.text = badge!.name!;
+    infoCnt.text = badge!.info!;
+    imageUrlCnt.text = badge!.imageUrl!;
   }
 
   @override
@@ -56,8 +71,13 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
   }
 
   Future getBadgeNames() async {
-    names =
+    badgeNames =
         await Provider.of<UserModel>(context, listen: false).getBadgeNames();
+  }
+
+  Future getUserNames() async {
+    userNames =
+        await Provider.of<UserModel>(context, listen: false).getUserNames();
   }
 
   Widget buildHeaderandTextForm() {
@@ -138,14 +158,7 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
                               border: Border.all(color: newBadgeColor)),
                           child: GestureDetector(
                             child: Center(
-                              child: image == null
-                                  ? Text(
-                                      "Resim Yok",
-                                      style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontWeight: FontWeight.bold),
-                                    )
-                                  : Image.file(image!),
+                              child: buildImage(),
                             ),
                             onTap: galeriResimUpload,
                           ),
@@ -187,7 +200,7 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
   }
 
   String? nameControl(String? value) {
-    if (names.contains(value)) {
+    if (badgeNames.contains(value)) {
       return "Bu rozet bulunmaktadır";
     } else if (value!.isEmpty) {
       return "Bir rozet adı belirtmelisiniz";
@@ -213,6 +226,22 @@ class _CreateBadgePageState extends State<CreateBadgePage> {
       }
     } else {
       return null;
+    }
+  }
+
+  Widget buildImage() {
+    if (badge == null) {
+      if (image == null) {
+        return Text(
+          "Resim Yok",
+          style: TextStyle(
+              color: Colors.grey.shade600, fontWeight: FontWeight.bold),
+        );
+      } else {
+        return Image.file(image!);
+      }
+    } else {
+      return BadgeImage(id: badge!.id!, imageUrl: badge!.imageUrl!);
     }
   }
 
