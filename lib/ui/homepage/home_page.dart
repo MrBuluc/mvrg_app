@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -103,24 +104,35 @@ class _HomePageState extends State<HomePage> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: badges
-          .map((Badge badge) => Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Image.network(
-                    badge.imageUrl!,
-                    loadingBuilder: loadingBuilder,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  ),
-                  Text(
-                    badge.name!,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: size.height * .01,
-                  )
-                ],
+          .map((Badge badge) => GestureDetector(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Hero(
+                      tag: badge.id!,
+                      child: Image.network(
+                        badge.imageUrl!,
+                        loadingBuilder: loadingBuilder,
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Text(
+                      badge.name!,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: size.height * .01,
+                    )
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InfoBadgePage(badge: badge)));
+                },
               ))
           .toList(),
     );
