@@ -14,8 +14,12 @@ class _HomePageState extends State<HomePage> {
   Stream<QuerySnapshot> badgeStream =
       FirebaseFirestore.instance.collection("Badges").snapshots();
 
+  late Size size;
+
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -69,7 +73,8 @@ class _HomePageState extends State<HomePage> {
       )));
       return widgets;
     }
-    for (int i = 0; i < badges.length; i++) {
+    int length = badges.length;
+    for (int i = 0; i < length; i++) {
       int remainder = i % 3;
       List<Badge> badges1 = [];
       switch (remainder) {
@@ -77,20 +82,24 @@ class _HomePageState extends State<HomePage> {
           badges1 = [badges[i]];
           break;
         case 1:
-          badges1 = [badges[i], badges[i + 1]];
+          if (i + 1 == length) {
+            badges1 = [badges[i]];
+          } else {
+            badges1 = [badges[i], badges[i + 1]];
+          }
           break;
         default:
           continue;
       }
-      widgets.add(buildRow(badges1));
+      widgets.add(buildBadgeWidget(badges1));
     }
     return widgets;
   }
 
-  Widget buildRow(List<Badge> badges) {
+  Widget buildBadgeWidget(List<Badge> badges) {
     return Row(
       mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: badges
           .map((Badge badge) => Column(
                 mainAxisSize: MainAxisSize.max,
@@ -104,6 +113,9 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     badge.name!,
                     style: const TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: size.height * .01,
                   )
                 ],
               ))
