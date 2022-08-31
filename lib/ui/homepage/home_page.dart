@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
@@ -108,16 +109,7 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Hero(
-                      tag: badge.id!,
-                      child: Image.network(
-                        badge.imageUrl!,
-                        loadingBuilder: loadingBuilder,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    BadgeImage(id: badge.id!, imageUrl: badge.imageUrl!),
                     Text(
                       badge.name!,
                       style: const TextStyle(fontSize: 20),
@@ -135,17 +127,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ))
           .toList(),
-    );
-  }
-
-  Widget loadingBuilder(
-      BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-    if (loadingProgress == null) return child;
-    return CircularProgressIndicator(
-      value: loadingProgress.expectedTotalBytes != null
-          ? loadingProgress.cumulativeBytesLoaded /
-              loadingProgress.expectedTotalBytes!
-          : null,
     );
   }
 }

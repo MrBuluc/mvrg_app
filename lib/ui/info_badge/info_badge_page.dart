@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/model/badge.dart';
 
 class InfoBadgePage extends StatefulWidget {
@@ -53,14 +54,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Hero(
-                      tag: badge.id!,
-                      child: Image.network(
-                        badge.imageUrl!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )),
+                  BadgeImage(id: badge.id!, imageUrl: badge.imageUrl!),
                   Padding(
                     padding: EdgeInsets.only(
                         top: size.height * .03,
