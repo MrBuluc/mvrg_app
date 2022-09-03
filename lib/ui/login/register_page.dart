@@ -133,6 +133,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
+      keyboardType: icon == Icons.mail ? TextInputType.emailAddress : null,
       style: TextStyle(color: Colors.grey.shade400),
       decoration: InputDecoration(
           prefixIcon: Icon(
