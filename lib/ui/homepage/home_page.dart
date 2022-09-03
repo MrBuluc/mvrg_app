@@ -5,6 +5,8 @@ import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/create_and_update_badge/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
+import 'package:mvrg_app/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -127,12 +129,17 @@ class _HomePageState extends State<HomePage> {
                           builder: (context) => InfoBadgePage(badge: badge)));
                 },
                 onLongPress: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CreateAndUpdateBadgePage(
-                                badge: badge,
-                              )));
+                  bool admin = Provider.of<UserModel>(context, listen: false)
+                      .user!
+                      .admin!;
+                  if (admin) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateAndUpdateBadgePage(
+                                  badge: badge,
+                                )));
+                  }
                 },
               ))
           .toList(),
