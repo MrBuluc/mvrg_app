@@ -112,7 +112,9 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    BadgeImage(id: badge.id!, imageUrl: badge.imageUrl!),
+                    BadgeImage(
+                      badge: badge,
+                    ),
                     Text(
                       badge.name!,
                       style: const TextStyle(fontSize: 20),

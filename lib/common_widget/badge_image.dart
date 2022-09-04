@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/model/badge.dart';
 
 class BadgeImage extends StatelessWidget {
-  final String id, imageUrl;
-  const BadgeImage({Key? key, required this.id, required this.imageUrl})
-      : super(key: key);
+  final Badge badge;
+  const BadgeImage({Key? key, required this.badge}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-        tag: id,
+        tag: badge.id!,
         child: Image.network(
-          imageUrl,
+          badge.imageUrl!,
           width: 100,
           height: 100,
           fit: BoxFit.cover,

@@ -70,6 +70,16 @@ class FirestoreService {
     }
   }
 
+  Future<bool> updateBadge(String id, Map<String, dynamic> badgeMap) async {
+    try {
+      await badgesRef.doc(id).update(badgeMap);
+      return true;
+    } catch (e) {
+      printError("updateBadge", e);
+      rethrow;
+    }
+  }
+
   printError(String methodName, Object e) {
     print("firestore $methodName hata: " + e.toString());
   }

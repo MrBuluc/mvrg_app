@@ -159,6 +159,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> updateBadge(Badge badge) async {
+    try {
+      return await _userRepository.updateBadge(badge);
+    } catch (e) {
+      printError("updateBadge", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

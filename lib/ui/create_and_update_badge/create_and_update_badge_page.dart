@@ -25,7 +25,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   late Size size;
 
-  List<String> badgeNames = [], userNames = [];
+  List<String> badgeNames = [], userNames = [], rankList = ["0", "1", "2", "3"];
 
   TextEditingController nameCnt = TextEditingController();
   TextEditingController infoCnt = TextEditingController();
@@ -33,9 +33,11 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   File? image;
 
-  bool badgeInProgress = false;
+  bool badgeInProgress = false, imageUrlEnable = true;
 
   Badge? badge;
+
+  String? chosenUserName, chosenRank = "0", secilmedi = "Seçilmedi";
 
   @override
   void initState() {
@@ -44,6 +46,8 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     badge = widget.badge;
     if (badge != null) {
       prepareCnts();
+      getUserNames();
+      chosenUserName = secilmedi;
     }
   }
 
@@ -73,11 +77,16 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
   Future getBadgeNames() async {
     badgeNames =
         await Provider.of<UserModel>(context, listen: false).getBadgeNames();
+    if (badge != null) {
+      badgeNames.remove(badge!.name);
+    }
   }
 
   Future getUserNames() async {
     userNames =
         await Provider.of<UserModel>(context, listen: false).getUserNames();
+    userNames.add(secilmedi!);
+    setState(() {});
   }
 
   Widget buildHeaderandTextForm() {
@@ -100,9 +109,9 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
-                    "Yeni Rozet Oluştur",
+                    badge == null ? "Yeni Rozet Oluştur" : "Rozet Güncelle",
                     style: headerText,
                   )
                 ],
@@ -114,7 +123,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
             right: size.width * .1,
             left: size.width * .1,
             child: Container(
-              height: size.height * .7,
+              height: size.height * .64,
               width: size.width * .6,
               decoration: BoxDecoration(
                   color: Colors.white,
@@ -129,44 +138,80 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
               child: Form(
                 key: formKey,
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      top: size.width * .1, right: 30, left: 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildTextFormField(Colors.grey, nameCnt,
-                          Icons.verified_outlined, "Rozet Adı", nameControl),
-                      SizedBox(
-                        height: size.height * .03,
-                      ),
-                      buildTextFormField(Colors.indigo.shade200, infoCnt,
-                          Icons.info_outline, "Rozetin Infosu", infoControl),
-                      SizedBox(
-                        height: size.height * .03,
-                      ),
-                      buildTextFormField(Colors.indigo.shade200, imageUrlCnt,
-                          Icons.link, "Rozetin Resim Linki", urlControl),
-                      SizedBox(
-                        height: size.height * .03,
-                      ),
-                      Center(
-                        child: Container(
-                          height: size.height * .15,
-                          width: size.width * .4,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: newBadgeColor)),
-                          child: GestureDetector(
-                            child: Center(
-                              child: buildImage(),
+                    padding: EdgeInsets.only(
+                        top: size.width * .05, right: 30, left: 30),
+                    child: Stack(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildTextFormField(
+                                Colors.grey,
+                                nameCnt,
+                                Icons.verified_outlined,
+                                "Rozet Adı",
+                                nameControl),
+                            SizedBox(
+                              height: size.height * .03,
                             ),
-                            onTap: galeriResimUpload,
-                          ),
+                            buildTextFormField(
+                                Colors.grey,
+                                infoCnt,
+                                Icons.info_outline,
+                                "Rozetin Infosu",
+                                infoControl),
+                            SizedBox(
+                              height: size.height * .03,
+                            ),
+                            buildTextFormField(Colors.grey, imageUrlCnt,
+                                Icons.link, "Rozetin Resim Linki", urlControl,
+                                enable: imageUrlEnable),
+                            SizedBox(
+                              height: size.height * .03,
+                            ),
+                            if (badge != null)
+                              buildHoldersRow(
+                                  "Rozete atanacak kişi:", userNames, true),
+                            if (badge != null)
+                              buildHoldersRow(
+                                  "Kişinin seviyesi:", rankList, false),
+                            Center(
+                              child: Container(
+                                height: size.height * .15,
+                                width: size.width * .4,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(color: newBadgeColor)),
+                                child: GestureDetector(
+                                  child: Center(
+                                    child: buildImage(),
+                                  ),
+                                  onTap: galeriResimUpload,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
+                        if (image != null)
+                          GestureDetector(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  left: size.width * .491,
+                                  top: badge != null
+                                      ? size.height * .436
+                                      : size.height * .281),
+                              child: const Icon(
+                                Icons.clear,
+                                color: Colors.red,
+                                size: 28,
+                              ),
+                            ),
+                            onTap: () {
+                              removeImage();
+                            },
+                          ),
+                      ],
+                    )),
               ),
             ),
           )
@@ -175,13 +220,11 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     );
   }
 
-  Widget buildTextFormField(
-      Color styleColor,
-      TextEditingController controller,
-      IconData iconData,
-      String hintText,
-      String? Function(String?)? validator) {
+  Widget buildTextFormField(Color styleColor, TextEditingController controller,
+      IconData iconData, String hintText, String? Function(String?)? validator,
+      {bool enable = true}) {
     return TextFormField(
+      enabled: enable,
       style: TextStyle(color: styleColor),
       controller: controller,
       decoration: InputDecoration(
@@ -220,7 +263,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     if (value != null && value.isNotEmpty) {
       RegExp regex = RegExp("(http(s?):)([/|.|\\w|\\s|%|-])*\\.(?:jpg|png)");
       if (!regex.hasMatch(value)) {
-        return "Sonu .jpg veya .png ile biten geçerli bir url belirtmelisiniz";
+        return "Sonu .jpg veya .png ile biten bir url belirtmelisiniz";
       } else {
         return null;
       }
@@ -229,19 +272,63 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     }
   }
 
+  Widget buildHoldersRow(String text, List<String> items, bool isUserName) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: isUserName ? 0 : size.height * .015),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text),
+          buildDropdownButton(items, isUserName),
+        ],
+      ),
+    );
+  }
+
+  Widget buildDropdownButton(List<String> items, bool isUserName) {
+    return Container(
+      alignment: Alignment.center,
+      child: DropdownButton<String>(
+        focusColor: Colors.white,
+        value: isUserName ? chosenUserName : chosenRank,
+        style: const TextStyle(color: Colors.white),
+        iconEnabledColor: Colors.black,
+        onChanged: (String? value) => setState(() {
+          if (isUserName) {
+            chosenUserName = value;
+          } else {
+            chosenRank = value;
+          }
+        }),
+        items: items
+            .map<DropdownMenuItem<String>>(
+                (String value) => DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ))
+            .toList(),
+      ),
+    );
+  }
+
   Widget buildImage() {
-    if (badge == null) {
-      if (image == null) {
+    if (image == null) {
+      if (badge == null) {
         return Text(
           "Resim Yok",
           style: TextStyle(
               color: Colors.grey.shade600, fontWeight: FontWeight.bold),
         );
       } else {
-        return Image.file(image!);
+        return BadgeImage(
+          badge: badge!,
+        );
       }
     } else {
-      return BadgeImage(id: badge!.id!, imageUrl: badge!.imageUrl!);
+      return Image.file(image!);
     }
   }
 
@@ -252,13 +339,23 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
       setState(() {
         image = File(pickedFile!.path);
+        imageUrlEnable = false;
       });
+
+      imageUrlCnt.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Resim Seçilmedi 😕"),
         duration: Duration(seconds: 2),
       ));
     }
+  }
+
+  removeImage() {
+    setState(() {
+      image = null;
+      imageUrlEnable = true;
+    });
   }
 
   Widget buildBack() {
@@ -317,7 +414,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
             ),
             onTap: () {
               if (!badgeInProgress) {
-                createBadge();
+                createAndUpdateBadge();
               }
             },
           )
@@ -326,7 +423,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     );
   }
 
-  Future createBadge() async {
+  Future createAndUpdateBadge() async {
     setState(() {
       badgeInProgress = true;
     });
@@ -347,31 +444,58 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
         try {
           late String imageUrl;
-          if (imageUrlCnt.text.isEmpty) {
+          if (image != null) {
             imageUrl =
                 await userModel.uploadFile("Badges", image!, nameCnt.text);
           } else {
             imageUrl = imageUrlCnt.text;
+            bool response = await checkImageUrl(imageUrl);
+            if (!response) {
+              setState(() {
+                badgeInProgress = false;
+              });
+              return;
+            }
           }
 
-          bool sonuc = await userModel.setBadge(Badge(
+          late bool result;
+          Badge newBadge = Badge(
               imageUrl: imageUrl,
               name: nameCnt.text,
               info: infoCnt.text,
-              holders: []));
+              holders: []);
+          if (badge == null) {
+            result = await userModel.setBadge(newBadge);
+          } else {
+            newBadge.id = badge!.id;
+            if (chosenUserName != secilmedi) {
+              newBadge.holders = getNewHolders();
+            } else {
+              newBadge.holders = null;
+            }
+            result = await userModel.updateBadge(newBadge);
+          }
 
-          if (sonuc) {
+          if (result) {
             AwesomeDialog(
                     context: context,
                     dialogType: DialogType.SUCCES,
                     animType: AnimType.RIGHSLIDE,
                     headerAnimationLoop: true,
-                    title: 'Yeni Rozet Oluşturuldu 👍',
-                    desc: 'Yeni rozet başarılı bir şekilde oluşturuldu',
+                    title: badge == null
+                        ? 'Yeni Rozet Oluşturuldu 👍'
+                        : "Rozet Güncellendi 👍",
+                    desc: badge == null
+                        ? 'Yeni rozet başarılı bir şekilde oluşturuldu'
+                        : "Rozet başarılı bir şekilde güncellendi",
                     btnOkOnPress: () {},
                     btnOkText: "Tamam",
                     btnOkColor: Colors.blue)
                 .show();
+
+            setState(() {
+              badgeInProgress = false;
+            });
           }
         } catch (e) {
           AwesomeDialog(
@@ -379,7 +503,9 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                   dialogType: DialogType.WARNING,
                   animType: AnimType.RIGHSLIDE,
                   headerAnimationLoop: true,
-                  title: 'Şifre Güncelleme HATA',
+                  title: badge == null
+                      ? 'Rozet Ekleme HATA'
+                      : "Rozet Güncelleme HATA",
                   desc: Exceptions.goster(e.toString()),
                   btnOkOnPress: () {},
                   btnOkText: "Tamam",
@@ -397,5 +523,45 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
         });
       }
     }
+  }
+
+  Future<bool> checkImageUrl(String url) async {
+    bool response =
+        await Provider.of<UserModel>(context, listen: false).checkResponse(url);
+    if (!response) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.WARNING,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: 'Rozet Ekleme HATA',
+              desc:
+                  "Girdiğiniz resim linki geçerli değil. Lütfen geçerli bir resim "
+                  "linki giriniz.",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
+    return response;
+  }
+
+  List<Map<String, dynamic>> getNewHolders() {
+    Map<String, dynamic> holdersMap = {
+      "name": chosenUserName,
+      "rank": int.parse(chosenRank!)
+    };
+
+    List<Map<String, dynamic>> holders = badge!.holders!;
+    for (int i = 0; i < holders.length; i++) {
+      Map<String, dynamic> oldHolder = holders.elementAt(i);
+      if (oldHolder["name"] == holdersMap["name"]) {
+        holders.elementAt(i)["rank"] = holdersMap["rank"];
+        return holders;
+      }
+    }
+
+    holders.add(holdersMap);
+    return holders;
   }
 }

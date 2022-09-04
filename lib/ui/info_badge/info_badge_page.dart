@@ -54,7 +54,9 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  BadgeImage(id: badge.id!, imageUrl: badge.imageUrl!),
+                  BadgeImage(
+                    badge: badge,
+                  ),
                   Padding(
                     padding: EdgeInsets.only(
                         top: size.height * .03,
