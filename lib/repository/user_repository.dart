@@ -6,6 +6,7 @@ import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
 import 'package:mvrg_app/services/firebase/firebase_storage_service.dart';
 import 'package:mvrg_app/services/firebase/firestore_service.dart';
+import 'package:mvrg_app/services/http_service.dart';
 
 import '../locator.dart';
 
@@ -15,6 +16,7 @@ class UserRepository implements AuthBase {
   final FirestoreService _firestoreService = locator<FirestoreService>();
   final FirebaseStorageService _firebaseStorageService =
       locator<FirebaseStorageService>();
+  final HttpService _httpService = locator<HttpService>();
 
   @override
   Future<UserC?> createUserWithEmailandPassword(
@@ -98,5 +100,9 @@ class UserRepository implements AuthBase {
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();
+  }
+
+  Future<bool> checkResponse(String url) async {
+    return _httpService.checkResponse(url);
   }
 }

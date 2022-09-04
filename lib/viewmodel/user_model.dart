@@ -176,6 +176,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> checkResponse(String url) async {
+    try {
+      return _userRepository.checkResponse(url);
+    } catch (e) {
+      printError("checkResponse", e);
+      rethrow;
+    }
+  }
+
   printError(String methodName, Object e) {
     print("Usermodel $methodName hata: " + e.toString());
   }
