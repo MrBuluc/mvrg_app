@@ -168,6 +168,16 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> removeHolderFromBadge(
+      String id, Map<String, dynamic> holderMap) async {
+    try {
+      return await _userRepository.removeHolderFromBadge(id, holderMap);
+    } catch (e) {
+      printError("removeHolderFromBadge", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

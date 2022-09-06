@@ -101,6 +101,11 @@ class UserRepository implements AuthBase {
     return await _firestoreService.updateBadge(badge.id!, badge.toFirestore());
   }
 
+  Future<bool> removeHolderFromBadge(
+      String id, Map<String, dynamic> holderMap) async {
+    return await _firestoreService.removeHolderFromBadge(id, holderMap);
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();

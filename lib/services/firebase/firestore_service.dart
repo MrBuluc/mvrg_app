@@ -80,6 +80,19 @@ class FirestoreService {
     }
   }
 
+  Future<bool> removeHolderFromBadge(
+      String id, Map<String, dynamic> holderMap) async {
+    try {
+      await badgesRef.doc(id).update({
+        "holders": FieldValue.arrayRemove([holderMap])
+      });
+      return true;
+    } catch (e) {
+      printError("removeHolderFromBadge", e);
+      rethrow;
+    }
+  }
+
   printError(String methodName, Object e) {
     print("firestore $methodName hata: " + e.toString());
   }

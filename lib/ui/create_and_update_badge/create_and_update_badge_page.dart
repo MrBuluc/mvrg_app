@@ -26,7 +26,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   late Size size;
 
-  List<String> badgeNames = [], userNames = [], rankList = ["0", "1", "2", "3"];
+  List<String> badgeNames = [], userNames = [];
 
   TextEditingController nameCnt = TextEditingController();
   TextEditingController infoCnt = TextEditingController();
@@ -172,11 +172,9 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                               height: size.height * .03,
                             ),
                             if (badge != null)
-                              buildHoldersRow(
-                                  "Rozete atanacak kişi:", userNames, true),
+                              buildHoldersRow("Rozete atanacak kişi:", true),
                             if (badge != null)
-                              buildHoldersRow(
-                                  "Kişinin seviyesi:", rankList, false),
+                              buildHoldersRow("Kişinin seviyesi:", false),
                             Center(
                               child: Container(
                                 height: size.height * .15,
@@ -274,14 +272,14 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     }
   }
 
-  Widget buildHoldersRow(String text, List<String> items, bool isUserName) {
+  Widget buildHoldersRow(String text, bool isUserName) {
     return Padding(
       padding: EdgeInsets.only(bottom: isUserName ? 0 : size.height * .015),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(text),
-          if (isUserName) buildDropdownButton(items),
+          if (isUserName) buildDropdownButton(),
           if (!isUserName)
             RankDropdownButton(
                 value: chosenRank,
@@ -293,7 +291,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     );
   }
 
-  Widget buildDropdownButton(List<String> items) {
+  Widget buildDropdownButton() {
     return Container(
       alignment: Alignment.center,
       child: DropdownButton<String>(
@@ -304,7 +302,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
         onChanged: (String? value) => setState(() {
           chosenUserName = value;
         }),
-        items: items
+        items: userNames
             .map<DropdownMenuItem<String>>(
                 (String value) => DropdownMenuItem<String>(
                       value: value,

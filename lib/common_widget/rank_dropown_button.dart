@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RankDropdownButton extends StatelessWidget {
-  final String value;
+  final String? value;
   final void Function(String?)? onChanged;
 
   const RankDropdownButton(

@@ -5,7 +5,7 @@ class Badge {
   String? info;
   List<Map<String, dynamic>>? holders;
 
-  Badge({this.imageUrl, this.name, this.info, this.holders});
+  Badge({this.id, this.imageUrl, this.name, this.info, this.holders});
 
   Badge.fromJson(Map<String, dynamic> json)
       : this(
@@ -20,9 +20,9 @@ class Badge {
       {"imageUrl": imageUrl, "name": name, "info": info, "holders": holders};
 
   Map<String, dynamic> toFirestore() => {
-        "name": name,
-        "info": info,
-        "imageUrl": imageUrl,
+        if (name != null) "name": name,
+        if (info != null) "info": info,
+        if (imageUrl != null) "imageUrl": imageUrl,
         if (holders != null) "holders": holders
       };
 }

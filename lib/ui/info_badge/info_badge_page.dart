@@ -1,6 +1,13 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
+import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/holder.dart';
+import 'package:mvrg_app/viewmodel/user_model.dart';
+import 'package:provider/provider.dart';
+
+import '../const.dart';
 
 class InfoBadgePage extends StatefulWidget {
   final Badge badge;
@@ -91,8 +98,11 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
 
   List<Widget> buildPerson() {
     List<Widget> widgets = [];
-    for (dynamic dynamicLocal in badge.holders!) {
-      Map<String, dynamic> map = dynamicLocal;
+    for (int i = 0; i < badge.holders!.length; i++) {
+      Holder holder = Holder.fromMap(badge.holders!.elementAt(i));
+      int rank = holder.rank!;
+      String rankStr = rank.toString();
+
       Row row = Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -101,24 +111,110 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
             color: Colors.grey,
           ),
           Text(
-            map["name"],
+            holder.name!,
             style: const TextStyle(fontSize: 16),
           )
         ],
       );
-      int rank = map["rank"];
-      for (int i = 0; i < rank; i++) {
+
+      for (int j = 0; j < rank; j++) {
         row.children.add(const Icon(
           Icons.star,
           color: Colors.yellow,
         ));
       }
-      Padding padding = Padding(
-        padding: EdgeInsets.only(top: size.height * .01),
-        child: row,
+
+      GestureDetector gestureDetector = GestureDetector(
+        child: Padding(
+          padding: EdgeInsets.only(top: size.height * .01),
+          child: row,
+        ),
+        onTap: () {
+          bool admin =
+              Provider.of<UserModel>(context, listen: false).user!.admin!;
+          if (admin) {
+            AwesomeDialog(
+                context: context,
+                dialogType: DialogType.NO_HEADER,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                body: Column(
+                  children: [
+                    Text(
+                      "${holder.name} Seviyesini Güncelle",
+                      style: const TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                    ),
+                    StatefulBuilder(
+                        builder: (context, rankDropdownButtonState) =>
+                            RankDropdownButton(
+                                value: rankStr,
+                                onChanged: (String? value) =>
+                                    rankDropdownButtonState(() {
+                                      rankStr = value!;
+                                    }))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        buildTextButton(
+                            "Kaldır", Colors.red, () => removeHolder(i)),
+                        buildTextButton("Güncelle", Colors.green,
+                            () => updateRank(i, rankStr)),
+                      ],
+                    )
+                  ],
+                )).show();
+          }
+        },
       );
-      widgets.add(padding);
+      widgets.add(gestureDetector);
     }
     return widgets;
+  }
+
+  Widget buildTextButton(
+      String text, Color buttonColor, void Function()? onPressed) {
+    return TextButton(
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 18),
+      ),
+      style: TextButton.styleFrom(primary: buttonColor),
+      onPressed: onPressed,
+    );
+  }
+
+  Future removeHolder(int index) async {
+    Map<String, dynamic> holdersMap = badge.holders!.elementAt(index);
+    bool result = await Provider.of<UserModel>(context, listen: false)
+        .removeHolderFromBadge(badge.id!, holdersMap);
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("${holdersMap["name"]} Kaldırıldı"),
+        backgroundColor: colorTwo,
+        duration: const Duration(seconds: 3),
+      ));
+      setState(() {
+        badge.holders!.removeAt(index);
+      });
+      Navigator.pop(context);
+    }
+  }
+
+  Future updateRank(int index, String newRank) async {
+    Map<String, dynamic> holdersMap = badge.holders!.elementAt(index);
+    holdersMap["rank"] = int.parse(newRank);
+    badge.holders!.elementAt(index)["rank"] = holdersMap["rank"];
+    bool result = await Provider.of<UserModel>(context, listen: false)
+        .updateBadge(Badge(id: badge.id!, holders: badge.holders!));
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("${holdersMap["name"]} Seviyesi Güncellendi"),
+        backgroundColor: colorTwo,
+        duration: const Duration(seconds: 3),
+      ));
+      setState(() {});
+      Navigator.pop(context);
+    }
   }
 }
