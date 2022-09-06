@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
+import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
@@ -37,7 +38,8 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   Badge? badge;
 
-  String? chosenUserName, chosenRank = "0", secilmedi = "Seçilmedi";
+  String? chosenUserName, secilmedi = "Seçilmedi";
+  String chosenRank = "0";
 
   @override
   void initState() {
@@ -279,26 +281,28 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(text),
-          buildDropdownButton(items, isUserName),
+          if (isUserName) buildDropdownButton(items),
+          if (!isUserName)
+            RankDropdownButton(
+                value: chosenRank,
+                onChanged: (String? value) => setState(() {
+                      chosenRank = value!;
+                    }))
         ],
       ),
     );
   }
 
-  Widget buildDropdownButton(List<String> items, bool isUserName) {
+  Widget buildDropdownButton(List<String> items) {
     return Container(
       alignment: Alignment.center,
       child: DropdownButton<String>(
         focusColor: Colors.white,
-        value: isUserName ? chosenUserName : chosenRank,
+        value: chosenUserName,
         style: const TextStyle(color: Colors.white),
         iconEnabledColor: Colors.black,
         onChanged: (String? value) => setState(() {
-          if (isUserName) {
-            chosenUserName = value;
-          } else {
-            chosenRank = value;
-          }
+          chosenUserName = value;
         }),
         items: items
             .map<DropdownMenuItem<String>>(
@@ -549,7 +553,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
   List<Map<String, dynamic>> getNewHolders() {
     Map<String, dynamic> holdersMap = {
       "name": chosenUserName,
-      "rank": int.parse(chosenRank!)
+      "rank": int.parse(chosenRank)
     };
 
     List<Map<String, dynamic>> holders = badge!.holders!;
