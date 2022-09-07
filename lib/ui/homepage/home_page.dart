@@ -53,10 +53,12 @@ class _HomePageState extends State<HomePage> {
               );
             }
 
-            return Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: buildColumn(snapshot),
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: buildColumn(snapshot),
+              ),
             );
           },
         ),

@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badgeHolder.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference usersRef, badgesRef;
+  late CollectionReference usersRef, badgesRef, badgeHolderRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -13,6 +14,12 @@ class FirestoreService {
     badgesRef = _firestore.collection("Badges").withConverter<Badge>(
         fromFirestore: (snapshot, _) => Badge.fromJson(snapshot.data()!),
         toFirestore: (badge, _) => badge.toJson());
+    badgeHolderRef = _firestore
+        .collection("BadgeHolders")
+        .withConverter<BadgeHolder>(
+            fromFirestore: (snapshot, _) =>
+                BadgeHolder.fromFirestore(snapshot.data()!),
+            toFirestore: (badgeHolder, _) => badgeHolder.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -46,18 +53,20 @@ class FirestoreService {
     return badgeNames;
   }
 
-  Future<List<String>> getUserNames() async {
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> docSnapshotList =
-        (await _firestore.collection("Users").get()).docs;
-    List<String> userNames = [];
-
-    for (QueryDocumentSnapshot<Map<String, dynamic>> queryDocumentSnapshot
-        in docSnapshotList) {
-      userNames.add(queryDocumentSnapshot.data()["name"] +
-          " " +
-          queryDocumentSnapshot.data()["surname"]);
+  Future<List<UserC>> getUsers() async {
+    try {
+      List<UserC> users = [];
+      List<QueryDocumentSnapshot<UserC>> queryDocumentSnapshotList =
+          (await usersRef.get()).docs as List<QueryDocumentSnapshot<UserC>>;
+      for (QueryDocumentSnapshot<UserC> queryDocumentSnapshot
+          in queryDocumentSnapshotList) {
+        users.add(queryDocumentSnapshot.data());
+      }
+      return users;
+    } catch (e) {
+      printError("getUsers", e);
+      rethrow;
     }
-    return userNames;
   }
 
   Future<bool> setBadge(Badge badge) async {
@@ -80,15 +89,81 @@ class FirestoreService {
     }
   }
 
-  Future<bool> removeHolderFromBadge(
-      String id, Map<String, dynamic> holderMap) async {
+  Future<bool> addBadgeHolder(BadgeHolder badgeHolder) async {
     try {
-      await badgesRef.doc(id).update({
-        "holders": FieldValue.arrayRemove([holderMap])
-      });
+      String docId = (await badgeHolderRef.add(badgeHolder)).id;
+      return await updateBadgeHolder(docId, {"id": docId});
+    } catch (e) {
+      printError("addBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> updateBadgeHolder(
+      String id, Map<String, dynamic> badgeHolderMap) async {
+    try {
+      await badgeHolderRef.doc(id).update(badgeHolderMap);
       return true;
     } catch (e) {
-      printError("removeHolderFromBadge", e);
+      printError("updateBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<int> countBadgeHolderFromBadgeId(String badgeId) async {
+    try {
+      return (await badgeHolderRef.where("badgeId", isEqualTo: badgeId).get())
+          .size;
+    } catch (e) {
+      printError("countBadgeHolderFromBadgeId", e);
+      rethrow;
+    }
+  }
+
+  Future<List<BadgeHolder>> getBadgeHolderFromBadgeIdAndUserId(
+      String badgeId, String userId) async {
+    try {
+      List<BadgeHolder> badgeHolders = [];
+      List<QueryDocumentSnapshot<BadgeHolder>> queryDocSnapshotList =
+          (await badgeHolderRef
+                  .where("badgeId", isEqualTo: badgeId)
+                  .where("userId", isEqualTo: userId)
+                  .get())
+              .docs as List<QueryDocumentSnapshot<BadgeHolder>>;
+      for (QueryDocumentSnapshot<BadgeHolder> queryDocumentSnapshot
+          in queryDocSnapshotList) {
+        badgeHolders.add(queryDocumentSnapshot.data());
+      }
+      return badgeHolders;
+    } catch (e) {
+      printError("countBadgeHolderFromBadgeIdAndUserId", e);
+      rethrow;
+    }
+  }
+
+  Future<List<BadgeHolder>> getBadgeHoldersFromBadgeId(String badgeId) async {
+    try {
+      List<BadgeHolder> badgeHolders = [];
+      List<QueryDocumentSnapshot<BadgeHolder>> queryDocSnapshotList =
+          (await badgeHolderRef.where("badgeId", isEqualTo: badgeId).get()).docs
+              as List<QueryDocumentSnapshot<BadgeHolder>>;
+      for (QueryDocumentSnapshot<BadgeHolder> queryDocumentSnapshot
+          in queryDocSnapshotList) {
+        badgeHolders.add(queryDocumentSnapshot.data());
+      }
+      return badgeHolders;
+    } catch (e) {
+      printError("getBadgeHoldersFromBadgeId", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteBadgeHolder(String badgeHolderId) async {
+    try {
+      await badgeHolderRef.doc(badgeHolderId).delete();
+      return true;
+    } catch (e) {
+      printError("deleteBadgeHolder", e);
       rethrow;
     }
   }

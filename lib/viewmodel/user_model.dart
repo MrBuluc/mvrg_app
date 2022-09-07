@@ -7,6 +7,8 @@ import 'package:mvrg_app/repository/user_repository.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 
 import '../locator.dart';
+import '../model/badgeHolder.dart';
+import '../model/holder.dart';
 
 enum ViewState { idle, busy }
 
@@ -128,9 +130,9 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<List<String>> getUserNames() async {
+  Future<List<UserC>> getUsers() async {
     try {
-      return await _userRepository.getUserNames();
+      return await _userRepository.getUsers();
     } catch (e) {
       printError("getUserNames", e);
       rethrow;
@@ -168,12 +170,47 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<bool> removeHolderFromBadge(
-      String id, Map<String, dynamic> holderMap) async {
+  Future<bool> addBadgeHolder(BadgeHolder badgeHolder) async {
     try {
-      return await _userRepository.removeHolderFromBadge(id, holderMap);
+      return await _userRepository.addBadgeHolder(badgeHolder);
     } catch (e) {
-      printError("removeHolderFromBadge", e);
+      printError("addBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> updateBadgeHolder(BadgeHolder badgeHolder) async {
+    try {
+      return await _userRepository.updateBadgeHolder(badgeHolder);
+    } catch (e) {
+      printError("updateBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<int> countBadgeHolderFromBadgeId(String badgeId) async {
+    try {
+      return await _userRepository.countBadgeHolderFromBadgeId(badgeId);
+    } catch (e) {
+      printError("countBadgeHolderFromBadgeId", e);
+      rethrow;
+    }
+  }
+
+  Future<List<Holder>> getHolders(String badgeId) async {
+    try {
+      return await _userRepository.getHolders(badgeId);
+    } catch (e) {
+      printError("getHolders", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteBadgeHolder(String badgeHolderId) async {
+    try {
+      return await _userRepository.deleteBadgeHolder(badgeHolderId);
+    } catch (e) {
+      printError("deleteBadgeHolder", e);
       rethrow;
     }
   }

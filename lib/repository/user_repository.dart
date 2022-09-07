@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/holder.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
@@ -9,6 +10,7 @@ import 'package:mvrg_app/services/firebase/firestore_service.dart';
 import 'package:mvrg_app/services/http_service.dart';
 
 import '../locator.dart';
+import '../model/badgeHolder.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
@@ -83,8 +85,8 @@ class UserRepository implements AuthBase {
     return await _firestoreService.getBadgeNames();
   }
 
-  Future<List<String>> getUserNames() async {
-    return await _firestoreService.getUserNames();
+  Future<List<UserC>> getUsers() async {
+    return await _firestoreService.getUsers();
   }
 
   Future<String> uploadFile(
@@ -101,9 +103,43 @@ class UserRepository implements AuthBase {
     return await _firestoreService.updateBadge(badge.id!, badge.toFirestore());
   }
 
-  Future<bool> removeHolderFromBadge(
-      String id, Map<String, dynamic> holderMap) async {
-    return await _firestoreService.removeHolderFromBadge(id, holderMap);
+  Future<bool> addBadgeHolder(BadgeHolder badgeHolder) async {
+    List<BadgeHolder> badgeHolders =
+        await _firestoreService.getBadgeHolderFromBadgeIdAndUserId(
+            badgeHolder.badgeId!, badgeHolder.userId!);
+    if (badgeHolders.isEmpty) {
+      return await _firestoreService.addBadgeHolder(badgeHolder);
+    } else {
+      badgeHolder.id = badgeHolders.elementAt(0).id;
+      return await updateBadgeHolder(badgeHolder);
+    }
+  }
+
+  Future<bool> updateBadgeHolder(BadgeHolder badgeHolder) async {
+    return await _firestoreService.updateBadgeHolder(
+        badgeHolder.id!, badgeHolder.toFirestore());
+  }
+
+  Future<int> countBadgeHolderFromBadgeId(String badgeId) async {
+    return await _firestoreService.countBadgeHolderFromBadgeId(badgeId);
+  }
+
+  Future<List<Holder>> getHolders(String badgeId) async {
+    List<Holder> holders = [];
+    List<BadgeHolder> badgeHolders =
+        await _firestoreService.getBadgeHoldersFromBadgeId(badgeId);
+    for (BadgeHolder badgeHolder in badgeHolders) {
+      Holder holder = Holder(rank: badgeHolder.rank);
+      UserC userC = await _firestoreService.readUser(badgeHolder.userId!);
+      holder.name = userC.name! + " " + userC.surname!;
+      holder.badgeHolderId = badgeHolder.id;
+      holders.add(holder);
+    }
+    return holders;
+  }
+
+  Future<bool> deleteBadgeHolder(String badgeHolderId) async {
+    return await _firestoreService.deleteBadgeHolder(badgeHolderId);
   }
 
   @override

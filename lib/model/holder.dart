@@ -1,9 +1,7 @@
 class Holder {
   String? name;
   int? rank;
+  String? badgeHolderId;
 
-  Holder({this.name, this.rank});
-
-  Holder.fromMap(Map<String, dynamic> map)
-      : this(name: map["name"], rank: map["rank"]);
+  Holder({this.name, this.rank, this.badgeHolderId});
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badgeHolder.dart';
 import 'package:mvrg_app/model/holder.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +25,15 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
 
   late double infoPaddingVertical;
 
+  int? holderCount;
+
+  List<Holder> holders = [];
+
   @override
   void initState() {
     super.initState();
     badge = widget.badge;
+    getHolderCount();
   }
 
   @override
@@ -40,66 +46,79 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
         centerTitle: true,
         title: const Text("Rozet Bilgisi"),
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: size.height * .03),
-              child: Text(
-                badge.name!,
-                style: const TextStyle(
-                    fontSize: 23,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: size.height * .1),
+      body: holderCount != null
+          ? SafeArea(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  BadgeImage(
-                    badge: badge,
-                  ),
                   Padding(
-                    padding: EdgeInsets.only(
-                        top: size.height * .03,
-                        left: infoPaddingVertical,
-                        right: infoPaddingVertical),
+                    padding: EdgeInsets.only(top: size.height * .03),
                     child: Text(
-                      badge.info!,
-                      style: const TextStyle(fontSize: 20),
+                      badge.name!,
+                      style: const TextStyle(
+                          fontSize: 23,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: size.height * .03),
-                    child: Text(
-                      "Bu rozet ${badge.holders!.length} kişi tarafınan "
-                      "kazanıldı:",
-                      style: const TextStyle(
-                          fontSize: 22, fontWeight: FontWeight.bold),
+                    padding: EdgeInsets.only(top: size.height * .1),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BadgeImage(
+                          badge: badge,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: size.height * .03,
+                              left: infoPaddingVertical,
+                              right: infoPaddingVertical),
+                          child: Text(
+                            badge.info!,
+                            style: const TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: size.height * .03),
+                          child: Text(
+                            "Bu rozet $holderCount kişi tarafınan "
+                            "kazanıldı:",
+                            style: const TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Column(
+                          children: buildPerson(),
+                        )
+                      ],
                     ),
-                  ),
-                  Column(
-                    children: buildPerson(),
                   )
                 ],
               ),
             )
-          ],
-        ),
-      ),
+          : const Center(
+              child: CircularProgressIndicator(),
+            ),
     );
+  }
+
+  Future getHolderCount() async {
+    UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    holderCount = await userModel.countBadgeHolderFromBadgeId(badge.id!);
+    if (holderCount! > 0) {
+      holders = await userModel.getHolders(badge.id!);
+    }
+    setState(() {});
   }
 
   List<Widget> buildPerson() {
     List<Widget> widgets = [];
-    for (int i = 0; i < badge.holders!.length; i++) {
-      Holder holder = Holder.fromMap(badge.holders!.elementAt(i));
+    for (int i = 0; i < holders.length; i++) {
+      Holder holder = holders.elementAt(i);
       int rank = holder.rank!;
       String rankStr = rank.toString();
 
@@ -156,10 +175,13 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        buildTextButton("Kaldır", Colors.red,
+                            () => removeHolder(holder.badgeHolderId!, i)),
                         buildTextButton(
-                            "Kaldır", Colors.red, () => removeHolder(i)),
-                        buildTextButton("Güncelle", Colors.green,
-                            () => updateRank(i, rankStr)),
+                            "Güncelle",
+                            Colors.green,
+                            () =>
+                                updateRank(i, rankStr, holder.badgeHolderId!)),
                       ],
                     )
                   ],
@@ -184,36 +206,35 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
     );
   }
 
-  Future removeHolder(int index) async {
-    Map<String, dynamic> holdersMap = badge.holders!.elementAt(index);
+  Future removeHolder(String badgeHolderId, int index) async {
     bool result = await Provider.of<UserModel>(context, listen: false)
-        .removeHolderFromBadge(badge.id!, holdersMap);
+        .deleteBadgeHolder(badgeHolderId);
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("${holdersMap["name"]} Kaldırıldı"),
+        content: Text("${holders.elementAt(index).name} Kaldırıldı"),
         backgroundColor: colorTwo,
         duration: const Duration(seconds: 3),
       ));
       setState(() {
-        badge.holders!.removeAt(index);
+        holders.removeAt(index);
       });
       Navigator.pop(context);
     }
   }
 
-  Future updateRank(int index, String newRank) async {
-    Map<String, dynamic> holdersMap = badge.holders!.elementAt(index);
-    holdersMap["rank"] = int.parse(newRank);
-    badge.holders!.elementAt(index)["rank"] = holdersMap["rank"];
+  Future updateRank(int index, String newRank, String badgeHolderId) async {
     bool result = await Provider.of<UserModel>(context, listen: false)
-        .updateBadge(Badge(id: badge.id!, holders: badge.holders!));
+        .updateBadgeHolder(
+            BadgeHolder(id: badgeHolderId, rank: int.parse(newRank)));
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("${holdersMap["name"]} Seviyesi Güncellendi"),
+        content: Text("${holders.elementAt(index).name} Seviyesi Güncellendi"),
         backgroundColor: colorTwo,
         duration: const Duration(seconds: 3),
       ));
-      setState(() {});
+      setState(() {
+        holders.elementAt(index).rank = int.parse(newRank);
+      });
       Navigator.pop(context);
     }
   }

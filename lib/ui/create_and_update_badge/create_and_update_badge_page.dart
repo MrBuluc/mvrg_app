@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badgeHolder.dart';
+import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +28,8 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   late Size size;
 
-  List<String> badgeNames = [], userNames = [];
+  List<String> badgeNames = [];
+  List<UserC> users = [];
 
   TextEditingController nameCnt = TextEditingController();
   TextEditingController infoCnt = TextEditingController();
@@ -38,7 +41,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
 
   Badge? badge;
 
-  String? chosenUserName, secilmedi = "Seçilmedi";
+  String? chosenUserId;
   String chosenRank = "0";
 
   @override
@@ -49,7 +52,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
     if (badge != null) {
       prepareCnts();
       getUserNames();
-      chosenUserName = secilmedi;
+      chosenUserId = "-1";
     }
   }
 
@@ -85,10 +88,10 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
   }
 
   Future getUserNames() async {
-    userNames =
-        await Provider.of<UserModel>(context, listen: false).getUserNames();
-    userNames.add(secilmedi!);
-    setState(() {});
+    users = await Provider.of<UserModel>(context, listen: false).getUsers();
+    setState(() {
+      users.add(UserC(id: "-1", name: "Seçilmedi", surname: ""));
+    });
   }
 
   Widget buildHeaderandTextForm() {
@@ -296,18 +299,18 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
       alignment: Alignment.center,
       child: DropdownButton<String>(
         focusColor: Colors.white,
-        value: chosenUserName,
+        value: chosenUserId,
         style: const TextStyle(color: Colors.white),
         iconEnabledColor: Colors.black,
         onChanged: (String? value) => setState(() {
-          chosenUserName = value;
+          chosenUserId = value;
         }),
-        items: userNames
+        items: users
             .map<DropdownMenuItem<String>>(
-                (String value) => DropdownMenuItem<String>(
-                      value: value,
+                (UserC userC) => DropdownMenuItem<String>(
+                      value: userC.id,
                       child: Text(
-                        value,
+                        userC.name! + " " + userC.surname!,
                         style: const TextStyle(color: Colors.black),
                       ),
                     ))
@@ -461,19 +464,17 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
           }
 
           late bool result;
-          Badge newBadge = Badge(
-              imageUrl: imageUrl,
-              name: nameCnt.text,
-              info: infoCnt.text,
-              holders: []);
+          Badge newBadge =
+              Badge(imageUrl: imageUrl, name: nameCnt.text, info: infoCnt.text);
           if (badge == null) {
             result = await userModel.setBadge(newBadge);
           } else {
             newBadge.id = badge!.id;
-            if (chosenUserName != secilmedi) {
-              newBadge.holders = getNewHolders();
-            } else {
-              newBadge.holders = null;
+            if (chosenUserId != "-1") {
+              await userModel.addBadgeHolder(BadgeHolder(
+                  badgeId: newBadge.id!,
+                  userId: chosenUserId,
+                  rank: int.parse(chosenRank)));
             }
             result = await userModel.updateBadge(newBadge);
           }
@@ -513,6 +514,9 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                   btnOkText: "Tamam",
                   btnOkColor: Colors.blue)
               .show();
+          setState(() {
+            badgeInProgress = false;
+          });
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -546,24 +550,5 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
           .show();
     }
     return response;
-  }
-
-  List<Map<String, dynamic>> getNewHolders() {
-    Map<String, dynamic> holdersMap = {
-      "name": chosenUserName,
-      "rank": int.parse(chosenRank)
-    };
-
-    List<Map<String, dynamic>> holders = badge!.holders!;
-    for (int i = 0; i < holders.length; i++) {
-      Map<String, dynamic> oldHolder = holders.elementAt(i);
-      if (oldHolder["name"] == holdersMap["name"]) {
-        holders.elementAt(i)["rank"] = holdersMap["rank"];
-        return holders;
-      }
-    }
-
-    holders.add(holdersMap);
-    return holders;
   }
 }
