@@ -1,21 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
-import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/create_and_update_badge/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class BadgesPage extends StatefulWidget {
+  const BadgesPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<BadgesPage> createState() => _BadgesPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BadgesPageState extends State<BadgesPage> {
   Stream<QuerySnapshot> badgeStream =
       FirebaseFirestore.instance.collection("Badges").snapshots();
 
@@ -26,16 +26,7 @@ class _HomePageState extends State<HomePage> {
     size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        title: const Text(
-          "Rozetler",
-          style: TextStyle(color: Colors.white, fontSize: 22),
-        ),
-        centerTitle: true,
-        elevation: 2,
-      ),
-      drawer: const DrawerC(),
+      appBar: buildAppBar("Rozetler"),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: badgeStream,

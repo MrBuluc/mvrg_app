@@ -8,18 +8,18 @@ import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
 import '../const.dart';
-import '../homepage/home_page.dart';
+import '../home_page/home_page.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  late Size size;
+  late final Size size;
 
   String? mail, password;
 
-  late UserModel userModel;
+  late final UserModel userModel;
 
   @override
   Widget build(BuildContext context) {

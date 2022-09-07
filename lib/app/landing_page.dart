@@ -1,9 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/ui/homepage/home_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
+import '../ui/home_page/home_page.dart';
 import '../ui/login/login_page.dart';
 
 class LandingPage extends StatefulWidget {
