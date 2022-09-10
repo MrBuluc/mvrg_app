@@ -2,33 +2,33 @@ class Event {
   String? title;
   String? location;
   String? imageUrl;
-  List<String>? participants;
   bool? award;
   int? tokenPrice;
+  String? code;
 
   Event(
       {this.title,
       this.location,
       this.imageUrl,
-      this.participants,
       this.award,
-      this.tokenPrice});
+      this.tokenPrice,
+      this.code});
 
   Event.fromFirestore(Map<String, dynamic> map)
       : this(
             title: map["title"],
             location: map["location"],
             imageUrl: map["imageUrl"],
-            participants: map["participants"],
             award: map["award"],
-            tokenPrice: map["tokenPrice"]);
+            tokenPrice: map["tokenPrice"],
+            code: map["code"]);
 
-  Map<String, dynamic> toFiresstore() => {
+  Map<String, dynamic> toFirestore() => {
         if (title != null) "title": title,
         if (location != null) "location": location,
         if (imageUrl != null) "imageUrl": imageUrl,
-        if (participants != null) "participants": participants,
         if (award != null) "award": award,
-        if (tokenPrice != null) "tokenPrice": tokenPrice
+        if (tokenPrice != null) "tokenPrice": tokenPrice,
+        if (code != null) "code": code
       };
 }

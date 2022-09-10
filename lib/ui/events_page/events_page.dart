@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/center_text.dart';
-import 'package:mvrg_app/model/event.dart';
+import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
