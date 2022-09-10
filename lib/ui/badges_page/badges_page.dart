@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/center_text.dart';
 import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
+import 'package:mvrg_app/ui/badges_page/info_badge_page.dart';
 import 'package:mvrg_app/ui/const.dart';
-import 'package:mvrg_app/ui/create_and_update_badge/create_and_update_badge_page.dart';
-import 'package:mvrg_app/ui/info_badge/info_badge_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
