@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/drawer/drawerC.dart';
 import 'package:mvrg_app/ui/badges_page/badges_page.dart';
 import 'package:mvrg_app/ui/const.dart';
+import 'package:mvrg_app/ui/events_page/events_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
               height: size.height * .05,
             ),
             buildNavigators(Icons.event, "Varolan Etkinlikleri İncele",
-                "Etkinlikler Sayfasına Git", const BadgesPage())
+                "Etkinlikler Sayfasına Git", const EventsPage())
           ],
         ),
       ),

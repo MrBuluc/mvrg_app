@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
+import 'package:mvrg_app/common_widget/center_text.dart';
 import 'package:mvrg_app/model/badge.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/create_and_update_badge/create_and_update_badge_page.dart';
@@ -33,15 +34,11 @@ class _BadgesPageState extends State<BadgesPage> {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return const Center(
-                child: Text("Something went wong"),
-              );
+              return const CenterText(text: "Something went wong");
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: Text("Loading"),
-              );
+              return const CenterText(text: "Loading");
             }
 
             return SingleChildScrollView(
@@ -66,11 +63,8 @@ class _BadgesPageState extends State<BadgesPage> {
 
     List<Widget> widgets = [];
     if (badges.isEmpty) {
-      widgets.add(const Center(
-          child: Text(
-        "Daha hiçbir rozet eklenmemiştir",
-        style: TextStyle(fontSize: 20),
-      )));
+      widgets.add(const CenterText(
+          text: "Daha hiçbir rozet eklenmemiştir", fontSize: 20));
       return widgets;
     }
     int length = badges.length;

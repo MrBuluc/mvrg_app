@@ -55,6 +55,12 @@ LinearGradient orangeButton = LinearGradient(
       const Color.fromRGBO(255, 241, 151, 1),
     ]);
 
+LinearGradient homePageBg = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: const [.1, .6, .9],
+    colors: [Colors.grey.shade900, Colors.grey, Colors.white]);
+
 const TextStyle headerText = TextStyle(
     color: Colors.white,
     fontSize: 42,
@@ -65,6 +71,18 @@ const TextStyle headerText = TextStyle(
         blurRadius: 8,
         color: Color.fromARGB(43, 43, 43, 0),
       )
+    ]);
+
+const TextStyle headerText2 = TextStyle(
+    fontFamily: "Ubuntu",
+    color: Colors.white,
+    fontSize: 25,
+    fontWeight: FontWeight.bold,
+    shadows: [
+      Shadow(
+          offset: Offset(3, 3),
+          blurRadius: 8,
+          color: Color.fromARGB(43, 43, 43, 0))
     ]);
 
 const TextStyle miniHeader = TextStyle(
