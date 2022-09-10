@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/holder.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
@@ -10,7 +10,7 @@ import 'package:mvrg_app/services/firebase/firestore_service.dart';
 import 'package:mvrg_app/services/http_service.dart';
 
 import '../locator.dart';
-import '../model/badgeHolder.dart';
+import '../model/badges/badgeHolder.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =

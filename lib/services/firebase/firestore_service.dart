@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mvrg_app/model/badge.dart';
-import 'package:mvrg_app/model/badgeHolder.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
+
+import '../../model/badges/badgeHolder.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

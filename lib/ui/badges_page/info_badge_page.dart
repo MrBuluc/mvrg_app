@@ -2,12 +2,12 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
-import 'package:mvrg_app/model/badge.dart';
-import 'package:mvrg_app/model/badgeHolder.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/holder.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../model/badges/badgeHolder.dart';
 import '../const.dart';
 
 class InfoBadgePage extends StatefulWidget {

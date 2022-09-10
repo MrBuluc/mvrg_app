@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/repository/user_repository.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 
 import '../locator.dart';
-import '../model/badgeHolder.dart';
+import '../model/badges/badgeHolder.dart';
 import '../model/holder.dart';
 
 enum ViewState { idle, busy }

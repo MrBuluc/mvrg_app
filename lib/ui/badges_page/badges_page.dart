@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/center_text.dart';
-import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/badges_page/info_badge_page.dart';
 import 'package:mvrg_app/ui/const.dart';

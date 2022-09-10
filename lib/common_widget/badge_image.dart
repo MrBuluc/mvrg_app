@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/model/badge.dart';
+import 'package:mvrg_app/model/badges/badge.dart';
 
 class BadgeImage extends StatelessWidget {
   final Badge badge;
