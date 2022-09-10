@@ -8,7 +8,7 @@ import 'package:mvrg_app/services/auth_base.dart';
 
 import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
-import '../model/holder.dart';
+import '../model/badges/holder.dart';
 
 enum ViewState { idle, busy }
 

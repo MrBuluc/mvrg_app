@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:mvrg_app/model/badges/badge.dart';
-import 'package:mvrg_app/model/holder.dart';
+import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
