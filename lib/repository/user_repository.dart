@@ -11,6 +11,7 @@ import 'package:mvrg_app/services/http_service.dart';
 
 import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
+import '../model/events/event.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
@@ -90,9 +91,8 @@ class UserRepository implements AuthBase {
   }
 
   Future<String> uploadFile(
-      String anaKlasor, File image, String badgeName) async {
-    return await _firebaseStorageService.uploadFile(
-        anaKlasor, image, badgeName);
+      String anaKlasor, File file, String fileName) async {
+    return await _firebaseStorageService.uploadFile(anaKlasor, file, fileName);
   }
 
   Future<bool> setBadge(Badge badge) async {
@@ -140,6 +140,14 @@ class UserRepository implements AuthBase {
 
   Future<bool> deleteBadgeHolder(String badgeHolderId) async {
     return await _firestoreService.deleteBadgeHolder(badgeHolderId);
+  }
+
+  Future<List<String>> getEventsTitles() async {
+    return await _firestoreService.getEventsTitles();
+  }
+
+  Future<bool> setEvent(Event event) async {
+    return await _firestoreService.setEvent(event);
   }
 
   @override

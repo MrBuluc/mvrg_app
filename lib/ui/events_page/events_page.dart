@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/center_text.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
+import 'package:mvrg_app/ui/events_page/create_event_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -73,7 +74,12 @@ class _EventsPageState extends State<EventsPage> {
                 size: 50,
               ),
               backgroundColor: Colors.green,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateEventPage()));
+              },
             ),
           )
       ],

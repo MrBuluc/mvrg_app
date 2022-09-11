@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
+import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 import '../../model/badges/badgeHolder.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference usersRef, badgesRef, badgeHolderRef;
+  late CollectionReference usersRef, badgesRef, badgeHolderRef, eventsRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -21,6 +22,9 @@ class FirestoreService {
             fromFirestore: (snapshot, _) =>
                 BadgeHolder.fromFirestore(snapshot.data()!),
             toFirestore: (badgeHolder, _) => badgeHolder.toFirestore());
+    eventsRef = _firestore.collection("Events").withConverter<Event>(
+        fromFirestore: (snapshot, _) => Event.fromFirestore(snapshot.data()!),
+        toFirestore: (event, _) => event.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -165,6 +169,29 @@ class FirestoreService {
       return true;
     } catch (e) {
       printError("deleteBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getEventsTitles() async {
+    List<String> eventsTitles = [];
+
+    List<QueryDocumentSnapshot<Event>> queryDocSnapshotList =
+        (await eventsRef.get()).docs as List<QueryDocumentSnapshot<Event>>;
+
+    for (QueryDocumentSnapshot<Event> queryDocumentSnapshot
+        in queryDocSnapshotList) {
+      eventsTitles.add(queryDocumentSnapshot.data().title!);
+    }
+    return eventsTitles;
+  }
+
+  Future<bool> setEvent(Event event) async {
+    try {
+      await eventsRef.doc(event.title!).set(event);
+      return true;
+    } catch (e) {
+      printError("setEvent", e);
       rethrow;
     }
   }

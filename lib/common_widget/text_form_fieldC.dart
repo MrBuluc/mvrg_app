@@ -33,11 +33,7 @@ class TextFormFieldC extends StatelessWidget {
             iconData,
             color: newBadgeAndEventColor,
           ),
-          hintStyle: const TextStyle(
-              fontFamily: "Catamaran",
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-              fontSize: 17),
+          hintStyle: textFormFieldHintStyle,
           hintText: hintText),
       validator: validator,
     );

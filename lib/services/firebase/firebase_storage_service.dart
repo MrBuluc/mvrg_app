@@ -6,13 +6,13 @@ class FirebaseStorageService {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   Future<String> uploadFile(
-      String anaKlasor, File image, String badgeName) async {
+      String anaKlasor, File file, String fileName) async {
     return await (await _firebaseStorage
             .ref()
             .child(anaKlasor)
-            .child(badgeName)
-            .child(badgeName + ".png")
-            .putFile(image))
+            .child(fileName)
+            .child(fileName + ".png")
+            .putFile(file))
         .ref
         .getDownloadURL();
   }

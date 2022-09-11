@@ -9,6 +9,7 @@ import 'package:mvrg_app/services/auth_base.dart';
 import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/badges/holder.dart';
+import '../model/events/event.dart';
 
 enum ViewState { idle, busy }
 
@@ -140,10 +141,10 @@ class UserModel with ChangeNotifier implements AuthBase {
   }
 
   Future<String> uploadFile(
-      String anaKlasor, File image, String badgeName) async {
+      String anaKlasor, File file, String fileName) async {
     try {
       state = ViewState.busy;
-      return await _userRepository.uploadFile(anaKlasor, image, badgeName);
+      return await _userRepository.uploadFile(anaKlasor, file, fileName);
     } catch (e) {
       printError("uploadFile", e);
       rethrow;
@@ -211,6 +212,24 @@ class UserModel with ChangeNotifier implements AuthBase {
       return await _userRepository.deleteBadgeHolder(badgeHolderId);
     } catch (e) {
       printError("deleteBadgeHolder", e);
+      rethrow;
+    }
+  }
+
+  Future<List<String>> getEventsTitles() async {
+    try {
+      return await _userRepository.getEventsTitles();
+    } catch (e) {
+      printError("getEventsTitles", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> setEvent(Event event) async {
+    try {
+      return await _userRepository.setEvent(event);
+    } catch (e) {
+      printError("methodName", e);
       rethrow;
     }
   }
