@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mvrg_app/common_widget/back_and_save.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/image_file.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
@@ -76,7 +77,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
           Theme(
               data: ThemeData(primaryColor: newBadgeAndEventColor),
               child: buildHeaderandTextForm()),
-          buildBack()
+          BackAndSave(isProgress: badgeInProgress, onTap: createAndUpdateBadge)
         ],
       ),
     );
@@ -323,71 +324,6 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
       image = null;
       imageUrlEnable = true;
     });
-  }
-
-  Widget buildBack() {
-    return Padding(
-      padding: EdgeInsets.only(left: size.width * .1, top: size.width * .08),
-      child: Row(
-        children: [
-          GestureDetector(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: newBadgeAndEventColor,
-              size: 30,
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          GestureDetector(
-            child: Text(
-              "Geri",
-              style: TextStyle(
-                  color: newBadgeAndEventColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          SizedBox(
-            height: size.height * .15,
-            width: size.width * .45,
-          ),
-          GestureDetector(
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: butonBorder,
-                  gradient: const LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.bottomRight,
-                      stops: [
-                        .1,
-                        .8
-                      ],
-                      colors: [
-                        Color.fromRGBO(30, 227, 167, 1),
-                        Color.fromRGBO(220, 247, 239, 1)
-                      ])),
-              height: size.height * .08,
-              width: size.width * .15,
-              child: Icon(
-                badgeInProgress ? Icons.lock : Icons.save,
-                color: Colors.white,
-                size: 40,
-              ),
-            ),
-            onTap: () {
-              if (!badgeInProgress) {
-                createAndUpdateBadge();
-              }
-            },
-          )
-        ],
-      ),
-    );
   }
 
   Future createAndUpdateBadge() async {
