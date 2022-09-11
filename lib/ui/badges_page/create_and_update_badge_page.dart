@@ -204,7 +204,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                                   left: size.width * .491,
                                   top: badge != null
                                       ? size.height * .436
-                                      : size.height * .281),
+                                      : size.height * .345),
                               child: const Icon(
                                 Icons.clear,
                                 color: Colors.red,
