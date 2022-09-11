@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
+import 'package:mvrg_app/common_widget/image_file.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
@@ -191,22 +192,8 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                               buildHoldersRow("Rozete atanacak kişi:", true),
                             if (badge != null)
                               buildHoldersRow("Kişinin seviyesi:", false),
-                            Center(
-                              child: Container(
-                                height: size.height * .15,
-                                width: size.width * .4,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: newBadgeAndEventColor)),
-                                child: GestureDetector(
-                                  child: Center(
-                                    child: buildImage(),
-                                  ),
-                                  onTap: galeriResimUpload,
-                                ),
-                              ),
-                            ),
+                            ImageFile(
+                                child: buildImage(), onTap: galeriResimUpload)
                           ],
                         ),
                         if (image != null)
