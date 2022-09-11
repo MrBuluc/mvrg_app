@@ -39,10 +39,21 @@ class Validator {
     return null;
   }
 
-  static String? nullControl(String? value) {
+  static String? emptyControl(String? value, String emptyText) {
     if (value!.isEmpty) {
-      return "You should enter a value";
+      return emptyText;
     }
     return null;
+  }
+
+  static String? listContainsControl(
+      String? value, List<String> list, String containsText, String emptyText) {
+    if (list.contains(value)) {
+      return containsText;
+    } else if (value!.isEmpty) {
+      return emptyText;
+    } else {
+      return null;
+    }
   }
 }

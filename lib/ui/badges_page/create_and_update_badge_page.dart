@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
+import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/userC.dart';
+import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +73,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
       body: Column(
         children: [
           Theme(
-              data: ThemeData(primaryColor: newBadgeColor),
+              data: ThemeData(primaryColor: newBadgeAndEventColor),
               child: buildHeaderandTextForm()),
           buildBack()
         ],
@@ -104,7 +106,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
             width: size.width,
             height: size.height * .3,
             decoration: BoxDecoration(
-                color: newBadgeColor,
+                color: newBadgeAndEventColor,
                 borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(30),
                     bottomRight: Radius.circular(30))),
@@ -150,26 +152,37 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            buildTextFormField(
-                                Colors.grey,
-                                nameCnt,
-                                Icons.verified_outlined,
-                                "Rozet Adı",
-                                nameControl),
+                            TextFormFieldC(
+                                styleColor: Colors.grey,
+                                controller: nameCnt,
+                                iconData: Icons.verified_outlined,
+                                hintText: "Rozet Adı",
+                                validator: (String? value) =>
+                                    Validator.listContainsControl(
+                                        value,
+                                        badgeNames,
+                                        "Bu rozet bulunmaktadır",
+                                        "Bir rozet adı belirtmelisiniz")),
                             SizedBox(
                               height: size.height * .03,
                             ),
-                            buildTextFormField(
-                                Colors.grey,
-                                infoCnt,
-                                Icons.info_outline,
-                                "Rozetin Infosu",
-                                infoControl),
+                            TextFormFieldC(
+                                styleColor: Colors.grey,
+                                controller: infoCnt,
+                                iconData: Icons.info_outline,
+                                hintText: "Rozetin Infosu",
+                                validator: (String? value) =>
+                                    Validator.emptyControl(value,
+                                        "Rozetin Infosunu belirtmelisiniz")),
                             SizedBox(
                               height: size.height * .03,
                             ),
-                            buildTextFormField(Colors.grey, imageUrlCnt,
-                                Icons.link, "Rozetin Resim Linki", urlControl,
+                            TextFormFieldC(
+                                styleColor: Colors.grey,
+                                controller: imageUrlCnt,
+                                iconData: Icons.link,
+                                hintText: "Rozetin Resim Linki",
+                                validator: urlControl,
                                 enable: imageUrlEnable),
                             SizedBox(
                               height: size.height * .03,
@@ -184,7 +197,8 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                                 width: size.width * .4,
                                 decoration: BoxDecoration(
                                     color: Colors.white,
-                                    border: Border.all(color: newBadgeColor)),
+                                    border: Border.all(
+                                        color: newBadgeAndEventColor)),
                                 child: GestureDetector(
                                   child: Center(
                                     child: buildImage(),
@@ -221,45 +235,6 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
         ],
       ),
     );
-  }
-
-  Widget buildTextFormField(Color styleColor, TextEditingController controller,
-      IconData iconData, String hintText, String? Function(String?)? validator,
-      {bool enable = true}) {
-    return TextFormField(
-      enabled: enable,
-      style: TextStyle(color: styleColor),
-      controller: controller,
-      decoration: InputDecoration(
-          prefixIcon: Icon(
-            iconData,
-            color: newBadgeColor,
-          ),
-          hintStyle: const TextStyle(
-              fontFamily: "Catamaran",
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-              fontSize: 17),
-          hintText: hintText),
-      validator: validator,
-    );
-  }
-
-  String? nameControl(String? value) {
-    if (badgeNames.contains(value)) {
-      return "Bu rozet bulunmaktadır";
-    } else if (value!.isEmpty) {
-      return "Bir rozet adı belirtmelisiniz";
-    } else {
-      return null;
-    }
-  }
-
-  String? infoControl(String? value) {
-    if (value!.isEmpty) {
-      return "Rozetin Infosunu belirtmelisiniz";
-    }
-    return null;
   }
 
   String? urlControl(String? value) {
@@ -371,7 +346,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
           GestureDetector(
             child: Icon(
               Icons.arrow_back_ios,
-              color: newBadgeColor,
+              color: newBadgeAndEventColor,
               size: 30,
             ),
             onTap: () {
@@ -382,7 +357,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
             child: Text(
               "Geri",
               style: TextStyle(
-                  color: newBadgeColor,
+                  color: newBadgeAndEventColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 20),
             ),
