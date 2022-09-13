@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/center_text.dart';
+import 'package:mvrg_app/common_widget/event_image.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/events_page/create_event_page.dart';
+import 'package:mvrg_app/ui/events_page/event_details_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -138,27 +140,29 @@ class _EventsPageState extends State<EventsPage> {
 
   Widget buildEventWidget(Event event) => Column(
         children: [
-          Container(
-            decoration: BoxDecoration(boxShadow: [
-              BoxShadow(
-                  color: Colors.grey.shade700,
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3))
-            ]),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Hero(
-                tag: event.title!,
-                child: FadeInImage.assetNetwork(
-                  placeholder: "assets/loading.gif",
-                  image: event.imageUrl!,
-                  height: 320,
-                  width: 320,
-                  fit: BoxFit.cover,
-                ),
+          GestureDetector(
+            child: Container(
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.shade700,
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3))
+              ]),
+              child: EventImage(
+                borderRadius: 10,
+                heroTag: event.title!,
+                image: event.imageUrl!,
+                height: 320,
+                width: 320,
               ),
             ),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventDetailsPage(event: event)));
+            },
           ),
           const SizedBox(
             height: 20,
