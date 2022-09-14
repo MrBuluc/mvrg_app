@@ -97,6 +97,18 @@ const TextStyle miniHeader = TextStyle(
       )
     ]);
 
+const TextStyle miniHeader2 = TextStyle(
+    fontFamily: "Catamaran",
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    shadows: [
+      Shadow(
+          offset: Offset(5, 5),
+          blurRadius: 10,
+          color: Color.fromRGBO(43, 43, 43, 0))
+    ]);
+
 const TextStyle textFormFieldHintStyle = TextStyle(
     fontFamily: "Catamaran",
     fontWeight: FontWeight.bold,
@@ -107,6 +119,8 @@ Color textFieldPrimaryColor = const Color.fromRGBO(30, 227, 167, 1);
 Color colorOne = const Color.fromRGBO(116, 235, 213, 1);
 Color colorTwo = const Color.fromRGBO(172, 182, 229, 1);
 Color newBadgeAndEventColor = const Color.fromRGBO(30, 227, 167, 1);
+Color detailsColor = const Color.fromRGBO(151, 175, 255, 1);
+Color detailsColor2 = const Color.fromRGBO(213, 217, 255, 1);
 
 Decoration gradient = const BoxDecoration(
     gradient: LinearGradient(
