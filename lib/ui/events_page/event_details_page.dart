@@ -201,7 +201,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     } catch (e) {
       AwesomeDialog(
               context: context,
-              dialogType: DialogType.SUCCES,
+              dialogType: DialogType.ERROR,
               animType: AnimType.RIGHSLIDE,
               headerAnimationLoop: true,
               title: "Katılacağım Etkinlikler Güncellenirken HATA",

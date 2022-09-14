@@ -275,6 +275,14 @@ class FirestoreService {
     }
   }
 
+  Future<EventParticipant> getEventParticipant(
+      String eventParticipantId) async {
+    return (await eventParticipantRef
+        .doc(eventParticipantId)
+        .get()
+        .then((snapshot) => snapshot.data()!)) as EventParticipant;
+  }
+
   Future<bool> deleteEventParticipant(String eventParticipantId) async {
     try {
       await eventParticipantRef.doc(eventParticipantId).delete();

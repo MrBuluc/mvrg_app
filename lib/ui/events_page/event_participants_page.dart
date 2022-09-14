@@ -1,7 +1,10 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/model/events/participant.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/exceptions.dart';
 
 class EventParticipantsPage extends StatefulWidget {
   final String eventTitle;
@@ -89,13 +92,15 @@ class _EventParticipantsPageState extends State<EventParticipantsPage> {
             participant.name!,
             style: const TextStyle(fontSize: 20),
           ),
-          trailing: participant.isCurrentUser!
+          trailing: participant.isCurrentUser! && !widget.isParticipant
               ? GestureDetector(
                   child: const Icon(
                     Icons.remove,
                     color: Colors.red,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    removeParticipant(participant.eventParticipantId!, i);
+                  },
                 )
               : null,
         ),
@@ -103,5 +108,29 @@ class _EventParticipantsPageState extends State<EventParticipantsPage> {
       children.add(child);
     }
     return children;
+  }
+
+  Future removeParticipant(String eventParticipantId, int index) async {
+    try {
+      bool result = await Provider.of<UserModel>(context, listen: false)
+          .deleteEventParticipant(eventParticipantId);
+      if (result) {
+        setState(() {
+          participants!.removeAt(index);
+        });
+      }
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Katılacağım Etkinlikler Güncellenirken HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
   }
 }

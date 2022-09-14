@@ -259,6 +259,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> deleteEventParticipant(String eventParticipantId) async {
+    try {
+      return await _userRepository.deleteEventParticipant(eventParticipantId);
+    } catch (e) {
+      printError("deleteEventParticipant", e);
+      rethrow;
+    }
+  }
+
   Future<bool> checkResponse(String url) async {
     try {
       return _userRepository.checkResponse(url);

@@ -182,6 +182,10 @@ class UserRepository implements AuthBase {
     return participants;
   }
 
+  Future<bool> deleteEventParticipant(String eventParticipantId) async {
+    return await _firestoreService.deleteEventParticipant(eventParticipantId);
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();
