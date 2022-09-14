@@ -12,6 +12,7 @@ import 'package:mvrg_app/services/http_service.dart';
 import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/events/event.dart';
+import '../model/events/event_participant.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
@@ -148,6 +149,19 @@ class UserRepository implements AuthBase {
 
   Future<bool> setEvent(Event event) async {
     return await _firestoreService.setEvent(event);
+  }
+
+  Future<bool> addEventParticipant(EventParticipant eventParticipant) async {
+    List<EventParticipant> eventParticipants = await _firestoreService
+        .getEventParticipantFromEventNameAndUserIdAndIsParticipant(
+            eventParticipant.eventName!,
+            eventParticipant.userId!,
+            eventParticipant.isParticipant!);
+    if (eventParticipants.isEmpty) {
+      return await _firestoreService.addEventParticipant(eventParticipant);
+    } else {
+      return false;
+    }
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
+import 'package:mvrg_app/model/events/event_participant.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/repository/user_repository.dart';
 import 'package:mvrg_app/services/auth_base.dart';
@@ -234,6 +235,27 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> addEventParticipant(String eventName, bool isParticipant) async {
+    try {
+      return await _userRepository.addEventParticipant(EventParticipant(
+          eventName: eventName,
+          userId: user!.id!,
+          isParticipant: isParticipant));
+    } catch (e) {
+      printError("addEventParticipant", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> checkResponse(String url) async {
+    try {
+      return _userRepository.checkResponse(url);
+    } catch (e) {
+      printError("checkResponse", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {
@@ -248,15 +270,6 @@ class UserModel with ChangeNotifier implements AuthBase {
       rethrow;
     } finally {
       state = ViewState.idle;
-    }
-  }
-
-  Future<bool> checkResponse(String url) async {
-    try {
-      return _userRepository.checkResponse(url);
-    } catch (e) {
-      printError("checkResponse", e);
-      rethrow;
     }
   }
 

@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event.dart';
+import 'package:mvrg_app/model/events/event_participant.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 import '../../model/badges/badgeHolder.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late CollectionReference usersRef, badgesRef, badgeHolderRef, eventsRef;
+  late CollectionReference usersRef,
+      badgesRef,
+      badgeHolderRef,
+      eventsRef,
+      eventParticipantRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -25,6 +30,13 @@ class FirestoreService {
     eventsRef = _firestore.collection("Events").withConverter<Event>(
         fromFirestore: (snapshot, _) => Event.fromFirestore(snapshot.data()!),
         toFirestore: (event, _) => event.toFirestore());
+    eventParticipantRef = _firestore
+        .collection("EventParticipant")
+        .withConverter<EventParticipant>(
+            fromFirestore: (snapshot, _) =>
+                EventParticipant.fromFirestore(snapshot.data()!),
+            toFirestore: (eventParticipant, _) =>
+                eventParticipant.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -192,6 +204,51 @@ class FirestoreService {
       return true;
     } catch (e) {
       printError("setEvent", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> addEventParticipant(EventParticipant eventParticipant) async {
+    try {
+      String docId = (await eventParticipantRef.add(eventParticipant)).id;
+      return await updateEventParticipant(docId, {"id": docId});
+    } catch (e) {
+      printError("addEventParticipant", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> updateEventParticipant(
+      String id, Map<String, dynamic> eventParticipantMap) async {
+    try {
+      await eventParticipantRef.doc(id).update(eventParticipantMap);
+      return true;
+    } catch (e) {
+      printError("updateEventParticipant", e);
+      rethrow;
+    }
+  }
+
+  Future<List<EventParticipant>>
+      getEventParticipantFromEventNameAndUserIdAndIsParticipant(
+          String eventName, String userId, bool isParticipant) async {
+    try {
+      List<EventParticipant> eventParticipants = [];
+      List<QueryDocumentSnapshot<EventParticipant>> queryDocSnapshotList =
+          (await eventParticipantRef
+                  .where("eventName", isEqualTo: eventName)
+                  .where("userId", isEqualTo: userId)
+                  .where("isParticipant", isEqualTo: isParticipant)
+                  .get())
+              .docs as List<QueryDocumentSnapshot<EventParticipant>>;
+      for (QueryDocumentSnapshot<EventParticipant> queryDocumentSnapshot
+          in queryDocSnapshotList) {
+        eventParticipants.add(queryDocumentSnapshot.data());
+      }
+      return eventParticipants;
+    } catch (e) {
+      printError(
+          "getEventParticipantFromEventNameAndUserIdAndIsParticipant", e);
       rethrow;
     }
   }

@@ -1,4 +1,6 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/app/exceptions.dart';
 import 'package:mvrg_app/common_widget/event_image.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
@@ -16,6 +18,8 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late Size size;
+
+  bool isProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -107,28 +111,103 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   Widget buildButtons() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          buildTextButton("Katılacağım", () {}),
-          buildTextButton("Kimler Katılacak?", () {})
+          buildTextButton(
+              isProgress
+                  ? const Icon(
+                      Icons.lock,
+                      color: Colors.white,
+                    )
+                  : const Text(
+                      "Katılacağım",
+                      style: miniHeader2,
+                    ), () {
+            if (!isProgress) {
+              addEventParticipant();
+            }
+          }),
+          buildTextButton(
+              const Text(
+                "Kimler Katılacak?",
+                style: miniHeader2,
+              ),
+              () {})
         ],
       );
 
-  Widget buildTextButton(String text, void Function() onTap) => Container(
+  Widget buildTextButton(Widget child, void Function() onTap) => Container(
         height: 50,
         width: 150,
         decoration: BoxDecoration(
             color: detailsColor, borderRadius: BorderRadius.circular(20)),
         child: Center(
           child: GestureDetector(
-            child: Text(
-              text,
-              style: miniHeader2,
-            ),
+            child: child,
             onTap: () {
               onTap();
             },
           ),
         ),
       );
+
+  Future addEventParticipant() async {
+    setState(() {
+      isProgress = true;
+    });
+
+    try {
+      bool result = await Provider.of<UserModel>(context, listen: false)
+          .addEventParticipant(widget.event.title!, false);
+      if (result) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.SUCCES,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Katılacağım Etkinlikler Listesi Güncellendi",
+                desc: "Katılacağım etkinlikler listesi başarıyla güncellendi",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+
+        setState(() {
+          isProgress = false;
+        });
+      } else {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.SUCCES,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Zaten Katılımcısınız",
+                desc: "Bu etkinliğin katılımcılar listesinde varsınız",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+
+        setState(() {
+          isProgress = false;
+        });
+      }
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.SUCCES,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Katılacağım Etkinlikler Güncellenirken HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+
+      setState(() {
+        isProgress = false;
+      });
+    }
+  }
 
   Widget buildBackAndQr() {
     bool admin = Provider.of<UserModel>(context, listen: false).user!.admin!;
