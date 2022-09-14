@@ -32,7 +32,7 @@ class _LandingPageState extends State<LandingPage> {
     if (connection) {
       if (_userModel.state == ViewState.idle) {
         if (_userModel.user == null) {
-          return LoginPage();
+          return const LoginPage();
         } else {
           return const HomePage();
         }
