@@ -4,6 +4,7 @@ import 'package:mvrg_app/app/exceptions.dart';
 import 'package:mvrg_app/common_widget/event_image.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
+import 'package:mvrg_app/ui/events_page/event_participants_page.dart';
 import 'package:mvrg_app/ui/events_page/events_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -129,8 +130,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               const Text(
                 "Kimler Katılacak?",
                 style: miniHeader2,
-              ),
-              () {})
+              ), () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EventParticipantsPage(
+                          eventTitle: widget.event.title!,
+                          isParticipant: false,
+                        )));
+          })
         ],
       );
 

@@ -11,6 +11,7 @@ import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/badges/holder.dart';
 import '../model/events/event.dart';
+import '../model/events/participant.dart';
 
 enum ViewState { idle, busy }
 
@@ -243,6 +244,17 @@ class UserModel with ChangeNotifier implements AuthBase {
           isParticipant: isParticipant));
     } catch (e) {
       printError("addEventParticipant", e);
+      rethrow;
+    }
+  }
+
+  Future<List<Participant>> getParticipants(
+      String eventName, bool isParticipant) async {
+    try {
+      return await _userRepository.getParticipants(
+          eventName, user!.id!, isParticipant);
+    } catch (e) {
+      printError("getParticipant", e);
       rethrow;
     }
   }

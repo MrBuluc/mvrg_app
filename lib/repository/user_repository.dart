@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/badges/holder.dart';
+import 'package:mvrg_app/model/events/participant.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
@@ -162,6 +163,23 @@ class UserRepository implements AuthBase {
     } else {
       return false;
     }
+  }
+
+  Future<List<Participant>> getParticipants(
+      String eventName, String currentUserId, bool isParticipant) async {
+    List<Participant> participants = [];
+    List<EventParticipant> eventParticipants = await _firestoreService
+        .getEventParticipantFromEventNameAndIsParticipant(
+            eventName, isParticipant);
+    for (EventParticipant eventParticipant in eventParticipants) {
+      Participant participant =
+          Participant(eventParticipantId: eventParticipant.id);
+      UserC userC = await _firestoreService.readUser(eventParticipant.userId!);
+      participant.name = userC.name! + " " + userC.surname!;
+      participant.isCurrentUser = currentUserId == userC.id!;
+      participants.add(participant);
+    }
+    return participants;
   }
 
   @override

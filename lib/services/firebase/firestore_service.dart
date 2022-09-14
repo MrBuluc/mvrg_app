@@ -253,6 +253,38 @@ class FirestoreService {
     }
   }
 
+  Future<List<EventParticipant>>
+      getEventParticipantFromEventNameAndIsParticipant(
+          String eventName, bool isParticipant) async {
+    try {
+      List<EventParticipant> eventParticipants = [];
+      List<QueryDocumentSnapshot<EventParticipant>> queryDocSnapshotList =
+          (await eventParticipantRef
+                  .where("eventName", isEqualTo: eventName)
+                  .where("isParticipant", isEqualTo: isParticipant)
+                  .get())
+              .docs as List<QueryDocumentSnapshot<EventParticipant>>;
+      for (QueryDocumentSnapshot<EventParticipant> queryDocumentSnapshot
+          in queryDocSnapshotList) {
+        eventParticipants.add(queryDocumentSnapshot.data());
+      }
+      return eventParticipants;
+    } catch (e) {
+      printError("getEventParticipantFromEventName", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> deleteEventParticipant(String eventParticipantId) async {
+    try {
+      await eventParticipantRef.doc(eventParticipantId).delete();
+      return true;
+    } catch (e) {
+      printError("deleteEventParticipant", e);
+      rethrow;
+    }
+  }
+
   printError(String methodName, Object e) {
     print("firestore $methodName hata: " + e.toString());
   }
