@@ -173,8 +173,8 @@ class _DrawerCState extends State<DrawerC> {
       btnOkText: "Evet",
       btnOkOnPress: () {
         signOut();
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginPage()));
       },
     ).show();
   }
