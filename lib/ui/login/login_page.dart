@@ -10,21 +10,23 @@ import 'package:provider/provider.dart';
 import '../const.dart';
 import '../home_page/home_page.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  late final Size size;
+  late Size size;
 
   String? mail, password;
-
-  late final UserModel userModel;
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    userModel = Provider.of<UserModel>(context, listen: false);
     return Container(
       decoration: BoxDecoration(gradient: loginPageBg),
       child: Scaffold(
@@ -194,7 +196,8 @@ class LoginPage extends StatelessWidget {
           .show();
     } else {
       try {
-        bool sonuc1 = await userModel.sendPasswordResetEmail(mail!);
+        bool sonuc1 = await Provider.of<UserModel>(context, listen: false)
+            .sendPasswordResetEmail(mail!);
         if (sonuc1) {
           AwesomeDialog(
             context: context,
@@ -266,8 +269,8 @@ class LoginPage extends StatelessWidget {
       formKey.currentState!.save();
 
       try {
-        UserC? userC =
-            await userModel.signInWithEmailandPassword(mail!, password!);
+        UserC? userC = await Provider.of<UserModel>(context, listen: false)
+            .signInWithEmailandPassword(mail!, password!);
         if (userC != null) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const HomePage()));
