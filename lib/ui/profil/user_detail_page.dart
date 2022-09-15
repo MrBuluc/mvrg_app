@@ -8,14 +8,14 @@ import 'package:provider/provider.dart';
 
 import '../../app/exceptions.dart';
 
-class ProfilPage extends StatefulWidget {
-  const ProfilPage({Key? key}) : super(key: key);
+class UserDetailPage extends StatefulWidget {
+  const UserDetailPage({Key? key}) : super(key: key);
 
   @override
-  State<ProfilPage> createState() => _ProfilPageState();
+  State<UserDetailPage> createState() => _UserDetailPageState();
 }
 
-class _ProfilPageState extends State<ProfilPage> {
+class _UserDetailPageState extends State<UserDetailPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   TextEditingController nameCnt = TextEditingController();
@@ -62,7 +62,7 @@ class _ProfilPageState extends State<ProfilPage> {
                 margin: const EdgeInsets.only(left: 15, bottom: 15),
                 alignment: Alignment.centerLeft,
                 child: const Text(
-                  "Kullanıcı Bilgilerim",
+                  "Kullanıcı Bilgilerimi Güncelle",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 25,

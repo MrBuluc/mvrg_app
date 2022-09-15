@@ -1,16 +1,16 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/ui/Profil/profil_page.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
+import 'package:mvrg_app/ui/login/login_page.dart';
+import 'package:mvrg_app/ui/profil/user_detail_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/exceptions.dart';
 import '../../model/userC.dart';
 import '../../ui/const.dart';
-import '../../ui/login/login_page.dart';
 
 class DrawerC extends StatefulWidget {
   const DrawerC({Key? key}) : super(key: key);
@@ -22,14 +22,16 @@ class DrawerC extends StatefulWidget {
 class _DrawerCState extends State<DrawerC> {
   String name = " ", surname = " ", mail = "";
 
-  late UserModel userModel;
-
   bool admin = false;
 
   @override
-  Widget build(BuildContext context) {
-    userModel = Provider.of<UserModel>(context, listen: false);
+  void initState() {
+    super.initState();
     currentUser();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Drawer(
       child: SingleChildScrollView(
         child: IntrinsicHeight(
@@ -65,6 +67,14 @@ class _DrawerCState extends State<DrawerC> {
                             Text(
                               name + " " + surname,
                               style: const TextStyle(fontSize: 16),
+                            ),
+                            GestureDetector(
+                              child: const Text(
+                                "100 MvRG Token    🔄",
+                                style:
+                                    TextStyle(fontSize: 16, color: Colors.red),
+                              ),
+                              onTap: () {},
                             )
                           ],
                         ),
@@ -82,8 +92,8 @@ class _DrawerCState extends State<DrawerC> {
                       title: const Text("Hesap Bilgilerim"),
                       trailing: const Icon(Icons.arrow_drop_down),
                       children: [
-                        buildListTile(
-                            "Kullanıcı Bilgilerim", const ProfilPage()),
+                        buildListTile("Kullanıcı Bilgilerimi Güncelle",
+                            const UserDetailPage()),
                         buildListTile(
                             "Şifre Değişikliği", const UpdatePasswordPage())
                       ],
@@ -138,7 +148,7 @@ class _DrawerCState extends State<DrawerC> {
   }
 
   Future currentUser() async {
-    UserC? userC = userModel.user;
+    UserC? userC = Provider.of<UserModel>(context, listen: false).user;
     if (userC != null) {
       setState(() {
         name = userC.name!;
