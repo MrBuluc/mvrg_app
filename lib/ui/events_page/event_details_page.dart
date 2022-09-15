@@ -7,6 +7,7 @@ import 'package:mvrg_app/common_widget/event_image.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/events_page/event_participants_page.dart';
+import 'package:mvrg_app/ui/events_page/event_qr_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -249,10 +250,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => EventParticipantsPage(
-                            eventTitle: widget.event.title!,
-                            isParticipant: false,
-                          )));
+                      builder: (context) =>
+                          EventQrPage(data: widget.event.code!)));
             })
         ],
       ),

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class CenterText extends StatelessWidget {
   final String? text;
   final double? fontSize;
-  const CenterText({Key? key, required this.text, this.fontSize})
+  final TextStyle? textStyle;
+  const CenterText(
+      {Key? key, required this.text, this.fontSize, this.textStyle})
       : super(key: key);
 
   @override
@@ -11,7 +13,7 @@ class CenterText extends StatelessWidget {
     return Center(
       child: Text(
         text!,
-        style: TextStyle(fontSize: fontSize ?? 14),
+        style: textStyle ?? TextStyle(fontSize: fontSize ?? 14),
       ),
     );
   }
