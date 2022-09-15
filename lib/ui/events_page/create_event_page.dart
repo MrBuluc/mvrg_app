@@ -149,18 +149,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                           Container(
                             alignment: Alignment.centerLeft,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
-                                Text(
-                                  "Token hediye edilecek mi?",
-                                  style: textFormFieldHintStyle.copyWith(
-                                      fontSize: 15),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.error,
-                                    color: Colors.grey,
+                                GestureDetector(
+                                  child: Text(
+                                    "Token verilecek mi?",
+                                    style: textFormFieldHintStyle.copyWith(
+                                        fontSize: 15),
                                   ),
-                                  onPressed: () {
+                                  onTap: () {
                                     AwesomeDialog(
                                             context: context,
                                             dialogType: DialogType.INFO,
@@ -191,7 +188,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             styleColor: Colors.grey,
                             controller: priceCnt,
                             iconData: Icons.attach_money,
-                            hintText: "Etkinliğin Token Miktarı",
+                            hintText: "Token Miktarı",
                             validator: checkPrice,
                             textInputType: TextInputType.number,
                           ),

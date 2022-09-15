@@ -151,51 +151,53 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                         top: size.width * .05, right: 30, left: 30),
                     child: Stack(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextFormFieldC(
-                                styleColor: Colors.grey,
-                                controller: nameCnt,
-                                iconData: Icons.verified_outlined,
-                                hintText: "Rozet Adı",
-                                validator: (String? value) =>
-                                    Validator.listContainsControl(
-                                        value,
-                                        badgeNames,
-                                        "Bu rozet bulunmaktadır",
-                                        "Bir rozet adı belirtmelisiniz")),
-                            SizedBox(
-                              height: size.height * .03,
-                            ),
-                            TextFormFieldC(
-                                styleColor: Colors.grey,
-                                controller: infoCnt,
-                                iconData: Icons.info_outline,
-                                hintText: "Rozetin Infosu",
-                                validator: (String? value) =>
-                                    Validator.emptyControl(value,
-                                        "Rozetin Infosunu belirtmelisiniz")),
-                            SizedBox(
-                              height: size.height * .03,
-                            ),
-                            TextFormFieldC(
-                                styleColor: Colors.grey,
-                                controller: imageUrlCnt,
-                                iconData: Icons.link,
-                                hintText: "Rozetin Resim Linki",
-                                validator: urlControl,
-                                enable: imageUrlEnable),
-                            SizedBox(
-                              height: size.height * .03,
-                            ),
-                            if (badge != null)
-                              buildHoldersRow("Rozete atanacak kişi:", true),
-                            if (badge != null)
-                              buildHoldersRow("Kişinin seviyesi:", false),
-                            ImageFile(
-                                child: buildImage(), onTap: galeriResimUpload)
-                          ],
+                        SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TextFormFieldC(
+                                  styleColor: Colors.grey,
+                                  controller: nameCnt,
+                                  iconData: Icons.verified_outlined,
+                                  hintText: "Rozet Adı",
+                                  validator: (String? value) =>
+                                      Validator.listContainsControl(
+                                          value,
+                                          badgeNames,
+                                          "Bu rozet bulunmaktadır",
+                                          "Bir rozet adı belirtmelisiniz")),
+                              SizedBox(
+                                height: size.height * .03,
+                              ),
+                              TextFormFieldC(
+                                  styleColor: Colors.grey,
+                                  controller: infoCnt,
+                                  iconData: Icons.info_outline,
+                                  hintText: "Rozetin Infosu",
+                                  validator: (String? value) =>
+                                      Validator.emptyControl(value,
+                                          "Rozetin Infosunu belirtmelisiniz")),
+                              SizedBox(
+                                height: size.height * .03,
+                              ),
+                              TextFormFieldC(
+                                  styleColor: Colors.grey,
+                                  controller: imageUrlCnt,
+                                  iconData: Icons.link,
+                                  hintText: "Rozetin Resim Linki",
+                                  validator: urlControl,
+                                  enable: imageUrlEnable),
+                              SizedBox(
+                                height: size.height * .03,
+                              ),
+                              if (badge != null)
+                                buildHoldersRow("Atanacak kişi:", true),
+                              if (badge != null)
+                                buildHoldersRow("Kişinin seviyesi:", false),
+                              ImageFile(
+                                  child: buildImage(), onTap: galeriResimUpload)
+                            ],
+                          ),
                         ),
                         if (image != null)
                           GestureDetector(

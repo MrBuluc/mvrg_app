@@ -60,7 +60,8 @@ class _EventsPageState extends State<EventsPage> {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.only(left: size.width * .25),
+          padding: EdgeInsets.only(
+              left: admin ? size.width * .15 : size.width * .25),
           child: const Text(
             "MvRG App",
             style: headerText,

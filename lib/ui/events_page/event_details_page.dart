@@ -90,6 +90,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 Text(
                   "Buluşma Yeri: " + widget.event.location!,
                   style: miniHeader2,
+                  textAlign: TextAlign.center,
                 )
               ],
             ),

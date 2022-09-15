@@ -25,9 +25,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
 
   late double infoPaddingVertical;
 
-  int? holderCount;
-
-  List<Holder> holders = [];
+  List<Holder>? holders;
 
   @override
   void initState() {
@@ -46,7 +44,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
         centerTitle: true,
         title: const Text("Rozet Bilgisi"),
       ),
-      body: holderCount != null
+      body: holders != null
           ? SafeArea(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -85,7 +83,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
                         Padding(
                           padding: EdgeInsets.only(top: size.height * .03),
                           child: Text(
-                            "Bu rozet $holderCount kişi tarafınan "
+                            "Bu rozet ${holders!.length} kişi tarafınan "
                             "kazanıldı:",
                             style: const TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.bold),
@@ -107,18 +105,15 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
   }
 
   Future getHolderCount() async {
-    UserModel userModel = Provider.of<UserModel>(context, listen: false);
-    holderCount = await userModel.countBadgeHolderFromBadgeId(badge.id!);
-    if (holderCount! > 0) {
-      holders = await userModel.getHolders(badge.id!);
-    }
+    holders = await Provider.of<UserModel>(context, listen: false)
+        .getHolders(badge.id!);
     setState(() {});
   }
 
   List<Widget> buildPerson() {
     List<Widget> widgets = [];
-    for (int i = 0; i < holders.length; i++) {
-      Holder holder = holders.elementAt(i);
+    for (int i = 0; i < holders!.length; i++) {
+      Holder holder = holders!.elementAt(i);
       int rank = holder.rank!;
       String rankStr = rank.toString();
 
@@ -211,12 +206,12 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
         .deleteBadgeHolder(badgeHolderId);
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("${holders.elementAt(index).name} Kaldırıldı"),
+        content: Text("${holders!.elementAt(index).name} Kaldırıldı"),
         backgroundColor: colorTwo,
         duration: const Duration(seconds: 3),
       ));
       setState(() {
-        holders.removeAt(index);
+        holders!.removeAt(index);
       });
       Navigator.pop(context);
     }
@@ -228,12 +223,12 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
             BadgeHolder(id: badgeHolderId, rank: int.parse(newRank)));
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("${holders.elementAt(index).name} Seviyesi Güncellendi"),
+        content: Text("${holders!.elementAt(index).name} Seviyesi Güncellendi"),
         backgroundColor: colorTwo,
         duration: const Duration(seconds: 3),
       ));
       setState(() {
-        holders.elementAt(index).rank = int.parse(newRank);
+        holders!.elementAt(index).rank = int.parse(newRank);
       });
       Navigator.pop(context);
     }
