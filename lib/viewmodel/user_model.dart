@@ -268,6 +268,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> joinEvent(String eventCode) async {
+    try {
+      return await _userRepository.joinEvent(eventCode, user!.id!);
+    } catch (e) {
+      printError("joinEvent", e);
+      rethrow;
+    }
+  }
+
   Future<bool> checkResponse(String url) async {
     try {
       return _userRepository.checkResponse(url);

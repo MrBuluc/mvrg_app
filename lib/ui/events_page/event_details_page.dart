@@ -1,11 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mvrg_app/app/exceptions.dart';
 import 'package:mvrg_app/common_widget/event_image.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/events_page/event_participants_page.dart';
-import 'package:mvrg_app/ui/events_page/events_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -242,14 +243,24 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               Navigator.pop(context);
             },
           ),
-          buildIconButton(Icons.camera_alt, 30, const EventsPage()),
-          if (admin) buildIconButton(Icons.qr_code, 35, const EventsPage())
+          buildIconButton(Icons.camera_alt, 30, scanQr),
+          if (admin)
+            buildIconButton(Icons.qr_code, 35, () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventParticipantsPage(
+                            eventTitle: widget.event.title!,
+                            isParticipant: false,
+                          )));
+            })
         ],
       ),
     );
   }
 
-  Widget buildIconButton(IconData iconData, double iconSize, Widget page) =>
+  Widget buildIconButton(
+          IconData iconData, double iconSize, void Function()? onTap) =>
       Container(
         height: 50,
         width: 50,
@@ -261,12 +272,144 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             color: Colors.white,
             size: iconSize,
           ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => page),
-            );
-          },
+          onTap: onTap,
         ),
       );
+
+  Future scanQr() async {
+    String eventCode = "";
+    try {
+      ScanResult scanResult = await BarcodeScanner.scan();
+      eventCode = scanResult.rawContent;
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Kamera İzni Hatası",
+                desc: "Qr okutmak için kamera izni vermeniz gerekiyor",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+        return;
+      } else {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "HATA",
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+        return;
+      }
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+      return;
+    }
+
+    try {
+      if (widget.event.code! == eventCode) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.INFO,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Etkinliğe Katılınıyor...",
+                desc: "Etkinliğe katılma işlemi devam ediyor lütfen bir dialog "
+                    "çıkıncaya kadar bekleyiniz.",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+
+        bool result = await Provider.of<UserModel>(context, listen: false)
+            .joinEvent(eventCode);
+        if (result) {
+          Navigator.pop(context);
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.SUCCES,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: "Etkinliğe Katılma İşlemi Tamamlandı",
+                  desc: "Etkinliğe başarılı bir şekilde katılındı.",
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+        }
+      } else {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Etkinlik Eşleşme Hatası",
+                desc: "Etkinliğin kodu ile qr eşleşmiyor. Lütfen "
+                    "${widget.event.title!} etkinliğinin qr ını okutunuz.",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+      }
+    } on PlatformException catch (e) {
+      if (e.code == "0") {
+        Navigator.pop(context);
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "HATA",
+                desc: e.message,
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+      } else {
+        Navigator.pop(context);
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "HATA",
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
+  }
 }

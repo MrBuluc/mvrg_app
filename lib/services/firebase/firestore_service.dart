@@ -208,6 +208,18 @@ class FirestoreService {
     }
   }
 
+  Future<List<Event>> getEventsFromCode(String code) async {
+    List<Event> events = [];
+    List<QueryDocumentSnapshot<Event>> queryDocSnapshotList =
+        (await eventsRef.where("code", isEqualTo: code).get()).docs
+            as List<QueryDocumentSnapshot<Event>>;
+    for (QueryDocumentSnapshot<Event> queryDocumentSnapshot
+        in queryDocSnapshotList) {
+      events.add(queryDocumentSnapshot.data());
+    }
+    return events;
+  }
+
   Future<bool> addEventParticipant(EventParticipant eventParticipant) async {
     try {
       String docId = (await eventParticipantRef.add(eventParticipant)).id;
@@ -271,6 +283,27 @@ class FirestoreService {
       return eventParticipants;
     } catch (e) {
       printError("getEventParticipantFromEventName", e);
+      rethrow;
+    }
+  }
+
+  Future<List<EventParticipant>> getEventParticipantFromEventNameAndUserId(
+      String eventName, String userId) async {
+    try {
+      List<EventParticipant> eventParticipants = [];
+      List<QueryDocumentSnapshot<EventParticipant>> queryDocSnapshotList =
+          (await eventParticipantRef
+                  .where("eventName", isEqualTo: eventName)
+                  .where("userId", isEqualTo: userId)
+                  .get())
+              .docs as List<QueryDocumentSnapshot<EventParticipant>>;
+      for (QueryDocumentSnapshot<EventParticipant> queryDocumentSnapshot
+          in queryDocSnapshotList) {
+        eventParticipants.add(queryDocumentSnapshot.data());
+      }
+      return eventParticipants;
+    } catch (e) {
+      printError("getEventParticipantFromEventNameAndUserId", e);
       rethrow;
     }
   }

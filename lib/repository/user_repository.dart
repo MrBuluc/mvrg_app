@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/events/participant.dart';
@@ -184,6 +185,25 @@ class UserRepository implements AuthBase {
 
   Future<bool> deleteEventParticipant(String eventParticipantId) async {
     return await _firestoreService.deleteEventParticipant(eventParticipantId);
+  }
+
+  Future<bool> joinEvent(String eventCode, String userId) async {
+    List<Event> events = await _firestoreService.getEventsFromCode(eventCode);
+    String eventTitle = events.elementAt(0).title!;
+
+    List<EventParticipant> eventParticipants = await _firestoreService
+        .getEventParticipantFromEventNameAndUserId(eventTitle, userId);
+    if (eventParticipants.isNotEmpty) {
+      if (!eventParticipants.elementAt(0).isParticipant!) {
+        return await _firestoreService.updateEventParticipant(
+            eventParticipants.elementAt(0).id!, {"isParticipant": true});
+      }
+      throw PlatformException(
+          code: "0", message: "Bu etkinliğin zaten katıldınız.");
+    } else {
+      return await _firestoreService.addEventParticipant(EventParticipant(
+          eventName: eventTitle, userId: userId, isParticipant: true));
+    }
   }
 
   @override
