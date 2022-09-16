@@ -145,3 +145,14 @@ AppBar buildAppBar(String text) => AppBar(
       centerTitle: true,
       elevation: 2,
     );
+
+Widget imageLoadingBuilder(
+    BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+  if (loadingProgress == null) return child;
+  return CircularProgressIndicator(
+    value: loadingProgress.expectedTotalBytes != null
+        ? loadingProgress.cumulativeBytesLoaded /
+            loadingProgress.expectedTotalBytes!
+        : null,
+  );
+}
