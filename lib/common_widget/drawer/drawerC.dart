@@ -4,6 +4,7 @@ import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/ui/login/login_page.dart';
+import 'package:mvrg_app/ui/my_events/my_events.dart';
 import 'package:mvrg_app/ui/profil/user_detail_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,11 @@ class _DrawerCState extends State<DrawerC> {
   String name = " ", surname = " ", mail = "";
 
   bool admin = false;
+
+  Divider divider = const Divider(
+    height: 1,
+    color: Colors.grey,
+  );
 
   @override
   void initState() {
@@ -87,6 +93,9 @@ class _DrawerCState extends State<DrawerC> {
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 child: Column(
                   children: [
+                    buildListTileWithIcon(
+                        Icons.event, "Etkinliklerim", const MyEvents()),
+                    divider,
                     ExpansionTile(
                       leading: const Icon(Icons.account_box),
                       title: const Text("Hesap Bilgilerim"),
@@ -99,21 +108,9 @@ class _DrawerCState extends State<DrawerC> {
                       ],
                     ),
                     if (admin)
-                      ListTile(
-                        leading: const Icon(Icons.badge),
-                        title: const Text("Yeni Rozet Ekle"),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateAndUpdateBadgePage()));
-                        },
-                      ),
-                    const Divider(
-                      height: 1,
-                      color: Colors.grey,
-                    ),
+                      buildListTileWithIcon(Icons.badge, "Yeni Rozet Ekle",
+                          const CreateAndUpdateBadgePage()),
+                    divider,
                     Row(
                       children: [
                         IconButton(
@@ -168,6 +165,16 @@ class _DrawerCState extends State<DrawerC> {
       },
     );
   }
+
+  Widget buildListTileWithIcon(IconData iconData, String title, Widget page) =>
+      ListTile(
+        leading: Icon(iconData),
+        title: Text(title),
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => page));
+        },
+      );
 
   Future areYouSureForSignOut() async {
     AwesomeDialog(

@@ -277,6 +277,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<List<List<String>>> getMyEvents() async {
+    try {
+      return await _userRepository.getMyEvents(user!.id!);
+    } catch (e) {
+      printError("getMyEvents", e);
+      rethrow;
+    }
+  }
+
   Future<bool> checkResponse(String url) async {
     try {
       return _userRepository.checkResponse(url);

@@ -308,6 +308,19 @@ class FirestoreService {
     }
   }
 
+  Future<List<EventParticipant>> getEventParticipantFromUserId(
+      String userId) async {
+    List<EventParticipant> eventParticipants = [];
+    List<QueryDocumentSnapshot<EventParticipant>> queryDocSnapshotList =
+        (await eventParticipantRef.where("userId", isEqualTo: userId).get())
+            .docs as List<QueryDocumentSnapshot<EventParticipant>>;
+    for (QueryDocumentSnapshot<EventParticipant> queryDocumentSnapshot
+        in queryDocSnapshotList) {
+      eventParticipants.add(queryDocumentSnapshot.data());
+    }
+    return eventParticipants;
+  }
+
   Future<EventParticipant> getEventParticipant(
       String eventParticipantId) async {
     return (await eventParticipantRef

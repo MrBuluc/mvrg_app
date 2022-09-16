@@ -204,6 +204,20 @@ class UserRepository implements AuthBase {
     }
   }
 
+  Future<List<List<String>>> getMyEvents(String userId) async {
+    List<String> isParticipantEvents = [], isNotParticipantEvents = [];
+    List<EventParticipant> eventParticipants =
+        await _firestoreService.getEventParticipantFromUserId(userId);
+    for (EventParticipant eventParticipant in eventParticipants) {
+      if (eventParticipant.isParticipant!) {
+        isParticipantEvents.add(eventParticipant.eventName!);
+      } else {
+        isNotParticipantEvents.add(eventParticipant.eventName!);
+      }
+    }
+    return [isParticipantEvents, isNotParticipantEvents];
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();

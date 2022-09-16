@@ -115,6 +115,9 @@ const TextStyle textFormFieldHintStyle = TextStyle(
     color: Colors.grey,
     fontSize: 17);
 
+TextStyle textStyle = TextStyle(
+    color: Colors.grey.shade700, fontFamily: "Catamaran", fontSize: 16);
+
 Color textFieldPrimaryColor = const Color.fromRGBO(30, 227, 167, 1);
 Color colorOne = const Color.fromRGBO(116, 235, 213, 1);
 Color colorTwo = const Color.fromRGBO(172, 182, 229, 1);
