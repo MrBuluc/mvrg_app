@@ -154,11 +154,9 @@ class UserRepository implements AuthBase {
   }
 
   Future<bool> addEventParticipant(EventParticipant eventParticipant) async {
-    List<EventParticipant> eventParticipants = await _firestoreService
-        .getEventParticipantFromEventNameAndUserIdAndIsParticipant(
-            eventParticipant.eventName!,
-            eventParticipant.userId!,
-            eventParticipant.isParticipant!);
+    List<EventParticipant> eventParticipants =
+        await _firestoreService.getEventParticipantFromEventNameAndUserId(
+            eventParticipant.eventName!, eventParticipant.userId!);
     if (eventParticipants.isEmpty) {
       return await _firestoreService.addEventParticipant(eventParticipant);
     } else {
