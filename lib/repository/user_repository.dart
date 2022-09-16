@@ -218,6 +218,10 @@ class UserRepository implements AuthBase {
     return [isParticipantEvents, isNotParticipantEvents];
   }
 
+  Future<bool> isThereAnyEventWithCode(String code) async {
+    return (await _firestoreService.getEventsFromCode(code)).isNotEmpty;
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();

@@ -273,7 +273,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               imageUrl: imageUrl,
               award: award,
               tokenPrice: int.parse(priceCnt.text),
-              code: const Uuid().v4()));
+              code: await getCode()));
 
           if (result) {
             AwesomeDialog(
@@ -321,5 +321,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
         });
       }
     }
+  }
+
+  Future<String> getCode() async {
+    UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    Uuid uuid = const Uuid();
+    String code = uuid.v4();
+    bool flag = await userModel.isThereAnyEventWithCode(code);
+    while (flag) {
+      code = uuid.v4();
+      flag = await userModel.isThereAnyEventWithCode(code);
+    }
+    return code;
   }
 }
