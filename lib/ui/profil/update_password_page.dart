@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/common_widget/header.dart';
 import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
@@ -41,29 +42,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            width: size.width,
-            height: size.height * 0.3,
-            decoration: const BoxDecoration(
-              color: Color.fromRGBO(57, 28, 178, 1),
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(left: size.width * 0.1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    "Şifremi\nGüncelle",
-                    style: headerText,
-                  )
-                ],
-              ),
-            ),
-          ),
+          const Header(
+              containerColor: Color.fromRGBO(57, 28, 178, 1),
+              text: "Şifremi\nGüncelle"),
           Positioned(
             top: size.height * 0.26,
             right: size.width * 0.1,
