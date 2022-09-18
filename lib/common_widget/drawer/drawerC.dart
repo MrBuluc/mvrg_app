@@ -4,7 +4,7 @@ import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/ui/login/login_page.dart';
-import 'package:mvrg_app/ui/my_events/my_events.dart';
+import 'package:mvrg_app/ui/my_haves/my_badges.dart';
 import 'package:mvrg_app/ui/profil/user_detail_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../app/exceptions.dart';
 import '../../model/userC.dart';
 import '../../ui/const.dart';
+import '../../ui/my_haves/my_events.dart';
 
 class DrawerC extends StatefulWidget {
   const DrawerC({Key? key}) : super(key: key);
@@ -95,6 +96,8 @@ class _DrawerCState extends State<DrawerC> {
                   children: [
                     buildListTileWithIcon(
                         Icons.event, "Etkinliklerim", const MyEvents()),
+                    buildListTileWithIcon(
+                        Icons.badge, "Rozetlerim", const MyBadges()),
                     divider,
                     ExpansionTile(
                       leading: const Icon(Icons.account_box),
@@ -108,8 +111,8 @@ class _DrawerCState extends State<DrawerC> {
                       ],
                     ),
                     if (admin)
-                      buildListTileWithIcon(Icons.badge, "Yeni Rozet Ekle",
-                          const CreateAndUpdateBadgePage()),
+                      buildListTileWithIcon(Icons.badge_outlined,
+                          "Yeni Rozet Ekle", const CreateAndUpdateBadgePage()),
                     divider,
                     Row(
                       children: [

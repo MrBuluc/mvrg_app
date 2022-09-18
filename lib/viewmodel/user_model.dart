@@ -295,6 +295,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<List<Holder>> getMyBadges() async {
+    try {
+      return await _userRepository.getMyBadges(user!.id!);
+    } catch (e) {
+      printError("getMyBadges", e);
+      rethrow;
+    }
+  }
+
   Future<bool> checkResponse(String url) async {
     try {
       return _userRepository.checkResponse(url);

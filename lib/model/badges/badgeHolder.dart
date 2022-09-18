@@ -1,4 +1,4 @@
-class BadgeHolder {
+class BadgeHolder extends Comparable<BadgeHolder> {
   String? id;
   String? badgeId;
   String? userId;
@@ -19,4 +19,9 @@ class BadgeHolder {
         if (userId != null) "userId": userId,
         if (rank != null) "rank": rank
       };
+
+  @override
+  int compareTo(BadgeHolder other) {
+    return badgeId!.compareTo(other.badgeId!);
+  }
 }

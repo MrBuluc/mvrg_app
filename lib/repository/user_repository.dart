@@ -222,6 +222,25 @@ class UserRepository implements AuthBase {
     return (await _firestoreService.getEventsFromCode(code)).isNotEmpty;
   }
 
+  Future<List<Holder>> getMyBadges(String userId) async {
+    List<Holder> holders = [];
+    List<Badge> badges = [];
+    List<BadgeHolder> badgeHolders =
+        await _firestoreService.getBadgeHolderFromUserId(userId);
+    badgeHolders.sort();
+    for (BadgeHolder badgeHolder in badgeHolders) {
+      badges
+          .add(await _firestoreService.getBadgeFromDocId(badgeHolder.badgeId!));
+    }
+    for (int i = 0; i < badgeHolders.length; i++) {
+      holders.add(Holder(
+          name: badges.elementAt(i).name,
+          rank: badgeHolders.elementAt(i).rank,
+          badgeImageUrl: badges.elementAt(i).imageUrl));
+    }
+    return holders;
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();
