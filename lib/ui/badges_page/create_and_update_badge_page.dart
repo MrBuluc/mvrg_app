@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/back_and_save.dart';
 import 'package:mvrg_app/common_widget/badge_image.dart';
-import 'package:mvrg_app/common_widget/header.dart';
+import 'package:mvrg_app/common_widget/header/header.dart';
 import 'package:mvrg_app/common_widget/image_file.dart';
 import 'package:mvrg_app/common_widget/rank_dropown_button.dart';
 import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
