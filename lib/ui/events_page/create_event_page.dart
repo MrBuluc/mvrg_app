@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/back_and_save.dart';
+import 'package:mvrg_app/common_widget/header.dart';
 import 'package:mvrg_app/common_widget/image_file.dart';
 import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
 import 'package:mvrg_app/services/validator.dart';
@@ -71,30 +72,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            Container(
-              width: size.width,
-              height: size.height * .3,
-              decoration: BoxDecoration(
-                  color: newBadgeAndEventColor,
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30))),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: size.width * .1,
-                  bottom: size.width * .1,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      "Yeni Etkinlik Oluştur",
-                      style: headerText,
-                    )
-                  ],
-                ),
-              ),
+            Header(
+              containerColor: newBadgeAndEventColor,
+              text: "Yeni Etkinlik Oluştur",
+              columnBottomPadding: size.width * .1,
             ),
             Positioned(
               top: size.height * .23,
