@@ -13,6 +13,7 @@ import 'package:mvrg_app/ui/events_page/event_qr_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../common_widget/header/header_with_row.dart';
 import '../../model/userC.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -38,7 +39,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            buildHeader(),
+            HeaderWithRow(
+              containerColor: detailsColor,
+              text: "Ayrıntılar",
+              children: [
+                Image.asset(
+                  "assets/MvRG_Token.png",
+                  height: 90,
+                  width: 90,
+                ),
+                Text(
+                  widget.event.tokenPrice!.toString() + " \nMvRG Token",
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: widget.event.award!
+                          ? Colors.green.shade900
+                          : Colors.red),
+                  textAlign: TextAlign.center,
+                )
+              ],
+            ),
             SizedBox(
               height: size.height * .22,
             ),
@@ -56,48 +76,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       ),
     ));
   }
-
-  Widget buildHeader() => Container(
-        height: size.height * .25,
-        decoration: BoxDecoration(
-            color: detailsColor,
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30)),
-            boxShadow: const [
-              BoxShadow(color: Colors.grey, spreadRadius: 2, blurRadius: 7)
-            ]),
-        child: Padding(
-          padding: EdgeInsets.only(left: size.width * .05),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Text(
-                "Ayrıntılar",
-                style: headerText,
-              ),
-              Column(
-                children: [
-                  Image.asset(
-                    "assets/MvRG_Token.png",
-                    height: 90,
-                    width: 90,
-                  ),
-                  Text(
-                    widget.event.tokenPrice!.toString() + " \nMvRG Token",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: widget.event.award!
-                            ? Colors.green.shade900
-                            : Colors.red),
-                    textAlign: TextAlign.center,
-                  )
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
 
   Widget buildBody() => Stack(
         clipBehavior: Clip.none,
