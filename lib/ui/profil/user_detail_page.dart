@@ -210,8 +210,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
       try {
         bool sonuc = await Provider.of<UserModel>(context, listen: false)
-            .updateUser(userC!.id!, nameCnt.text, surnameCnt.text, mailCnt.text,
-                password, userC!.admin!);
+            .updateUserAuth(userC!.id!, nameCnt.text, surnameCnt.text,
+                mailCnt.text, password, userC!.admin!);
         if (sonuc) {
           Navigator.pop(context);
           AwesomeDialog(

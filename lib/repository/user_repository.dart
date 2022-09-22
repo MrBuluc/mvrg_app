@@ -69,8 +69,8 @@ class UserRepository implements AuthBase {
     }
   }
 
-  Future<bool> updateUser(String id, String name, String surname, String mail,
-      String password, bool admin) async {
+  Future<bool> updateUserAuth(String id, String name, String surname,
+      String mail, String password, bool admin) async {
     bool sonuc =
         await _firebaseAuthService.updateUser(name, surname, mail, password);
     if (sonuc) {
@@ -82,6 +82,10 @@ class UserRepository implements AuthBase {
 
   Future<bool> updatePassword(String oldPassword, String newPassword) async {
     return await _firebaseAuthService.updatePassword(oldPassword, newPassword);
+  }
+
+  Future<bool> updateUserStore(UserC userC) async {
+    return await _firestoreService.updateUser(userC.id!, userC.toFirestore());
   }
 
   Future<List<String>> getBadgeNames() async {

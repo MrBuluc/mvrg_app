@@ -93,11 +93,11 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<bool> updateUser(String id, String name, String surname, String mail,
-      String password, bool admin) async {
+  Future<bool> updateUserAuth(String id, String name, String surname,
+      String mail, String password, bool admin) async {
     try {
       state = ViewState.busy;
-      bool sonuc = await _userRepository.updateUser(
+      bool sonuc = await _userRepository.updateUserAuth(
           id, name, surname, mail, password, admin);
       if (sonuc) {
         _user = UserC(
@@ -118,6 +118,15 @@ class UserModel with ChangeNotifier implements AuthBase {
       return await _userRepository.updatePassword(oldPassword, newPassword);
     } catch (e) {
       printError("updatePassword", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> updateUserStore(UserC newUser) async {
+    try {
+      return await _userRepository.updateUserStore(newUser);
+    } catch (e) {
+      printError("updateUserStore", e);
       rethrow;
     }
   }

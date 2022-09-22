@@ -1,15 +1,19 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mvrg_app/app/exceptions.dart';
 import 'package:mvrg_app/common_widget/event_image.dart';
+import 'package:mvrg_app/model/developer_settings.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/ui/events_page/event_participants_page.dart';
 import 'package:mvrg_app/ui/events_page/event_qr_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/userC.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Event event;
@@ -63,16 +67,35 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             boxShadow: const [
               BoxShadow(color: Colors.grey, spreadRadius: 2, blurRadius: 7)
             ]),
-        child: Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: size.width * .05),
-              child: const Text(
+        child: Padding(
+          padding: EdgeInsets.only(left: size.width * .05),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Text(
                 "Ayrıntılar",
                 style: headerText,
               ),
-            )
-          ],
+              Column(
+                children: [
+                  Image.asset(
+                    "assets/MvRG_Token.png",
+                    height: 90,
+                    width: 90,
+                  ),
+                  Text(
+                    widget.event.tokenPrice!.toString() + " \nMvRG Token",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: widget.event.award!
+                            ? Colors.green.shade900
+                            : Colors.red),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ],
+          ),
         ),
       );
 
@@ -93,7 +116,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   "Buluşma Yeri: " + widget.event.location!,
                   style: miniHeader2,
                   textAlign: TextAlign.center,
-                )
+                ),
               ],
             ),
           ),
@@ -278,8 +301,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   Future scanQr() async {
     String eventCode = "";
     try {
-      ScanResult scanResult = await BarcodeScanner.scan();
-      eventCode = scanResult.rawContent;
+      if (!DeveloperSettings.test) {
+        ScanResult scanResult = await BarcodeScanner.scan();
+        eventCode = scanResult.rawContent;
+      } else {
+        eventCode = widget.event.code!;
+      }
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.cameraAccessDenied) {
         AwesomeDialog(
@@ -323,6 +350,60 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       return;
     }
 
+    await updateUserForToken(eventCode);
+  }
+
+  Future updateUserForToken(String eventCode) async {
+    UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    UserC userC = userModel.user!;
+
+    bool award = widget.event.award!;
+    int tokenPrice = widget.event.tokenPrice!;
+
+    if (award) {
+      userC.token = userC.token! + tokenPrice;
+    } else {
+      if (tokenPrice > userC.token!) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Token HATA",
+                desc:
+                    "Bu etkinlik için yeterli MvRG Tokenınız bulunmamaktadır.",
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+        return;
+      } else {
+        userC.token = userC.token! - tokenPrice;
+      }
+    }
+
+    try {
+      bool result = await userModel.updateUserStore(userC);
+      if (result) {
+        await joinEvent(eventCode);
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
+  }
+
+  Future joinEvent(String eventCode) async {
     try {
       if (widget.event.code! == eventCode) {
         AwesomeDialog(
@@ -347,7 +428,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   dialogType: DialogType.SUCCES,
                   animType: AnimType.RIGHSLIDE,
                   headerAnimationLoop: true,
-                  title: "Etkinliğe Katılma İşlemi Tamamlandı",
+                  title: "Etkinliğe Katılma İşlemi Tamamlandı ✔",
                   desc: "Etkinliğe başarılı bir şekilde katılındı.",
                   btnOkOnPress: () {},
                   btnOkText: "Tamam",

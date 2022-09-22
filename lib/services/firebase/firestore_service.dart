@@ -56,6 +56,16 @@ class FirestoreService {
     }
   }
 
+  Future<bool> updateUser(String id, Map<String, dynamic> userMap) async {
+    try {
+      await usersRef.doc(id).update(userMap);
+      return true;
+    } catch (e) {
+      printError("updateUser", e);
+      rethrow;
+    }
+  }
+
   Future<List<String>> getBadgeNames() async {
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
         await _firestore.collection("Badges").get();
