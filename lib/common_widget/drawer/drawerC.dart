@@ -22,7 +22,7 @@ class DrawerC extends StatefulWidget {
 }
 
 class _DrawerCState extends State<DrawerC> {
-  String name = " ", surname = " ", mail = "";
+  String name = "", surname = "", mail = "", token = "";
 
   bool admin = false;
 
@@ -35,6 +35,19 @@ class _DrawerCState extends State<DrawerC> {
   void initState() {
     super.initState();
     currentUser();
+  }
+
+  Future currentUser() async {
+    UserC? userC = Provider.of<UserModel>(context, listen: false).user;
+    if (userC != null) {
+      setState(() {
+        name = userC.name!;
+        surname = userC.surname!;
+        mail = userC.mail!;
+        admin = userC.admin!;
+        token = userC.token!.toString();
+      });
+    }
   }
 
   @override
@@ -75,13 +88,10 @@ class _DrawerCState extends State<DrawerC> {
                               name + " " + surname,
                               style: const TextStyle(fontSize: 16),
                             ),
-                            GestureDetector(
-                              child: const Text(
-                                "100 MvRG Token    🔄",
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.red),
-                              ),
-                              onTap: () {},
+                            Text(
+                              "$token MvRG Token",
+                              style: const TextStyle(
+                                  fontSize: 16, color: Colors.red),
                             )
                           ],
                         ),
@@ -145,18 +155,6 @@ class _DrawerCState extends State<DrawerC> {
         ),
       ),
     );
-  }
-
-  Future currentUser() async {
-    UserC? userC = Provider.of<UserModel>(context, listen: false).user;
-    if (userC != null) {
-      setState(() {
-        name = userC.name!;
-        surname = userC.surname!;
-        mail = userC.mail!;
-        admin = userC.admin!;
-      });
-    }
   }
 
   Widget buildListTile(String title, Widget page) {
