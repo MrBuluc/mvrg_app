@@ -198,11 +198,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
       UserModel userModel = Provider.of<UserModel>(context, listen: false);
       try {
-        UserC? userC = await userModel.createUserWithEmailandPassword(
-            nameController.text,
-            surnameController.text,
-            mailController.text,
-            passwordController.text);
+        UserC? userC = await userModel.createUserWithEmailandPassword(UserC(
+            mail: mailController.text,
+            password: passwordController.text,
+            name: nameController.text,
+            surname: surnameController.text));
         if (userC != null) {
           Navigator.pop(context);
           AwesomeDialog(

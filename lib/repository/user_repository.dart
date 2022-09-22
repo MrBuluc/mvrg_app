@@ -25,16 +25,15 @@ class UserRepository implements AuthBase {
   final HttpService _httpService = locator<HttpService>();
 
   @override
-  Future<UserC?> createUserWithEmailandPassword(
-      String name, String surname, String mail, String password) async {
-    UserC userC = await _firebaseAuthService.createUserWithEmailandPassword(
-        name, surname, mail, password);
+  Future<UserC?> createUserWithEmailandPassword(UserC newUser) async {
+    UserC userC =
+        await _firebaseAuthService.createUserWithEmailandPassword(newUser);
 
     bool sonuc = await _firestoreService.setUser(userC);
 
     if (sonuc) {
       userC = await _firestoreService.readUser(userC.id!);
-      userC.password = password;
+      userC.password = newUser.password;
       return userC;
     } else {
       return null;

@@ -16,8 +16,8 @@ class FirestoreService {
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
-        fromFirestore: (snapshot, _) => UserC.fromJson(snapshot.data()!),
-        toFirestore: (userC, _) => userC.toJson());
+        fromFirestore: (snapshot, _) => UserC.fromFirestore(snapshot.data()!),
+        toFirestore: (userC, _) => userC.toFirestore());
     badgesRef = _firestore.collection("Badges").withConverter<Badge>(
         fromFirestore: (snapshot, _) => Badge.fromJson(snapshot.data()!),
         toFirestore: (badge, _) => badge.toJson());
