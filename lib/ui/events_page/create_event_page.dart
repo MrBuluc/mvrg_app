@@ -31,8 +31,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   TextEditingController locationCnt = TextEditingController();
   TextEditingController priceCnt = TextEditingController();
 
-  bool? award = false;
-  bool isProgress = false;
+  bool award = false, isProgress = false;
 
   File? image;
 
@@ -153,7 +152,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               children: [
                                 GestureDetector(
                                   child: Text(
-                                    "Token verilecek mi?",
+                                    "VIP etkinlik mi?",
                                     style: textFormFieldHintStyle.copyWith(
                                         fontSize: 15),
                                   ),
@@ -163,12 +162,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                             dialogType: DialogType.INFO,
                                             animType: AnimType.RIGHSLIDE,
                                             headerAnimationLoop: false,
-                                            title: "Token Hediye Etmek Nedir?",
-                                            desc: "Checkbox'u işaretlerseniz "
-                                                "etkinliğin katılımcılarına token "
-                                                "hediye edilir. Checkbox'u boş "
-                                                "bırakırsanız etkinliğin "
-                                                "katılımcılarından token alınır.",
+                                            title: "VIP Etkinlik Nedir?",
+                                            desc: "VIP Etkinliklerde etkinliğe "
+                                                "katılanlardan aşağıda "
+                                                "belirlediğiniz token miktarı "
+                                                "kadar MvRG Token alınır. VIP "
+                                                "Etkinlik olmayan etkinliklerde "
+                                                "etkinliğe katılanlara "
+                                                "belilediğiniz token miktarı "
+                                                "kadar MvRG Token verilir.",
                                             btnOkOnPress: () {},
                                             btnOkText: "Tamam",
                                             btnOkColor: Colors.blue)
@@ -178,7 +180,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 Checkbox(
                                   value: award,
                                   onChanged: (bool? value) => setState(() {
-                                    award = value;
+                                    award = value!;
                                   }),
                                 )
                               ],
@@ -271,7 +273,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               title: titleCnt.text,
               location: locationCnt.text,
               imageUrl: imageUrl,
-              award: award,
+              award: !award,
               tokenPrice: int.parse(priceCnt.text),
               code: await getCode()));
 
