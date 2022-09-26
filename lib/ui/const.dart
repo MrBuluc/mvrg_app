@@ -125,6 +125,7 @@ Color newBadgeAndEventColor = const Color.fromRGBO(30, 227, 167, 1);
 Color detailsColor = const Color.fromRGBO(151, 175, 255, 1);
 Color detailsColor2 = const Color.fromRGBO(213, 217, 255, 1);
 Color qrColor = const Color.fromRGBO(242, 210, 242, 1);
+Color tokenAppBarBgColor = const Color.fromRGBO(225, 158, 152, 1);
 
 Decoration gradient = const BoxDecoration(
     gradient: LinearGradient(

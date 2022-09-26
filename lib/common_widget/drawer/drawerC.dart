@@ -6,6 +6,7 @@ import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/ui/login/login_page.dart';
 import 'package:mvrg_app/ui/my_haves/my_badges.dart';
 import 'package:mvrg_app/ui/profil/user_detail_page.dart';
+import 'package:mvrg_app/ui/token_transfer_page/token_transfer_page.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
@@ -108,6 +109,8 @@ class _DrawerCState extends State<DrawerC> {
                         Icons.event, "Etkinliklerim", const MyEvents()),
                     buildListTileWithIcon(
                         Icons.badge, "Rozetlerim", const MyBadges()),
+                    buildListTileWithIcon(Icons.currency_exchange,
+                        "MvRG Token İşlemleri", const TokenTransferPage()),
                     divider,
                     ExpansionTile(
                       leading: const Icon(Icons.account_box),

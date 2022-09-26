@@ -56,4 +56,12 @@ class Validator {
       return null;
     }
   }
+
+  static String? checkPrice(String? value) {
+    if (int.tryParse(value!) != null) {
+      return null;
+    } else {
+      return "Lütfen token mikarını belirtecek bir sayı giriniz";
+    }
+  }
 }

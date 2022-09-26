@@ -33,4 +33,10 @@ class UserC {
         if (admin != null) "admin": admin,
         if (token != null) "token": token
       };
+
+  @override
+  String toString() {
+    return 'UserC{id: $id, mail: $mail, name: $name, surname: $surname, admin: '
+        '$admin, password: $password, token: $token}';
+  }
 }

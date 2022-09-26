@@ -4,6 +4,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mvrg_app/common_widget/back_and_save.dart';
+import 'package:mvrg_app/common_widget/form/form_c.dart';
 import 'package:mvrg_app/common_widget/header/header.dart';
 import 'package:mvrg_app/common_widget/image_file.dart';
 import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
@@ -75,23 +76,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
               text: "Yeni Etkinlik Oluştur",
               columnBottomPadding: size.width * .1,
             ),
-            Positioned(
-              top: size.height * .23,
-              right: size.width * .1,
-              left: size.width * .1,
-              child: Container(
+            FormC(
+                top: size.height * .23,
                 height: size.height * .7,
                 width: size.width * .6,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withOpacity(.2),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3))
-                    ]),
+                formKey: formKey,
                 child: Form(
                   key: formKey,
                   child: Padding(
@@ -170,7 +159,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             controller: priceCnt,
                             iconData: Icons.attach_money,
                             hintText: "Token Miktarı",
-                            validator: checkPrice,
+                            validator: Validator.checkPrice,
                             textInputType: TextInputType.number,
                           ),
                           SizedBox(
@@ -183,20 +172,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       ),
                     ),
                   ),
-                ),
-              ),
-            )
+                ))
           ],
         ),
       );
-
-  String? checkPrice(String? value) {
-    if (int.tryParse(value!) != null) {
-      return null;
-    } else {
-      return "Lütfen token mikarını belirtecek bir sayı giriniz";
-    }
-  }
 
   Widget buildImageFileChild() {
     if (image == null) {
