@@ -1,6 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mvrg_app/app/exceptions.dart';
@@ -441,6 +440,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 btnOkText: "Tamam",
                 btnOkColor: Colors.blue)
             .show();
+        await returnToken();
       } else {
         Navigator.pop(context);
         AwesomeDialog(
@@ -455,6 +455,37 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 btnOkColor: Colors.blue)
             .show();
       }
+    } catch (e) {
+      Navigator.pop(context);
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
+  }
+
+  Future returnToken() async {
+    UserModel userModel = Provider.of<UserModel>(context, listen: false);
+    UserC userC = userModel.user!;
+
+    bool award = widget.event.award!;
+    int tokenPrice = widget.event.tokenPrice!;
+
+    if (award) {
+      userC.token = userC.token! - tokenPrice;
+    } else {
+      userC.token = userC.token! + tokenPrice;
+    }
+
+    try {
+      await userModel.updateUserStore(userC);
     } catch (e) {
       Navigator.pop(context);
       AwesomeDialog(
