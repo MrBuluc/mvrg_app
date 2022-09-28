@@ -320,6 +320,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<String> getTokenBalance(String address) async {
+    try {
+      return await _userRepository.getTokenBalance(address);
+    } catch (e) {
+      printError("getBalance", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:mvrg_app/common_widget/form/icon_button_with_progress.dart';
 import 'package:mvrg_app/common_widget/header/header_with_row.dart';
@@ -6,6 +7,8 @@ import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/exceptions.dart';
 
 class TokenTransferPage extends StatefulWidget {
   const TokenTransferPage({Key? key}) : super(key: key);
@@ -186,7 +189,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
       );
 
   String? checkAddress(String? value) {
-    RegExp regExp = RegExp("/^0x[a-fA-F0-9]{40}\$/g");
+    RegExp regExp = RegExp("^0x[a-fA-F0-9]{40}\$");
     if (!regExp.hasMatch(value!)) {
       return "Lütfen geçerli bir Ethereum Cüzdan Adresi "
           "giriniz";
@@ -235,7 +238,51 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
         ),
       );
 
-  Future checkBalance() async {}
+  Future checkBalance() async {
+    countCnt.text = "0";
+    setState(() {
+      isProgress = true;
+    });
 
-  Future transferToken() async {}
+    if (formKey.currentState!.validate()) {
+      try {
+        String newBalance = await Provider.of<UserModel>(context, listen: false)
+            .getTokenBalance(addressCnt.text);
+        setState(() {
+          balanceStr = newBalance;
+          isProgress = false;
+        });
+      } catch (e) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.WARNING,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Token Miktarı Kontrol HATA",
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+
+        setState(() {
+          isProgress = false;
+        });
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:
+              const Text("Lütfen İstenilen Değerleri Doğru ve Tam Giriniz..."),
+          duration: const Duration(seconds: 2),
+          backgroundColor: colorTwo));
+
+      setState(() {
+        isProgress = false;
+      });
+    }
+  }
+
+  Future transferToken() async {
+    //ToDo count un 0 olmasını kontrol et
+  }
 }

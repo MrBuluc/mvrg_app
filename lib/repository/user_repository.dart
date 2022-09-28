@@ -15,6 +15,7 @@ import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/events/event.dart';
 import '../model/events/event_participant.dart';
+import '../services/token_service.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
@@ -23,6 +24,7 @@ class UserRepository implements AuthBase {
   final FirebaseStorageService _firebaseStorageService =
       locator<FirebaseStorageService>();
   final HttpService _httpService = locator<HttpService>();
+  final TokenService _tokenService = locator<TokenService>();
 
   @override
   Future<UserC?> createUserWithEmailandPassword(UserC newUser) async {
@@ -242,6 +244,10 @@ class UserRepository implements AuthBase {
           badgeImageUrl: badges.elementAt(i).imageUrl));
     }
     return holders;
+  }
+
+  Future<String> getTokenBalance(String address) async {
+    return await _tokenService.getTokenBalance(address);
   }
 
   @override
