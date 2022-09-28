@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/common_widget/form/form_c.dart';
 import 'package:mvrg_app/common_widget/form/icon_button_with_progress.dart';
 import 'package:mvrg_app/common_widget/header/header_with_row.dart';
 import 'package:mvrg_app/common_widget/text_form_fieldC.dart';
@@ -19,13 +18,15 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
   late Size size;
 
   TextEditingController addressCnt = TextEditingController();
-  TextEditingController countCnt = TextEditingController();
+  TextEditingController countCnt = TextEditingController(text: "0");
 
   bool isProgress = false;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   int? token;
+
+  String balanceStr = "0";
 
   @override
   void initState() {
@@ -70,7 +71,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 buildWalletWidget(token!.toString(), "Mevcut Token"),
-                buildWalletWidget("800", "Cüzdanınızda Bulunan Token")
+                buildWalletWidget(balanceStr, "Cüzdanınızda Bulunan Token")
               ],
             ),
             SizedBox(
@@ -84,13 +85,13 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
     );
   }
 
-  Widget buildWalletWidget(String countStr, String text) => Container(
+  Widget buildWalletWidget(String countStr, String text) => SizedBox(
         height: 90,
         width: size.width / 2 - 10,
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(15)),
                 gradient: LinearGradient(
                     begin: Alignment.centerLeft,
@@ -111,7 +112,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
+                SizedBox(
                   height: 80,
                   child: Center(
                     child: ListView(
@@ -119,7 +120,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                         Text(
                           countStr,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Color.fromRGBO(253, 211, 4, 1),
                               fontWeight: FontWeight.bold,
                               fontSize: 30),
@@ -127,7 +128,8 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                         Text(
                           text,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 16),
                         )
                       ],
                     ),
@@ -139,39 +141,49 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
         ),
       );
 
-  Widget buildTextForms() => FormC(
-      top: size.height * .23,
-      height: size.height * .25,
-      width: size.width * .8,
-      formKey: formKey,
-      child: Form(
-        key: formKey,
-        child: Padding(
-          padding: EdgeInsets.only(top: size.width * .05, right: 25, left: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormFieldC(
+  Widget buildTextForms() => Container(
+        height: size.height * .3,
+        width: size.width * .8,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(.2),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3))
+            ]),
+        child: Form(
+          key: formKey,
+          child: Padding(
+            padding:
+                EdgeInsets.only(top: size.width * .05, right: 25, left: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormFieldC(
+                    styleColor: Colors.grey,
+                    controller: addressCnt,
+                    iconData: Icons.account_balance_wallet,
+                    hintText: "Cüzdan Adresiniz",
+                    validator: checkAddress),
+                SizedBox(
+                  height: size.height * .03,
+                ),
+                TextFormFieldC(
                   styleColor: Colors.grey,
-                  controller: addressCnt,
-                  iconData: Icons.account_balance_wallet,
-                  hintText: "Cüzdan Adresiniz",
-                  validator: checkAddress),
-              SizedBox(
-                height: size.height * .03,
-              ),
-              TextFormFieldC(
-                styleColor: Colors.grey,
-                controller: countCnt,
-                iconData: Icons.attach_money,
-                hintText: "Çekmek İstediğiniz Miktar",
-                validator: Validator.checkPrice,
-                textInputType: TextInputType.number,
-              )
-            ],
+                  controller: countCnt,
+                  iconData: Icons.attach_money,
+                  hintText: "Çekmek İstediğiniz Miktar",
+                  validator: Validator.checkPrice,
+                  textInputType: TextInputType.number,
+                )
+              ],
+            ),
           ),
         ),
-      ));
+      );
 
   String? checkAddress(String? value) {
     RegExp regExp = RegExp("/^0x[a-fA-F0-9]{40}\$/g");

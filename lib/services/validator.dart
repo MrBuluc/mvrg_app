@@ -59,7 +59,7 @@ class Validator {
 
   static String? checkPrice(String? value) {
     if (int.tryParse(value!) != null) {
-      if (int.parse(value) <= 0) {
+      if (int.parse(value) < 0) {
         return "Lütfen 0 dan büyük bir değer giriniz";
       }
       return null;
