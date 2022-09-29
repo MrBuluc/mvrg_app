@@ -250,6 +250,10 @@ class UserRepository implements AuthBase {
     return await _tokenService.getTokenBalance(address);
   }
 
+  Future<String> sendToken(String receiverAddress, int value) async {
+    return await _tokenService.sendToken(receiverAddress, BigInt.from(value));
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();

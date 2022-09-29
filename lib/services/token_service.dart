@@ -4,7 +4,7 @@ import 'package:mvrg_app/services/secret.dart';
 import 'package:web3dart/web3dart.dart';
 
 class TokenService {
-  final blockchainUrl = Secret.blockchainUrl;
+  final String blockchainUrl = Secret.blockchainUrl;
 
   late Client httpClient;
 
@@ -33,5 +33,22 @@ class TokenService {
 
     return DeployedContract(ContractAbi.fromJson(abiFile, "MvRGToken"),
         EthereumAddress.fromHex(Secret.mvRGTokenAddress));
+  }
+
+  Future<String> callSetFunc(String funcName, List params) async {
+    DeployedContract contract = await getContract();
+    return await ethClient.sendTransaction(
+        EthPrivateKey.fromHex(Secret.privateAddress),
+        Transaction.callContract(
+            contract: contract,
+            function: contract.function(funcName),
+            parameters: params,
+            maxGas: 100000),
+        chainId: 4);
+  }
+
+  Future<String> sendToken(String receiverAddress, BigInt value) async {
+    return await callSetFunc(
+        "transfer", [EthereumAddress.fromHex(receiverAddress), value]);
   }
 }

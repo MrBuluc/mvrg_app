@@ -329,6 +329,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<String> sendToken(String receiverAddress, int value) async {
+    try {
+      return await _userRepository.sendToken(receiverAddress, value);
+    } catch (e) {
+      printError("sendToken", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

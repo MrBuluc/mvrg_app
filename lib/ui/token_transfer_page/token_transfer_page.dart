@@ -7,8 +7,10 @@ import 'package:mvrg_app/services/validator.dart';
 import 'package:mvrg_app/ui/const.dart';
 import 'package:mvrg_app/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../app/exceptions.dart';
+import '../../model/userC.dart';
 
 class TokenTransferPage extends StatefulWidget {
   const TokenTransferPage({Key? key}) : super(key: key);
@@ -21,7 +23,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
   late Size size;
 
   TextEditingController addressCnt = TextEditingController();
-  TextEditingController countCnt = TextEditingController(text: "0");
+  TextEditingController valueCnt = TextEditingController(text: "0");
 
   bool isProgress = false;
 
@@ -176,7 +178,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                 ),
                 TextFormFieldC(
                   styleColor: Colors.grey,
-                  controller: countCnt,
+                  controller: valueCnt,
                   iconData: Icons.attach_money,
                   hintText: "Çekmek İstediğiniz Miktar",
                   validator: Validator.checkPrice,
@@ -239,7 +241,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
       );
 
   Future checkBalance() async {
-    countCnt.text = "0";
+    valueCnt.text = "0";
     setState(() {
       isProgress = true;
     });
@@ -283,6 +285,126 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
   }
 
   Future transferToken() async {
-    //ToDo count un 0 olmasını kontrol et
+    setState(() {
+      isProgress = true;
+    });
+
+    if (formKey.currentState!.validate()) {
+      try {
+        if (valueCnt.text != "0") {
+          int value = int.parse(valueCnt.text);
+          if (value <= token!) {
+            UserModel userModel =
+                Provider.of<UserModel>(context, listen: false);
+            UserC userC = userModel.user!;
+
+            String transactionHash =
+                    await userModel.sendToken(addressCnt.text, value),
+                etherscanUrl =
+                    "https://rinkeby.etherscan.io/tx/$transactionHash";
+
+            userC.token = userC.token! - value;
+            bool result = await userModel.updateUserStore(userC);
+            if (result) {
+              if (await canLaunchUrlString(etherscanUrl)) {
+                AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.SUCCES,
+                        animType: AnimType.RIGHSLIDE,
+                        headerAnimationLoop: true,
+                        title: "MvRG Token Transfer Edildi ✔",
+                        desc: "$value MvRG Token başarıyla transfer edildi. "
+                            "İsterseniz tamam butonuna basarak transactionın "
+                            "etherscan adresine gidebilirsiniz.",
+                        btnOkOnPress: () async {
+                          await launchUrlString(etherscanUrl);
+                        },
+                        btnOkText: "Tamam",
+                        btnOkColor: Colors.blue)
+                    .show();
+              } else {
+                AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.SUCCES,
+                        animType: AnimType.RIGHSLIDE,
+                        headerAnimationLoop: true,
+                        title: "MvRG Token Transfer Edildi ✔",
+                        desc: "$value MvRG Token başarıyla transfer edildi.",
+                        btnOkOnPress: () {},
+                        btnOkText: "Tamam",
+                        btnOkColor: Colors.blue)
+                    .show();
+              }
+
+              setState(() {
+                isProgress = false;
+                token = token! - value;
+              });
+            }
+          } else {
+            AwesomeDialog(
+                    context: context,
+                    dialogType: DialogType.WARNING,
+                    animType: AnimType.RIGHSLIDE,
+                    headerAnimationLoop: true,
+                    title: "Transfer Etme HATA",
+                    desc: "Transfer etmek istediğiniz $value MvRG Tokena sahip "
+                        "değilsiniz. Lütfen sahip olduğunuz MvRG Token "
+                        "miktarına eşit veya miktarından küçük bir değer "
+                        "giriniz.",
+                    btnOkOnPress: () {},
+                    btnOkText: "Tamam",
+                    btnOkColor: Colors.blue)
+                .show();
+
+            setState(() {
+              isProgress = false;
+            });
+          }
+        } else {
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.WARNING,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: "Transfer Etme HATA",
+                  desc: "Lütfen 0 dan büyük bir MvRG Token miktarı giriniz.",
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+
+          setState(() {
+            isProgress = false;
+          });
+        }
+      } catch (e) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Transfer Etme HATA",
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+
+        setState(() {
+          isProgress = false;
+        });
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content:
+              const Text("Lütfen İstenilen Değerleri Doğru ve Tam Giriniz..."),
+          duration: const Duration(seconds: 2),
+          backgroundColor: colorTwo));
+
+      setState(() {
+        isProgress = false;
+      });
+    }
   }
 }
