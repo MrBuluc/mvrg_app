@@ -25,7 +25,7 @@ class DrawerC extends StatefulWidget {
 class _DrawerCState extends State<DrawerC> {
   String name = "", surname = "", mail = "", token = "";
 
-  bool admin = false;
+  bool admin = false, labAcik = false;
 
   Divider divider = const Divider(
     height: 1,
@@ -36,6 +36,7 @@ class _DrawerCState extends State<DrawerC> {
   void initState() {
     super.initState();
     currentUser();
+    labAcikMi();
   }
 
   Future currentUser() async {
@@ -49,6 +50,14 @@ class _DrawerCState extends State<DrawerC> {
         token = userC.token!.toString();
       });
     }
+  }
+
+  Future labAcikMi() async {
+    bool labAcikLocal =
+        await Provider.of<UserModel>(context, listen: false).labAcikMi();
+    setState(() {
+      labAcik = labAcikLocal;
+    });
   }
 
   @override
@@ -106,11 +115,31 @@ class _DrawerCState extends State<DrawerC> {
                 child: Column(
                   children: [
                     buildListTileWithIcon(
-                        Icons.event, "Etkinliklerim", const MyEvents()),
+                        Icons.event,
+                        "Etkinliklerim",
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyEvents()))),
                     buildListTileWithIcon(
-                        Icons.badge, "Rozetlerim", const MyBadges()),
-                    buildListTileWithIcon(Icons.currency_exchange,
-                        "MvRG Token İşlemleri", const TokenTransferPage()),
+                        Icons.badge,
+                        "Rozetlerim",
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MyBadges()))),
+                    buildListTileWithIcon(
+                        Icons.currency_exchange,
+                        "MvRG Token İşlemleri",
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const TokenTransferPage()))),
+                    buildListTileWithIcon(
+                        labAcik ? Icons.lock_open : Icons.lock,
+                        "Metaverse Lab Açık Mı?",
+                        labAcikMiSnackBar),
                     divider,
                     ExpansionTile(
                       leading: const Icon(Icons.account_box),
@@ -124,8 +153,14 @@ class _DrawerCState extends State<DrawerC> {
                       ],
                     ),
                     if (admin)
-                      buildListTileWithIcon(Icons.badge_outlined,
-                          "Yeni Rozet Ekle", const CreateAndUpdateBadgePage()),
+                      buildListTileWithIcon(
+                          Icons.badge_outlined,
+                          "Yeni Rozet Ekle",
+                          () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const CreateAndUpdateBadgePage()))),
                     divider,
                     Row(
                       children: [
@@ -160,6 +195,27 @@ class _DrawerCState extends State<DrawerC> {
     );
   }
 
+  Widget buildListTileWithIcon(
+          IconData iconData, String title, void Function()? onTap) =>
+      ListTile(
+        leading: Icon(iconData),
+        title: Text(title),
+        onTap: onTap,
+      );
+
+  labAcikMiSnackBar() {
+    String mesaj = "Metaverse Laboratuvarı ";
+    if (labAcik) {
+      mesaj += "Açık ✅";
+    } else {
+      mesaj += "Kapalı ❌";
+    }
+
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(mesaj), duration: const Duration(seconds: 2)));
+  }
+
   Widget buildListTile(String title, Widget page) {
     return ListTile(
       title: Text(title),
@@ -169,16 +225,6 @@ class _DrawerCState extends State<DrawerC> {
       },
     );
   }
-
-  Widget buildListTileWithIcon(IconData iconData, String title, Widget page) =>
-      ListTile(
-        leading: Icon(iconData),
-        title: Text(title),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => page));
-        },
-      );
 
   Future areYouSureForSignOut() async {
     AwesomeDialog(

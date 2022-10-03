@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
+import 'package:mvrg_app/model/lab_open.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 import '../../model/badges/badgeHolder.dart';
@@ -12,7 +13,8 @@ class FirestoreService {
       badgesRef,
       badgeHolderRef,
       eventsRef,
-      eventParticipantRef;
+      eventParticipantRef,
+      labOpenRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -37,6 +39,9 @@ class FirestoreService {
                 EventParticipant.fromFirestore(snapshot.data()!),
             toFirestore: (eventParticipant, _) =>
                 eventParticipant.toFirestore());
+    labOpenRef = _firestore.collection("LabOpen").withConverter<LabOpen>(
+        fromFirestore: (snapshot, _) => LabOpen.fromFirestore(snapshot.data()!),
+        toFirestore: (labOpen, _) => labOpen.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -363,6 +368,16 @@ class FirestoreService {
       printError("deleteEventParticipant", e);
       rethrow;
     }
+  }
+
+  Future<bool> labAcikMi() async {
+    return ((await labOpenRef
+                .orderBy("time")
+                .limit(1)
+                .get()
+                .then((snapshot) => snapshot.docs))[0]
+            .data() as LabOpen)
+        .acikMi!;
   }
 
   printError(String methodName, Object e) {

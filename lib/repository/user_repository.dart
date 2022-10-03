@@ -254,6 +254,10 @@ class UserRepository implements AuthBase {
     return await _tokenService.sendToken(receiverAddress, BigInt.from(value));
   }
 
+  Future<bool> labAcikMi() async {
+    return await _firestoreService.labAcikMi();
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();
