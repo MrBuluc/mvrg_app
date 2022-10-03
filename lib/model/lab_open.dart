@@ -7,7 +7,8 @@ class LabOpen {
 
   LabOpen({this.acikMi, this.time, this.userId});
 
-  LabOpen.fromFirestore(Map<String, dynamic> map) : this(acikMi: map["acikMi"]);
+  LabOpen.fromFirestore(Map<String, dynamic> map)
+      : this(acikMi: map["acikMi"], time: map["time"]);
 
   Map<String, dynamic> toFirestore() => {
         if (acikMi != null) "acikMi": acikMi,

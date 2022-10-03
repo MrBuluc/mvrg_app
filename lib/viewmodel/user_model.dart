@@ -347,6 +347,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> addLabOpen(bool acikMi) async {
+    try {
+      return await _userRepository.addLabOpen(acikMi, user!.id!);
+    } catch (e) {
+      printError("addLabOpen", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

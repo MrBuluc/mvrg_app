@@ -161,6 +161,9 @@ class _DrawerCState extends State<DrawerC> {
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const CreateAndUpdateBadgePage()))),
+                    if (admin)
+                      buildListTileWithIcon(Icons.door_back_door,
+                          labAcik ? "Labı Kapat" : "Labı Aç", addLabOpen),
                     divider,
                     Row(
                       children: [
@@ -224,6 +227,39 @@ class _DrawerCState extends State<DrawerC> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => page));
       },
     );
+  }
+
+  Future addLabOpen() async {
+    try {
+      bool result = await Provider.of<UserModel>(context, listen: false)
+          .addLabOpen(!labAcik);
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.SUCCES,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: result ? "Lab Açıldı ✔" : "Lab Kapandı",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+
+      setState(() {
+        labAcik = result;
+      });
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Lab Sorumlusu Eklenirken HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
   }
 
   Future areYouSureForSignOut() async {

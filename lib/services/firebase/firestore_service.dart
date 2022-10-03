@@ -372,12 +372,23 @@ class FirestoreService {
 
   Future<bool> labAcikMi() async {
     return ((await labOpenRef
-                .orderBy("time")
+                .orderBy("time", descending: true)
                 .limit(1)
                 .get()
                 .then((snapshot) => snapshot.docs))[0]
             .data() as LabOpen)
         .acikMi!;
+  }
+
+  Future<bool> addLabOpen(bool acikMi, String userId) async {
+    try {
+      await labOpenRef
+          .add(LabOpen(acikMi: acikMi, time: Timestamp.now(), userId: userId));
+      return acikMi;
+    } catch (e) {
+      printError("addLabOpen", e);
+      rethrow;
+    }
   }
 
   printError(String methodName, Object e) {
