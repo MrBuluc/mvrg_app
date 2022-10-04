@@ -258,8 +258,8 @@ class UserRepository implements AuthBase {
     return await _firestoreService.labAcikMi();
   }
 
-  Future<bool> addLabOpen(bool acikMi, String userId) async {
-    return await _firestoreService.addLabOpen(acikMi, userId);
+  Future<bool> addLabOpen(bool acikMi, String userName) async {
+    return await _firestoreService.addLabOpen(acikMi, userName);
   }
 
   @override

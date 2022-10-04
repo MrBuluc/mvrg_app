@@ -380,10 +380,10 @@ class FirestoreService {
         .acikMi!;
   }
 
-  Future<bool> addLabOpen(bool acikMi, String userId) async {
+  Future<bool> addLabOpen(bool acikMi, String userName) async {
     try {
-      await labOpenRef
-          .add(LabOpen(acikMi: acikMi, time: Timestamp.now(), userId: userId));
+      await labOpenRef.add(
+          LabOpen(acikMi: acikMi, time: Timestamp.now(), userName: userName));
       return acikMi;
     } catch (e) {
       printError("addLabOpen", e);

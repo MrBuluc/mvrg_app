@@ -3,16 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class LabOpen {
   bool? acikMi;
   Timestamp? time;
-  String? userId;
+  String? userName;
 
-  LabOpen({this.acikMi, this.time, this.userId});
+  LabOpen({this.acikMi, this.time, this.userName});
 
-  LabOpen.fromFirestore(Map<String, dynamic> map)
-      : this(acikMi: map["acikMi"], time: map["time"]);
+  LabOpen.fromFirestore(Map<String, dynamic> map) : this(acikMi: map["acikMi"]);
 
   Map<String, dynamic> toFirestore() => {
         if (acikMi != null) "acikMi": acikMi,
         if (time != null) "time": time,
-        if (userId != null) "userId": userId
+        if (userName != null) "userName": userName
       };
 }
