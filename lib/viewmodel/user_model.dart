@@ -357,6 +357,17 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> sendMessageToMvRG(bool acikMi) async {
+    try {
+      String content = "${user!.name} ${user!.surname} labı ";
+      content += acikMi ? "açtı. ✅" : "kapattı. ❌";
+      return await _userRepository.sendMessageToMvRG(content);
+    } catch (e) {
+      printError("sendMessageToMvRG", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

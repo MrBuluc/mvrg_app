@@ -6,6 +6,7 @@ import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/events/participant.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
+import 'package:mvrg_app/services/discord/webhook_service.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
 import 'package:mvrg_app/services/firebase/firebase_storage_service.dart';
 import 'package:mvrg_app/services/firebase/firestore_service.dart';
@@ -25,6 +26,7 @@ class UserRepository implements AuthBase {
       locator<FirebaseStorageService>();
   final HttpService _httpService = locator<HttpService>();
   final TokenService _tokenService = locator<TokenService>();
+  final WebhookService _webhookService = locator<WebhookService>();
 
   @override
   Future<UserC?> createUserWithEmailandPassword(UserC newUser) async {
@@ -260,6 +262,10 @@ class UserRepository implements AuthBase {
 
   Future<bool> addLabOpen(bool acikMi, String userName) async {
     return await _firestoreService.addLabOpen(acikMi, userName);
+  }
+
+  Future<bool> sendMessageToMvRG(String content) async {
+    return _webhookService.sendMessageToMvRG(content);
   }
 
   @override

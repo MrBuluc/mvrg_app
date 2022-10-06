@@ -163,7 +163,7 @@ class _DrawerCState extends State<DrawerC> {
                                       const CreateAndUpdateBadgePage()))),
                     if (admin)
                       buildListTileWithIcon(Icons.door_back_door,
-                          labAcik ? "Labı Kapat" : "Labı Aç", addLabOpen),
+                          labAcik ? "Labı Kapat" : "Labı Aç", labiAcVeyaKapat),
                     divider,
                     Row(
                       children: [
@@ -229,24 +229,10 @@ class _DrawerCState extends State<DrawerC> {
     );
   }
 
-  Future addLabOpen() async {
+  Future<bool> addLabOpen() async {
     try {
-      bool result = await Provider.of<UserModel>(context, listen: false)
+      return await Provider.of<UserModel>(context, listen: false)
           .addLabOpen(!labAcik);
-      AwesomeDialog(
-              context: context,
-              dialogType: DialogType.SUCCES,
-              animType: AnimType.RIGHSLIDE,
-              headerAnimationLoop: true,
-              title: result ? "Lab Açıldı ✔" : "Lab Kapandı",
-              btnOkOnPress: () {},
-              btnOkText: "Tamam",
-              btnOkColor: Colors.blue)
-          .show();
-
-      setState(() {
-        labAcik = result;
-      });
     } catch (e) {
       AwesomeDialog(
               context: context,
@@ -259,6 +245,53 @@ class _DrawerCState extends State<DrawerC> {
               btnOkText: "Tamam",
               btnOkColor: Colors.blue)
           .show();
+      rethrow;
+    }
+  }
+
+  Future<bool> sendMessageToMvRG() async {
+    try {
+      return await Provider.of<UserModel>(context, listen: false)
+          .sendMessageToMvRG(!labAcik);
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "MvRG Discord'a Mesaj Gönderirken HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+      return false;
+    }
+  }
+
+  Future labiAcVeyaKapat() async {
+    late bool resultAddLabOpen;
+    try {
+      resultAddLabOpen = await addLabOpen();
+    } catch (e) {
+      return;
+    }
+    bool resultSendMessageToMvRG = await sendMessageToMvRG();
+    if (resultSendMessageToMvRG) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.SUCCES,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: resultAddLabOpen ? "Lab Açıldı ✔" : "Lab Kapandı ❌",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+
+      setState(() {
+        labAcik = resultAddLabOpen;
+      });
     }
   }
 
