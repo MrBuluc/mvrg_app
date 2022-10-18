@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class EventImage extends StatelessWidget {
   final double borderRadius;
   final Object heroTag;
-  final String image;
+  final String imageUrl;
   final double? height;
   final double? width;
   const EventImage(
       {Key? key,
       required this.borderRadius,
       required this.heroTag,
-      required this.image,
+      required this.imageUrl,
       this.height,
       this.width})
       : super(key: key);
@@ -23,7 +23,7 @@ class EventImage extends StatelessWidget {
           borderRadius: BorderRadius.circular(borderRadius),
           child: FadeInImage.assetNetwork(
             placeholder: "assets/loading.gif",
-            image: image,
+            image: imageUrl,
             height: height,
             width: width,
             fit: BoxFit.cover,

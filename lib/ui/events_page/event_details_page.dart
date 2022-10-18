@@ -106,7 +106,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               child: EventImage(
                   borderRadius: 20,
                   heroTag: widget.event.title!,
-                  image: widget.event.imageUrl!),
+                  imageUrl: widget.event.imageUrl!),
             ),
           )
         ],
@@ -281,6 +281,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       if (!DeveloperSettings.test) {
         ScanResult scanResult = await BarcodeScanner.scan();
         eventCode = scanResult.rawContent;
+        if (eventCode.isEmpty) {
+          return;
+        }
       } else {
         eventCode = widget.event.code!;
       }

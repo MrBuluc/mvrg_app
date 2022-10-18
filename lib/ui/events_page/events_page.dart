@@ -153,7 +153,7 @@ class _EventsPageState extends State<EventsPage> {
               child: EventImage(
                 borderRadius: 10,
                 heroTag: event.title!,
-                image: event.imageUrl!,
+                imageUrl: event.imageUrl!,
                 height: 320,
                 width: 320,
               ),
