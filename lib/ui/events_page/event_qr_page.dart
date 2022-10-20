@@ -86,11 +86,14 @@ class _EventQrPageState extends State<EventQrPage> {
   }
 
   Widget buildCode() => Expanded(
-          child: TextFormField(
-        controller: codeCnt,
-        readOnly: true,
-        style: const TextStyle(fontSize: 18),
-        textAlign: TextAlign.center,
-        decoration: const InputDecoration(border: InputBorder.none),
+          child: Padding(
+        padding: EdgeInsets.only(left: size.width * .03),
+        child: TextFormField(
+          controller: codeCnt,
+          readOnly: true,
+          style: const TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+          decoration: const InputDecoration(border: InputBorder.none),
+        ),
       ));
 }
