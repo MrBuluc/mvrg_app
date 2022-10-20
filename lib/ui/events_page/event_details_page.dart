@@ -284,6 +284,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         if (eventCode.isEmpty) {
           return;
         }
+        bool checkResult = await checkEventCodes(eventCode);
+        if (!checkResult) {
+          return;
+        }
       } else {
         eventCode = widget.event.code!;
       }
@@ -331,6 +335,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     }
 
     await updateUserForToken(eventCode);
+  }
+
+  Future<bool> checkEventCodes(String eventCode) {
+    if (widget.event.code! != eventCode) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Etkinlik Eşleşme Hatası",
+              desc: "Etkinliğin kodu ile qr eşleşmiyor. Lütfen "
+                  "${widget.event.title!} etkinliğinin qr ını okutunuz.",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   Future updateUserForToken(String eventCode) async {
@@ -385,45 +408,30 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   Future joinEvent(String eventCode) async {
     try {
-      if (widget.event.code! == eventCode) {
-        AwesomeDialog(
-                context: context,
-                dialogType: DialogType.INFO,
-                animType: AnimType.RIGHSLIDE,
-                headerAnimationLoop: true,
-                title: "Etkinliğe Katılınıyor...",
-                desc: "Etkinliğe katılma işlemi devam ediyor lütfen bir dialog "
-                    "çıkıncaya kadar bekleyiniz.",
-                btnOkOnPress: () {},
-                btnOkText: "Tamam",
-                btnOkColor: Colors.blue)
-            .show();
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.INFO,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Etkinliğe Katılınıyor...",
+              desc: "Etkinliğe katılma işlemi devam ediyor lütfen bir dialog "
+                  "çıkıncaya kadar bekleyiniz.",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
 
-        bool result = await Provider.of<UserModel>(context, listen: false)
-            .joinEvent(eventCode);
-        if (result) {
-          Navigator.pop(context);
-          AwesomeDialog(
-                  context: context,
-                  dialogType: DialogType.SUCCES,
-                  animType: AnimType.RIGHSLIDE,
-                  headerAnimationLoop: true,
-                  title: "Etkinliğe Katılma İşlemi Tamamlandı ✔",
-                  desc: "Etkinliğe başarılı bir şekilde katılındı.",
-                  btnOkOnPress: () {},
-                  btnOkText: "Tamam",
-                  btnOkColor: Colors.blue)
-              .show();
-        }
-      } else {
+      bool result = await Provider.of<UserModel>(context, listen: false)
+          .joinEvent(eventCode);
+      if (result) {
+        Navigator.pop(context);
         AwesomeDialog(
                 context: context,
-                dialogType: DialogType.ERROR,
+                dialogType: DialogType.SUCCES,
                 animType: AnimType.RIGHSLIDE,
                 headerAnimationLoop: true,
-                title: "Etkinlik Eşleşme Hatası",
-                desc: "Etkinliğin kodu ile qr eşleşmiyor. Lütfen "
-                    "${widget.event.title!} etkinliğinin qr ını okutunuz.",
+                title: "Etkinliğe Katılma İşlemi Tamamlandı ✔",
+                desc: "Etkinliğe başarılı bir şekilde katılındı.",
                 btnOkOnPress: () {},
                 btnOkText: "Tamam",
                 btnOkColor: Colors.blue)
