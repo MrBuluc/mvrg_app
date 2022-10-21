@@ -301,7 +301,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
             String transactionHash =
                     await userModel.sendToken(addressCnt.text, value),
                 etherscanUrl =
-                    "https://rinkeby.etherscan.io/tx/$transactionHash";
+                    "https://goerli.etherscan.io/tx/$transactionHash";
 
             userC.token = userC.token! - value;
             bool result = await userModel.updateUserStore(userC);

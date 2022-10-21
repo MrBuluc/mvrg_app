@@ -44,7 +44,7 @@ class TokenService {
             function: contract.function(funcName),
             parameters: params,
             maxGas: 100000),
-        chainId: 4);
+        chainId: 5);
   }
 
   Future<String> sendToken(String receiverAddress, BigInt value) async {
