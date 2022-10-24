@@ -357,15 +357,24 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<bool> sendMessageToMvRG(bool acikMi) async {
+  Future<bool> sendMessageToMvRG(bool acikMi, int hour) async {
     try {
-      String content = "${user!.name} ${user!.surname} labı ";
-      content += acikMi ? "açtı. ✅" : "kapattı. ❌";
-      return await _userRepository.sendMessageToMvRG(content);
+      return await _userRepository.sendMessageToMvRG(getContent(acikMi, hour));
     } catch (e) {
       printError("sendMessageToMvRG", e);
       rethrow;
     }
+  }
+
+  String getContent(bool acikMi, int hour) {
+    String content =
+        "${user!.name} ${user!.surname} labı "; // Hakkıcan Bülüç labı kapattı.
+    if (acikMi) {
+      content += "$hour saatliğine açtı. ✅";
+    } else {
+      content += "kapattı. ❌";
+    }
+    return content;
   }
 
   @override

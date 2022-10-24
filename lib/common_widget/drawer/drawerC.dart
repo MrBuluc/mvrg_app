@@ -163,7 +163,7 @@ class _DrawerCState extends State<DrawerC> {
                                       const CreateAndUpdateBadgePage()))),
                     if (admin)
                       buildListTileWithIcon(Icons.door_back_door,
-                          labAcik ? "Labı Kapat" : "Labı Aç", labiAcVeyaKapat),
+                          labAcik ? "Labı Kapat" : "Labı Aç", labiAcDialog),
                     divider,
                     Row(
                       children: [
@@ -229,6 +229,96 @@ class _DrawerCState extends State<DrawerC> {
     );
   }
 
+  labiAcDialog() {
+    if (!labAcik) {
+      int selectedHour = 1;
+      AwesomeDialog(
+          context: context,
+          dialogType: DialogType.NO_HEADER,
+          animType: AnimType.RIGHSLIDE,
+          headerAnimationLoop: true,
+          body: Column(
+            children: [
+              const Text(
+                "Labı Kaç Saat Açık Tutacaksın?",
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              StatefulBuilder(
+                  builder: (context, hourDropdownButtonState) => Container(
+                        alignment: Alignment.center,
+                        child: DropdownButton<int>(
+                          focusColor: Colors.white,
+                          value: selectedHour,
+                          style: const TextStyle(color: Colors.white),
+                          iconEnabledColor: Colors.black,
+                          onChanged: (int? newValue) =>
+                              hourDropdownButtonState(() {
+                            selectedHour = newValue!;
+                          }),
+                          items: List.generate(24, (index) => ++index,
+                                  growable: false)
+                              .map<DropdownMenuItem<int>>((int itemsValue) =>
+                                  DropdownMenuItem<int>(
+                                    value: itemsValue,
+                                    child: Text(
+                                      itemsValue.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    child: const Text(
+                      "Labı Aç",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    style: TextButton.styleFrom(foregroundColor: Colors.green),
+                    onPressed: () {
+                      labiAcVeyaKapat(selectedHour);
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              )
+            ],
+          )).show();
+    } else {
+      labiAcVeyaKapat(-1);
+    }
+  }
+
+  Future labiAcVeyaKapat(int hour) async {
+    late bool resultAddLabOpen;
+    try {
+      resultAddLabOpen = await addLabOpen();
+    } catch (e) {
+      return;
+    }
+    bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
+    if (resultSendMessageToMvRG) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.SUCCES,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: resultAddLabOpen ? "Lab Açıldı ✔" : "Lab Kapandı ❌",
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+
+      setState(() {
+        labAcik = resultAddLabOpen;
+      });
+    }
+  }
+
   Future<bool> addLabOpen() async {
     try {
       return await Provider.of<UserModel>(context, listen: false)
@@ -249,10 +339,10 @@ class _DrawerCState extends State<DrawerC> {
     }
   }
 
-  Future<bool> sendMessageToMvRG() async {
+  Future<bool> sendMessageToMvRG(int hour) async {
     try {
       return await Provider.of<UserModel>(context, listen: false)
-          .sendMessageToMvRG(!labAcik);
+          .sendMessageToMvRG(!labAcik, hour);
     } catch (e) {
       AwesomeDialog(
               context: context,
@@ -266,32 +356,6 @@ class _DrawerCState extends State<DrawerC> {
               btnOkColor: Colors.blue)
           .show();
       return false;
-    }
-  }
-
-  Future labiAcVeyaKapat() async {
-    late bool resultAddLabOpen;
-    try {
-      resultAddLabOpen = await addLabOpen();
-    } catch (e) {
-      return;
-    }
-    bool resultSendMessageToMvRG = await sendMessageToMvRG();
-    if (resultSendMessageToMvRG) {
-      AwesomeDialog(
-              context: context,
-              dialogType: DialogType.SUCCES,
-              animType: AnimType.RIGHSLIDE,
-              headerAnimationLoop: true,
-              title: resultAddLabOpen ? "Lab Açıldı ✔" : "Lab Kapandı ❌",
-              btnOkOnPress: () {},
-              btnOkText: "Tamam",
-              btnOkColor: Colors.blue)
-          .show();
-
-      setState(() {
-        labAcik = resultAddLabOpen;
-      });
     }
   }
 
