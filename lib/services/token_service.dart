@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
-import 'package:mvrg_app/services/secret.dart';
 import 'package:web3dart/web3dart.dart';
 
 class TokenService {
-  final String blockchainUrl = Secret.blockchainUrl;
+  final String blockchainUrl = dotenv.env["blockchainUrl"]!;
 
   late Client httpClient;
 
@@ -32,13 +32,13 @@ class TokenService {
     String abiFile = await rootBundle.loadString("assets/mvrg_token_abi.json");
 
     return DeployedContract(ContractAbi.fromJson(abiFile, "MvRGToken"),
-        EthereumAddress.fromHex(Secret.mvRGTokenAddress));
+        EthereumAddress.fromHex(dotenv.env["mvRGTokenAddress"]!));
   }
 
   Future<String> callSetFunc(String funcName, List params) async {
     DeployedContract contract = await getContract();
     return await ethClient.sendTransaction(
-        EthPrivateKey.fromHex(Secret.privateAddress),
+        EthPrivateKey.fromHex(dotenv.env["privateAddress"]!),
         Transaction.callContract(
             contract: contract,
             function: contract.function(funcName),

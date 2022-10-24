@@ -1,12 +1,13 @@
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'package:mvrg_app/services/secret.dart';
 
 class WebhookService {
   Future<bool> sendMessageToMvRGDc(String content) async {
     String host = "discord.com",
-        path = "api/webhooks/${Secret.dcWebhookId}/${Secret.dcWebhookToken}";
+        path =
+            "api/webhooks/${dotenv.env["dcWebhookId"]}/${dotenv.env["dcWebhookToken"]}";
     Uri uri = Uri(scheme: "https", host: host, path: path);
     http.Response response = await http.post(uri, body: {"content": content});
     if (response.statusCode == 204) {
@@ -19,9 +20,9 @@ class WebhookService {
     Uri uri = Uri(
         scheme: "https",
         host: "api.telegram.org",
-        path: "bot${Secret.telegramMvRGBotToken}/sendMessage");
+        path: "bot${dotenv.env["telegramMvRGBotToken"]}/sendMessage");
     http.Response response = await http.post(uri,
-        body: {"chat_id": Secret.telegramMvRGGroupChatId, "text": text});
+        body: {"chat_id": dotenv.env["telegramMvRGGroupChatId"], "text": text});
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       return responseBody["ok"];

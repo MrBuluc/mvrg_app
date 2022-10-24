@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mvrg_app/locator.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ Future main() async {
   setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load(fileName: "assets/.env");
   runApp(const MyApp());
 }
 
