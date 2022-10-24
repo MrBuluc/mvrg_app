@@ -265,7 +265,11 @@ class UserRepository implements AuthBase {
   }
 
   Future<bool> sendMessageToMvRG(String content) async {
-    return _webhookService.sendMessageToMvRG(content);
+    bool result = await _webhookService.sendMessageToMvRGDc(content);
+    if (result) {
+      return _webhookService.sendMessageToMvRGTelegram(content);
+    }
+    return result;
   }
 
   @override
