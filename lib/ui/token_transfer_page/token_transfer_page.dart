@@ -58,7 +58,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
             HeaderWithRow(
                 containerColor: tokenAppBarBgColor,
                 text: "MvRG Token İşlemleri",
-                fontSize: 28,
+                fontSize: 22,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(top: size.height * .05),

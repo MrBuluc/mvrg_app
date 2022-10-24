@@ -324,7 +324,7 @@ class UserModel with ChangeNotifier implements AuthBase {
     try {
       return await _userRepository.getTokenBalance(address);
     } catch (e) {
-      printError("getBalance", e);
+      printError("getTokenBalance", e);
       rethrow;
     }
   }

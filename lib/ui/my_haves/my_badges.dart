@@ -37,10 +37,13 @@ class _MyBadgesState extends State<MyBadges> {
       appBar: buildAppBar("Rozetlerim"),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: buildColumnChildren(),
+          child: Padding(
+            padding: EdgeInsets.only(top: size.height * .01),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: buildColumnChildren(),
+            ),
           ),
         ),
       ),

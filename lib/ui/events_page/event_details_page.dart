@@ -79,22 +79,26 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   Widget buildBody() => Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            height: size.height * .25,
-            width: size.width * .8,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20), color: detailsColor2),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: size.width * .2,
-                ),
-                Text(
-                  "Buluşma Yeri: " + widget.event.location!,
-                  style: miniHeader2,
-                  textAlign: TextAlign.center,
-                ),
-              ],
+          Padding(
+            padding: EdgeInsets.only(top: size.height * .01),
+            child: Container(
+              height: size.height * .25,
+              width: size.width * .8,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: detailsColor2),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: size.width * .23,
+                  ),
+                  Text(
+                    "Buluşma Yeri: " + widget.event.location!,
+                    style: miniHeader2,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(
@@ -133,6 +137,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               const Text(
                 "Kimler Katılacak?",
                 style: miniHeader2,
+                textAlign: TextAlign.center,
               ), () {
             Navigator.push(
                 context,

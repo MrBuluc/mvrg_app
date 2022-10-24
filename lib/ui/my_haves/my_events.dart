@@ -126,9 +126,6 @@ class _MyEventsState extends State<MyEvents> {
                   value,
                   style: textStyle,
                 ),
-                const SizedBox(
-                  height: 20,
-                )
               ],
             ),
           ),

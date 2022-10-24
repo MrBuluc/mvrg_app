@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                       child: ElevatedButton(
                         child: Text(
                           buttonText,
-                          style: const TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 15),
                           textAlign: TextAlign.center,
                         ),
                         onPressed: () {

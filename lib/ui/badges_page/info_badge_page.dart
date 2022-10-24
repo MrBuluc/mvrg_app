@@ -87,6 +87,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
                             "kazanıldı:",
                             style: const TextStyle(
                                 fontSize: 22, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         Column(
@@ -196,7 +197,7 @@ class _InfoBadgePageState extends State<InfoBadgePage> {
         text,
         style: const TextStyle(fontSize: 18),
       ),
-      style: TextButton.styleFrom(primary: buttonColor),
+      style: TextButton.styleFrom(foregroundColor: buttonColor),
       onPressed: onPressed,
     );
   }
