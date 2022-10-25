@@ -21,8 +21,10 @@ class WebhookService {
         scheme: "https",
         host: "api.telegram.org",
         path: "bot${dotenv.env["telegramMvRGBotToken"]}/sendMessage");
-    http.Response response = await http.post(uri,
-        body: {"chat_id": dotenv.env["telegramMvRGGroupChatId"], "text": text});
+    http.Response response = await http.post(uri, body: {
+      "chat_id": dotenv.env["telegramMvRGLabDurumGroupChatId"],
+      "text": text
+    });
     if (response.statusCode == 200) {
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       return responseBody["ok"];

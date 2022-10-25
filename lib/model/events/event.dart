@@ -9,7 +9,7 @@ class Event {
   String? code;
   bool? isDeleted;
   Timestamp? deletedTime;
-  String? deleledUsedId;
+  String? deletedUsedId;
 
   Event(
       {this.title,
@@ -20,7 +20,7 @@ class Event {
       this.code,
       this.isDeleted,
       this.deletedTime,
-      this.deleledUsedId});
+      this.deletedUsedId});
 
   Event.fromFirestore(Map<String, dynamic> map)
       : this(
@@ -41,6 +41,6 @@ class Event {
         if (code != null) "code": code,
         if (isDeleted != null) "isDeleted": isDeleted,
         if (deletedTime != null) "deletedTime": deletedTime,
-        if (deleledUsedId != null) "deleledUsedId": deleledUsedId
+        if (deletedUsedId != null) "deletedUsedId": deletedUsedId
       };
 }
