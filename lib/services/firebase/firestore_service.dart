@@ -251,6 +251,20 @@ class FirestoreService {
     return events;
   }
 
+  Future<bool> markEventForDelete(String title, String deletedUserId) async {
+    try {
+      await eventsRef.doc(title).update({
+        "isDeleted": true,
+        "deletedTime": Timestamp.now(),
+        "deleledUsedId": deletedUserId
+      });
+      return true;
+    } catch (e) {
+      printError("markEventForDelete", e);
+      rethrow;
+    }
+  }
+
   Future<bool> addEventParticipant(EventParticipant eventParticipant) async {
     try {
       String docId = (await eventParticipantRef.add(eventParticipant)).id;

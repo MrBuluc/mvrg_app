@@ -211,6 +211,10 @@ class UserRepository implements AuthBase {
     }
   }
 
+  Future<bool> markEventForDelete(String title, String deletedUserId) async {
+    return await _firestoreService.markEventForDelete(title, deletedUserId);
+  }
+
   Future<List<List<String>>> getMyEvents(String userId) async {
     List<String> isParticipantEvents = [], isNotParticipantEvents = [];
     List<EventParticipant> eventParticipants =

@@ -19,8 +19,10 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   late Size size;
 
-  Stream<QuerySnapshot> eventsStream =
-      FirebaseFirestore.instance.collection("Events").snapshots();
+  Stream<QuerySnapshot> eventsStream = FirebaseFirestore.instance
+      .collection("Events")
+      .where("isDeleted", isEqualTo: false)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {

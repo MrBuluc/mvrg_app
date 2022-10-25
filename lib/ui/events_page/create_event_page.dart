@@ -233,7 +233,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
               imageUrl: imageUrl,
               award: !award,
               tokenPrice: int.parse(priceCnt.text),
-              code: await getCode()));
+              code: await getCode(),
+              isDeleted: false));
 
           if (result) {
             AwesomeDialog(

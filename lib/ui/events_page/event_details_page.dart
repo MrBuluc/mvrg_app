@@ -257,7 +257,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   MaterialPageRoute(
                       builder: (context) =>
                           EventQrPage(data: widget.event.code!)));
-            })
+            }),
+          if (admin)
+            buildIconButton(Icons.delete, 35, sureForMarkEventForDelete)
         ],
       ),
     );
@@ -510,6 +512,57 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               animType: AnimType.RIGHSLIDE,
               headerAnimationLoop: true,
               title: "HATA",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
+    }
+  }
+
+  Future sureForMarkEventForDelete() async {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.INFO,
+      borderSide: const BorderSide(color: Colors.green, width: 2),
+      headerAnimationLoop: false,
+      animType: AnimType.BOTTOMSLIDE,
+      title: 'Emin Misin?',
+      desc: "${widget.event.title} etkinliğini bitirmek istediğine emin misin?",
+      btnCancelText: "Vazgeç",
+      btnCancelOnPress: () {},
+      btnOkText: "Evet",
+      btnOkOnPress: () {
+        markEventForDelete();
+      },
+    ).show();
+  }
+
+  Future markEventForDelete() async {
+    try {
+      bool result = await Provider.of<UserModel>(context, listen: false)
+          .markEventForDelete(widget.event.title!);
+      if (result) {
+        AwesomeDialog(
+          context: context,
+          dialogType: DialogType.SUCCES,
+          animType: AnimType.BOTTOMSLIDE,
+          title: 'Etkinliği Bitirme Başarıyla Gerçekleştirildi 👍',
+          desc: 'MvRG App\'ı tercih ettiğiniz için teşekkür ederiz 🤟',
+          btnOkText: "Tamam",
+          btnOkColor: Colors.blue,
+          btnOkOnPress: () {
+            Navigator.pop(context);
+          },
+        ).show();
+      }
+    } catch (e) {
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.WARNING,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: 'Oturum Kapatılırken HATA',
               desc: Exceptions.goster(e.toString()),
               btnOkOnPress: () {},
               btnOkText: "Tamam",
