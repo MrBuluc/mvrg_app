@@ -29,7 +29,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  int? token;
+  int? token, beforeToken;
 
   String balanceStr = "0";
 
@@ -43,6 +43,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
     setState(() {
       token = Provider.of<UserModel>(context, listen: false).user!.token!;
     });
+    beforeToken = token;
   }
 
   @override
@@ -338,9 +339,13 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
 
               await checkBalance();
 
+              token = token! - value;
+              await userModel.addTokenTransaction(
+                  beforeToken!, token!, addressCnt.text, value);
+              beforeToken = token;
+
               setState(() {
                 isProgress = false;
-                token = token! - value;
               });
             }
           } else {

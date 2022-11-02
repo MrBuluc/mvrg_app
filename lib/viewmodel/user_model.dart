@@ -386,6 +386,17 @@ class UserModel with ChangeNotifier implements AuthBase {
     return content;
   }
 
+  Future<bool> addTokenTransaction(int beforeToken, int afterToken,
+      String walletAdd, int transferToken) async {
+    try {
+      return await _userRepository.addTokenTransaction(
+          _user!.id!, beforeToken, afterToken, walletAdd, transferToken);
+    } catch (e) {
+      printError("addTokenTransaction", e);
+      rethrow;
+    }
+  }
+
   @override
   Future<bool> signOut() async {
     try {

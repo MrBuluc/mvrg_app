@@ -276,6 +276,12 @@ class UserRepository implements AuthBase {
     return result;
   }
 
+  Future<bool> addTokenTransaction(String userId, int beforeToken,
+      int afterToken, String walletAdd, int transferToken) async {
+    return await _firestoreService.addTokenTransaction(
+        userId, beforeToken, afterToken, walletAdd, transferToken);
+  }
+
   @override
   Future<bool> signOut() async {
     return await _firebaseAuthService.signOut();

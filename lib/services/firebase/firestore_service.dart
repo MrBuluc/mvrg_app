@@ -3,6 +3,7 @@ import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
 import 'package:mvrg_app/model/lab_open.dart';
+import 'package:mvrg_app/model/token_transaction.dart';
 import 'package:mvrg_app/model/userC.dart';
 
 import '../../model/badges/badgeHolder.dart';
@@ -14,7 +15,8 @@ class FirestoreService {
       badgeHolderRef,
       eventsRef,
       eventParticipantRef,
-      labOpenRef;
+      labOpenRef,
+      tokenTransactionRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -42,6 +44,13 @@ class FirestoreService {
     labOpenRef = _firestore.collection("LabOpen").withConverter<LabOpen>(
         fromFirestore: (snapshot, _) => LabOpen.fromFirestore(snapshot.data()!),
         toFirestore: (labOpen, _) => labOpen.toFirestore());
+    tokenTransactionRef = _firestore
+        .collection("TokenTransaction")
+        .withConverter<TokenTransaction>(
+            fromFirestore: (snapshot, _) =>
+                TokenTransaction.fromFirestore(snapshot.data()!),
+            toFirestore: (tokenTransaction, _) =>
+                tokenTransaction.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -401,6 +410,23 @@ class FirestoreService {
       return acikMi;
     } catch (e) {
       printError("addLabOpen", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> addTokenTransaction(String userId, int beforeToken,
+      int afterToken, String walletAdd, int transferToken) async {
+    try {
+      await tokenTransactionRef.add(TokenTransaction(
+          userId: userId,
+          beforeToken: beforeToken,
+          afterToken: afterToken,
+          walletAdd: walletAdd,
+          transferToken: transferToken,
+          time: Timestamp.now()));
+      return true;
+    } catch (e) {
+      printError("addTokenTransaction", e);
       rethrow;
     }
   }
