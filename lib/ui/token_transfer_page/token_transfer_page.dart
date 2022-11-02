@@ -336,6 +336,8 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                     .show();
               }
 
+              await checkBalance();
+
               setState(() {
                 isProgress = false;
                 token = token! - value;
