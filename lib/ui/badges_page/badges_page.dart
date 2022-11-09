@@ -17,9 +17,6 @@ class BadgesPage extends StatefulWidget {
 }
 
 class _BadgesPageState extends State<BadgesPage> {
-  Stream<QuerySnapshot> badgeStream =
-      FirebaseFirestore.instance.collection("Badges").snapshots();
-
   late Size size;
 
   @override
@@ -30,7 +27,7 @@ class _BadgesPageState extends State<BadgesPage> {
       appBar: buildAppBar("Rozetler"),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
-          stream: badgeStream,
+          stream: Provider.of<UserModel>(context, listen: false).badgeStream(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
@@ -56,7 +53,7 @@ class _BadgesPageState extends State<BadgesPage> {
 
   List<Widget> buildColumn(AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
     List<Badge> badges = snapshot.data!.docs.map((DocumentSnapshot document) {
-      Badge badge = Badge.fromJson(document.data()! as Map<String, dynamic>);
+      Badge badge = document.data()! as Badge;
       badge.id = document.id;
       return badge;
     }).toList();

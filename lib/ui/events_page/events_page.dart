@@ -103,7 +103,7 @@ class _EventsPageState extends State<EventsPage> {
       );
 
   Widget buildEventsStreamBuilder() => StreamBuilder<QuerySnapshot>(
-      stream: eventsStream,
+      stream: Provider.of<UserModel>(context, listen: false).eventsStream(),
       builder: (context, snapshot) {
         int length = snapshot.data?.docs.length ?? 0;
 
@@ -128,9 +128,8 @@ class _EventsPageState extends State<EventsPage> {
 
   List<Widget> buildColumnsChildren(
       AsyncSnapshot<QuerySnapshot<Object?>> snapshot) {
-    List<Event> events = snapshot.data!.docs
-        .map((doc) => Event.fromFirestore(doc.data()! as Map<String, dynamic>))
-        .toList();
+    List<Event> events =
+        snapshot.data!.docs.map((doc) => doc.data()! as Event).toList();
 
     List<Widget> widgets = [];
     for (Event event in events) {

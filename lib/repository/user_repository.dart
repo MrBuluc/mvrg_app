@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/badges/holder.dart';
@@ -152,6 +153,8 @@ class UserRepository implements AuthBase {
     return await _firestoreService.deleteBadgeHolder(badgeHolderId);
   }
 
+  Stream<QuerySnapshot> badgeStream() => _firestoreService.badgeStream();
+
   Future<List<String>> getEventsTitles() async {
     return await _firestoreService.getEventsTitles();
   }
@@ -232,6 +235,8 @@ class UserRepository implements AuthBase {
   Future<bool> isThereAnyEventWithCode(String code) async {
     return (await _firestoreService.getEventsFromCode(code)).isNotEmpty;
   }
+
+  Stream<QuerySnapshot> eventsStream() => _firestoreService.eventsStream();
 
   Future<List<Holder>> getMyBadges(String userId) async {
     List<Holder> holders = [];

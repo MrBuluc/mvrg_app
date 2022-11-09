@@ -225,6 +225,8 @@ class FirestoreService {
     }
   }
 
+  Stream<QuerySnapshot> badgeStream() => badgesRef.snapshots();
+
   Future<List<String>> getEventsTitles() async {
     List<String> eventsTitles = [];
 
@@ -393,6 +395,11 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  Stream<QuerySnapshot> eventsStream() => eventsRef
+      .orderBy("createTime", descending: true)
+      .where("isDeleted", isEqualTo: false)
+      .snapshots();
 
   Future<bool> labAcikMi() async {
     return ((await labOpenRef

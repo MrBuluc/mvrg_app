@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
@@ -225,6 +226,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Stream<QuerySnapshot> badgeStream() {
+    try {
+      return _userRepository.badgeStream();
+    } catch (e) {
+      printError("badgeStream", e);
+      rethrow;
+    }
+  }
+
   Future<List<String>> getEventsTitles() async {
     try {
       return await _userRepository.getEventsTitles();
@@ -307,6 +317,15 @@ class UserModel with ChangeNotifier implements AuthBase {
       return await _userRepository.isThereAnyEventWithCode(code);
     } catch (e) {
       printError("isThereAnyEventWithCode", e);
+      rethrow;
+    }
+  }
+
+  Stream<QuerySnapshot> eventsStream() {
+    try {
+      return _userRepository.eventsStream();
+    } catch (e) {
+      printError("eventsStream", e);
       rethrow;
     }
   }
