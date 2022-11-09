@@ -21,6 +21,7 @@ class _EventsPageState extends State<EventsPage> {
 
   Stream<QuerySnapshot> eventsStream = FirebaseFirestore.instance
       .collection("Events")
+      .orderBy("createTime", descending: true)
       .where("isDeleted", isEqualTo: false)
       .snapshots();
 
