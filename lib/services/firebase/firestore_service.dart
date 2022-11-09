@@ -240,6 +240,7 @@ class FirestoreService {
 
   Future<bool> setEvent(Event event) async {
     try {
+      event.createTime = Timestamp.now();
       await eventsRef.doc(event.title!).set(event);
       return true;
     } catch (e) {

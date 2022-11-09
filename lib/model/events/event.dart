@@ -7,6 +7,7 @@ class Event {
   bool? award;
   int? tokenPrice;
   String? code;
+  Timestamp? createTime;
   bool? isDeleted;
   Timestamp? deletedTime;
   String? deletedUsedId;
@@ -18,6 +19,7 @@ class Event {
       this.award,
       this.tokenPrice,
       this.code,
+      this.createTime,
       this.isDeleted,
       this.deletedTime,
       this.deletedUsedId});
@@ -30,6 +32,7 @@ class Event {
             award: map["award"],
             tokenPrice: map["tokenPrice"],
             code: map["code"],
+            createTime: map["createTime"],
             isDeleted: map["isDeleted"]);
 
   Map<String, dynamic> toFirestore() => {
@@ -39,6 +42,7 @@ class Event {
         if (award != null) "award": award,
         if (tokenPrice != null) "tokenPrice": tokenPrice,
         if (code != null) "code": code,
+        if (createTime != null) "createTime": createTime,
         if (isDeleted != null) "isDeleted": isDeleted,
         if (deletedTime != null) "deletedTime": deletedTime,
         if (deletedUsedId != null) "deletedUsedId": deletedUsedId
