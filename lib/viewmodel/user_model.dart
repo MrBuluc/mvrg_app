@@ -385,7 +385,7 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<bool> sendMessageToMvRG(bool acikMi, int hour) async {
+  Future<bool> sendMessageToMvRG(bool acikMi, String hour) async {
     try {
       return await _userRepository.sendMessageToMvRG(getContent(acikMi, hour));
     } catch (e) {
@@ -394,11 +394,16 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  String getContent(bool acikMi, int hour) {
+  String getContent(bool acikMi, String hour) {
     String content =
         "${user!.name} ${user!.surname} labı "; // Hakkıcan Bülüç labı kapattı.
     if (acikMi) {
-      content += "$hour saatliğine açtı. ✅";
+      if (hour == "Belirsiz") {
+        content += "bir süreliğine";
+      } else {
+        content += "$hour saatliğine";
+      }
+      content += " açtı. ✅";
     } else {
       content += "kapattı. ❌";
     }

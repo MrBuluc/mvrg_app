@@ -1,7 +1,8 @@
 import 'package:get_it/get_it.dart';
-import 'package:mvrg_app/services/discord/webhook_service.dart';
 import 'package:mvrg_app/services/http_service.dart';
 import 'package:mvrg_app/services/token_service.dart';
+import 'package:mvrg_app/services/webhook_services/discord_webhook_service.dart';
+import 'package:mvrg_app/services/webhook_services/telegram_webhook_service.dart';
 
 import 'repository/user_repository.dart';
 import 'services/firebase/firebase_auth_service.dart';
@@ -17,5 +18,6 @@ void setupLocator() {
   locator.registerLazySingleton(() => UserRepository());
   locator.registerLazySingleton(() => HttpService());
   locator.registerLazySingleton(() => TokenService());
-  locator.registerLazySingleton(() => WebhookService());
+  locator.registerLazySingleton(() => DiscordWebhookService());
+  locator.registerLazySingleton(() => TelegramWebhookService());
 }

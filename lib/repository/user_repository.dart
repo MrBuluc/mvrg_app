@@ -7,17 +7,18 @@ import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/events/participant.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
-import 'package:mvrg_app/services/discord/webhook_service.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
 import 'package:mvrg_app/services/firebase/firebase_storage_service.dart';
 import 'package:mvrg_app/services/firebase/firestore_service.dart';
 import 'package:mvrg_app/services/http_service.dart';
+import 'package:mvrg_app/services/webhook_services/telegram_webhook_service.dart';
 
 import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/events/event.dart';
 import '../model/events/event_participant.dart';
 import '../services/token_service.dart';
+import '../services/webhook_services/discord_webhook_service.dart';
 
 class UserRepository implements AuthBase {
   final FirebaseAuthService _firebaseAuthService =
@@ -27,7 +28,10 @@ class UserRepository implements AuthBase {
       locator<FirebaseStorageService>();
   final HttpService _httpService = locator<HttpService>();
   final TokenService _tokenService = locator<TokenService>();
-  final WebhookService _webhookService = locator<WebhookService>();
+  final DiscordWebhookService _discordWebhookService =
+      locator<DiscordWebhookService>();
+  final TelegramWebhookService _telegramWebhookService =
+      locator<TelegramWebhookService>();
 
   @override
   Future<UserC?> createUserWithEmailandPassword(UserC newUser) async {
@@ -274,9 +278,9 @@ class UserRepository implements AuthBase {
   }
 
   Future<bool> sendMessageToMvRG(String content) async {
-    bool result = await _webhookService.sendMessageToMvRGDc(content);
+    bool result = await _discordWebhookService.sendMessageToMvRGDc(content);
     if (result) {
-      return _webhookService.sendMessageToMvRGTelegram(content);
+      return _telegramWebhookService.sendMessageToMvRGTelegram(content);
     }
     return result;
   }

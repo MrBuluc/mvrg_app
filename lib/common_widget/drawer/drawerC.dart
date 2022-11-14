@@ -231,7 +231,9 @@ class _DrawerCState extends State<DrawerC> {
 
   labiAcDialog() {
     if (!labAcik) {
-      int selectedHour = 1;
+      String selectedHour = "1";
+      List<String> hours = List.generate(24, (index) => "${++index}");
+      hours.add("Belirsiz");
       AwesomeDialog(
           context: context,
           dialogType: DialogType.NO_HEADER,
@@ -247,26 +249,26 @@ class _DrawerCState extends State<DrawerC> {
               StatefulBuilder(
                   builder: (context, hourDropdownButtonState) => Container(
                         alignment: Alignment.center,
-                        child: DropdownButton<int>(
+                        child: DropdownButton<String>(
                           focusColor: Colors.white,
                           value: selectedHour,
                           style: const TextStyle(color: Colors.white),
                           iconEnabledColor: Colors.black,
-                          onChanged: (int? newValue) =>
+                          onChanged: (String? newValue) =>
                               hourDropdownButtonState(() {
                             selectedHour = newValue!;
                           }),
-                          items: List.generate(24, (index) => ++index,
-                                  growable: false)
-                              .map<DropdownMenuItem<int>>((int itemsValue) =>
-                                  DropdownMenuItem<int>(
-                                    value: itemsValue,
-                                    child: Text(
-                                      itemsValue.toString(),
-                                      style:
-                                          const TextStyle(color: Colors.black),
-                                    ),
-                                  ))
+                          items: hours
+                              .map<DropdownMenuItem<String>>(
+                                  (String itemsValue) =>
+                                      DropdownMenuItem<String>(
+                                        value: itemsValue,
+                                        child: Text(
+                                          itemsValue,
+                                          style: const TextStyle(
+                                              color: Colors.black),
+                                        ),
+                                      ))
                               .toList(),
                         ),
                       )),
@@ -289,11 +291,11 @@ class _DrawerCState extends State<DrawerC> {
             ],
           )).show();
     } else {
-      labiAcVeyaKapat(-1);
+      labiAcVeyaKapat("-1");
     }
   }
 
-  Future labiAcVeyaKapat(int hour) async {
+  Future labiAcVeyaKapat(String hour) async {
     late bool resultAddLabOpen;
     try {
       resultAddLabOpen = await addLabOpen();
@@ -339,7 +341,7 @@ class _DrawerCState extends State<DrawerC> {
     }
   }
 
-  Future<bool> sendMessageToMvRG(int hour) async {
+  Future<bool> sendMessageToMvRG(String hour) async {
     try {
       return await Provider.of<UserModel>(context, listen: false)
           .sendMessageToMvRG(!labAcik, hour);
