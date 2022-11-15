@@ -413,11 +413,22 @@ class FirestoreService {
 
   Future<bool> addLabOpen(bool acikMi, String userName) async {
     try {
-      await labOpenRef.add(
-          LabOpen(acikMi: acikMi, time: Timestamp.now(), userName: userName));
+      String docId = (await labOpenRef.add(LabOpen(
+              acikMi: acikMi, time: Timestamp.now(), userName: userName)))
+          .id;
+      await updateLabOpen(docId, {"id": docId});
       return acikMi;
     } catch (e) {
       printError("addLabOpen", e);
+      rethrow;
+    }
+  }
+
+  Future updateLabOpen(String id, Map<String, dynamic> updateMap) async {
+    try {
+      await labOpenRef.doc(id).update(updateMap);
+    } catch (e) {
+      printError("updateLabOpen", e);
       rethrow;
     }
   }
