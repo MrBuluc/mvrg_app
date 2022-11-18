@@ -393,7 +393,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     }
 
     try {
-      bool result = await userModel.updateUserStore(userC);
+      bool result = await userModel.updateUser(userC);
       if (result) {
         await joinEvent(eventCode);
       }
@@ -503,7 +503,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     }
 
     try {
-      await userModel.updateUserStore(userC);
+      await userModel.updateUser(userC);
     } catch (e) {
       Navigator.pop(context);
       AwesomeDialog(

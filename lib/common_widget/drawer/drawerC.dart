@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:mvrg_app/model/lab_open.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
@@ -32,6 +33,10 @@ class _DrawerCState extends State<DrawerC> {
     color: Colors.grey,
   );
 
+  late LabOpen labOpen;
+
+  late UserC currentUserC;
+
   @override
   void initState() {
     super.initState();
@@ -40,23 +45,20 @@ class _DrawerCState extends State<DrawerC> {
   }
 
   Future currentUser() async {
-    UserC? userC = Provider.of<UserModel>(context, listen: false).user;
-    if (userC != null) {
-      setState(() {
-        name = userC.name!;
-        surname = userC.surname!;
-        mail = userC.mail!;
-        admin = userC.admin!;
-        token = userC.token!.toString();
-      });
-    }
+    currentUserC = Provider.of<UserModel>(context, listen: false).user!;
+    setState(() {
+      name = currentUserC.name!;
+      surname = currentUserC.surname!;
+      mail = currentUserC.mail!;
+      admin = currentUserC.admin!;
+      token = currentUserC.token!.toString();
+    });
   }
 
   Future labAcikMi() async {
-    bool labAcikLocal =
-        await Provider.of<UserModel>(context, listen: false).labAcikMi();
+    labOpen = await Provider.of<UserModel>(context, listen: false).labAcikMi();
     setState(() {
-      labAcik = labAcikLocal;
+      labAcik = labOpen.acikMi!;
     });
   }
 
@@ -298,9 +300,29 @@ class _DrawerCState extends State<DrawerC> {
   Future labiAcVeyaKapat(String hour) async {
     late bool resultAddLabOpen;
     try {
-      resultAddLabOpen = await addLabOpen();
+      DateTime now = DateTime.now();
+      //Labı kapatırken
+      if (hour == "-1") {
+        if (!checkUserForLabClose()) {
+          return;
+        }
+        updateUserWeeklyLabOpenMinutes(now);
+        await Provider.of<UserModel>(context, listen: false)
+            .updateUser(currentUserC);
+      }
+      resultAddLabOpen = await addLabOpen(now);
     } catch (e) {
-      return;
+      AwesomeDialog(
+              context: context,
+              dialogType: DialogType.ERROR,
+              animType: AnimType.RIGHSLIDE,
+              headerAnimationLoop: true,
+              title: "Lab Güncellenirken Hata",
+              desc: Exceptions.goster(e.toString()),
+              btnOkOnPress: () {},
+              btnOkText: "Tamam",
+              btnOkColor: Colors.blue)
+          .show();
     }
     bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
     if (resultSendMessageToMvRG) {
@@ -321,10 +343,33 @@ class _DrawerCState extends State<DrawerC> {
     }
   }
 
-  Future<bool> addLabOpen() async {
+  bool checkUserForLabClose() {
+    if (currentUserC.username == labOpen.userName!) {
+      return true;
+    }
+    AwesomeDialog(
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.RIGHSLIDE,
+            headerAnimationLoop: true,
+            title: "Lab Açılırken Hata",
+            desc: "Labı açan kişi ile kapatan kişi aynı olmalıdır.",
+            btnOkOnPress: () {},
+            btnOkText: "Tamam",
+            btnOkColor: Colors.blue)
+        .show();
+    return false;
+  }
+
+  updateUserWeeklyLabOpenMinutes(DateTime closeTime) {
+    currentUserC.weeklyLabOpenMinutes = currentUserC.weeklyLabOpenMinutes! +
+        closeTime.difference(labOpen.time!.toDate()).inMinutes;
+  }
+
+  Future<bool> addLabOpen(DateTime now) async {
     try {
       return await Provider.of<UserModel>(context, listen: false)
-          .addLabOpen(!labAcik);
+          .addLabOpen(!labAcik, now);
     } catch (e) {
       AwesomeDialog(
               context: context,

@@ -9,7 +9,11 @@ class LabOpen {
   LabOpen({this.id, this.acikMi, this.time, this.userName});
 
   LabOpen.fromFirestore(Map<String, dynamic> map)
-      : this(id: map["id"], acikMi: map["acikMi"], time: map["time"]);
+      : this(
+            id: map["id"],
+            acikMi: map["acikMi"],
+            time: map["time"],
+            userName: map["userName"]);
 
   Map<String, dynamic> toFirestore() => {
         if (id != null) "id": id,

@@ -401,20 +401,21 @@ class FirestoreService {
       .where("isDeleted", isEqualTo: false)
       .snapshots();
 
-  Future<bool> labAcikMi() async {
-    return ((await labOpenRef
-                .orderBy("time", descending: true)
-                .limit(1)
-                .get()
-                .then((snapshot) => snapshot.docs))[0]
-            .data() as LabOpen)
-        .acikMi!;
+  Future<LabOpen> labAcikMi() async {
+    return (await labOpenRef
+            .orderBy("time", descending: true)
+            .limit(1)
+            .get()
+            .then((snapshot) => snapshot.docs))[0]
+        .data() as LabOpen;
   }
 
-  Future<bool> addLabOpen(bool acikMi, String userName) async {
+  Future<bool> addLabOpen(bool acikMi, DateTime now, String userName) async {
     try {
       String docId = (await labOpenRef.add(LabOpen(
-              acikMi: acikMi, time: Timestamp.now(), userName: userName)))
+              acikMi: acikMi,
+              time: Timestamp.fromDate(now),
+              userName: userName)))
           .id;
       await updateLabOpen(docId, {"id": docId});
       return acikMi;

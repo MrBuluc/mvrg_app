@@ -305,7 +305,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                     "https://goerli.etherscan.io/tx/$transactionHash";
 
             userC.token = userC.token! - value;
-            bool result = await userModel.updateUserStore(userC);
+            bool result = await userModel.updateUser(userC);
             if (result) {
               if (await canLaunchUrlString(etherscanUrl)) {
                 AwesomeDialog(
