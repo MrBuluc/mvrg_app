@@ -24,7 +24,12 @@ class DrawerC extends StatefulWidget {
 }
 
 class _DrawerCState extends State<DrawerC> {
-  String name = "", surname = "", mail = "", token = "";
+  String name = "",
+      surname = "",
+      mail = "",
+      token = "",
+      weeklyLabOpenHours = "",
+      weeklyLabOpenMinutesStr = "";
 
   bool admin = false, labAcik = false;
 
@@ -46,6 +51,9 @@ class _DrawerCState extends State<DrawerC> {
 
   Future currentUser() async {
     currentUserC = Provider.of<UserModel>(context, listen: false).user!;
+    if (currentUserC.admin!) {
+      calculateLabOpenHours();
+    }
     setState(() {
       name = currentUserC.name!;
       surname = currentUserC.surname!;
@@ -53,6 +61,12 @@ class _DrawerCState extends State<DrawerC> {
       admin = currentUserC.admin!;
       token = currentUserC.token!.toString();
     });
+  }
+
+  calculateLabOpenHours() {
+    int weeklyLabOpenMinutes = currentUserC.weeklyLabOpenMinutes!;
+    weeklyLabOpenHours = (weeklyLabOpenMinutes / 60).floor().toString();
+    weeklyLabOpenMinutesStr = (weeklyLabOpenMinutes % 60).toString();
   }
 
   Future labAcikMi() async {
@@ -73,7 +87,7 @@ class _DrawerCState extends State<DrawerC> {
                 clipper: WaveClipper(),
                 child: Center(
                   child: SizedBox(
-                    height: 230,
+                    height: 250,
                     child: DrawerHeader(
                       decoration: gradient,
                       child: Align(
@@ -104,7 +118,14 @@ class _DrawerCState extends State<DrawerC> {
                               "$token MvRG Token",
                               style: const TextStyle(
                                   fontSize: 16, color: Colors.red),
-                            )
+                            ),
+                            if (admin)
+                              Text(
+                                "Bu hafta labtaydın: "
+                                "$weeklyLabOpenHours saat "
+                                "$weeklyLabOpenMinutesStr dakika",
+                                style: const TextStyle(fontSize: 15),
+                              )
                           ],
                         ),
                       ),
