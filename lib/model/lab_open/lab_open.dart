@@ -21,4 +21,9 @@ class LabOpen {
         if (time != null) "time": time,
         if (userName != null) "userName": userName
       };
+
+  @override
+  String toString() {
+    return 'LabOpen{id: $id, acikMi: $acikMi, time: $time, userName: $userName}';
+  }
 }

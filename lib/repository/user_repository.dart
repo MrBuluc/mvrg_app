@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/events/participant.dart';
-import 'package:mvrg_app/model/lab_open.dart';
+import 'package:mvrg_app/model/lab_open/lab_open.dart';
+import 'package:mvrg_app/model/lab_open/lab_open_duration.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
@@ -55,7 +56,15 @@ class UserRepository implements AuthBase {
   Future<UserC?> currentUser() async {
     UserC? userC = await _firebaseAuthService.currentUser();
     if (userC != null) {
-      return await _firestoreService.readUser(userC.id!);
+      userC = await _firestoreService.readUser(userC.id!);
+      LabOpenDuration? labOpenDuration =
+          await _firestoreService.getLabOpenDuration(userC.id!);
+      if (labOpenDuration != null) {
+        userC.weeklyLabOpenMinutes = labOpenDuration.weeklyMinutes;
+      } else {
+        userC.weeklyLabOpenMinutes = 0;
+      }
+      return userC;
     } else {
       return null;
     }
@@ -275,7 +284,7 @@ class UserRepository implements AuthBase {
     return await _firestoreService.labAcikMi();
   }
 
-  Future<bool> addLabOpen(bool acikMi, DateTime now, String userName) async {
+  Future<LabOpen> addLabOpen(bool acikMi, DateTime now, String userName) async {
     return await _firestoreService.addLabOpen(acikMi, now, userName);
   }
 

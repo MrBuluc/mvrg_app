@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
-import 'package:mvrg_app/model/lab_open.dart';
+import 'package:mvrg_app/model/lab_open/lab_open.dart';
+import 'package:mvrg_app/model/lab_open/lab_open_duration.dart';
 import 'package:mvrg_app/model/token_transaction.dart';
 import 'package:mvrg_app/model/userC.dart';
 
@@ -16,7 +17,8 @@ class FirestoreService {
       eventsRef,
       eventParticipantRef,
       labOpenRef,
-      tokenTransactionRef;
+      tokenTransactionRef,
+      labOpenDurationRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -51,6 +53,12 @@ class FirestoreService {
                 TokenTransaction.fromFirestore(snapshot.data()!),
             toFirestore: (tokenTransaction, _) =>
                 tokenTransaction.toFirestore());
+    labOpenDurationRef = _firestore
+        .collection("LabOpenDuration")
+        .withConverter<LabOpenDuration>(
+            fromFirestore: (snapshot, _) =>
+                LabOpenDuration.fromFirestore(snapshot.data()!),
+            toFirestore: (labOpenDuration, _) => labOpenDuration.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -410,15 +418,14 @@ class FirestoreService {
         .data() as LabOpen;
   }
 
-  Future<bool> addLabOpen(bool acikMi, DateTime now, String userName) async {
+  Future<LabOpen> addLabOpen(bool acikMi, DateTime now, String userName) async {
     try {
-      String docId = (await labOpenRef.add(LabOpen(
-              acikMi: acikMi,
-              time: Timestamp.fromDate(now),
-              userName: userName)))
-          .id;
+      LabOpen labOpen = LabOpen(
+          acikMi: acikMi, time: Timestamp.fromDate(now), userName: userName);
+      String docId = (await labOpenRef.add(labOpen)).id;
       await updateLabOpen(docId, {"id": docId});
-      return acikMi;
+      labOpen.id = docId;
+      return labOpen;
     } catch (e) {
       printError("addLabOpen", e);
       rethrow;
@@ -430,6 +437,37 @@ class FirestoreService {
       await labOpenRef.doc(id).update(updateMap);
     } catch (e) {
       printError("updateLabOpen", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> setLabOpenDuration(
+      String userId, LabOpenDuration labOpenDuration) async {
+    try {
+      await labOpenDurationRef.doc(userId).set(labOpenDuration);
+      return true;
+    } catch (e) {
+      printError("setLabOpenDuration", e);
+      rethrow;
+    }
+  }
+
+  Future<LabOpenDuration?> getLabOpenDuration(String userId) async {
+    return (await labOpenDurationRef
+        .doc(userId)
+        .get()
+        .then((snapshot) => snapshot.data())) as LabOpenDuration?;
+  }
+
+  Future<bool> updateLabOpenDuration(
+      String userId, int newWeeklyMinutes) async {
+    try {
+      await labOpenDurationRef
+          .doc(userId)
+          .update({"weeklyMinutes": newWeeklyMinutes});
+      return true;
+    } catch (e) {
+      printError("updateLabOpenDuration", e);
       rethrow;
     }
   }

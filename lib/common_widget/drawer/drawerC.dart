@@ -1,6 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/model/lab_open.dart';
+import 'package:mvrg_app/model/lab_open/lab_open.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
@@ -15,6 +15,8 @@ import '../../app/exceptions.dart';
 import '../../model/userC.dart';
 import '../../ui/const.dart';
 import '../../ui/my_haves/my_events.dart';
+
+enum LabState { labAcikAyni, labAcikFarkli, labKapali, noAdmin, idle }
 
 class DrawerC extends StatefulWidget {
   const DrawerC({Key? key}) : super(key: key);
@@ -41,6 +43,8 @@ class _DrawerCState extends State<DrawerC> {
   late LabOpen labOpen;
 
   late UserC currentUserC;
+
+  LabState labState = LabState.idle;
 
   @override
   void initState() {
@@ -74,6 +78,23 @@ class _DrawerCState extends State<DrawerC> {
     setState(() {
       labAcik = labOpen.acikMi!;
     });
+    getLabState();
+  }
+
+  getLabState() {
+    if (admin) {
+      if (labAcik) {
+        if (currentUserC.username == labOpen.userName!) {
+          labState = LabState.labAcikAyni;
+        } else {
+          labState = LabState.labAcikFarkli;
+        }
+      } else {
+        labState = LabState.labKapali;
+      }
+    } else {
+      labState = LabState.noAdmin;
+    }
   }
 
   @override
@@ -185,8 +206,14 @@ class _DrawerCState extends State<DrawerC> {
                                   builder: (context) =>
                                       const CreateAndUpdateBadgePage()))),
                     if (admin)
-                      buildListTileWithIcon(Icons.door_back_door,
-                          labAcik ? "Labı Kapat" : "Labı Aç", labiAcDialog),
+                      buildListTileWithIcon(
+                          labState == LabState.labAcikAyni
+                              ? Icons.door_back_door
+                              : labState == LabState.labAcikFarkli
+                                  ? Icons.lock
+                                  : Icons.door_back_door,
+                          labAcik ? "Labı Kapat" : "Labı Aç",
+                          labiAcDialog),
                     divider,
                     Row(
                       children: [
@@ -253,7 +280,14 @@ class _DrawerCState extends State<DrawerC> {
   }
 
   labiAcDialog() {
-    if (!labAcik) {
+    if (labState == LabState.labAcikAyni) {
+      labiAcVeyaKapat("-1");
+    } else if (labState == LabState.labAcikFarkli) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Labı açan kişi labı kapatabilir"),
+          duration: Duration(seconds: 2)));
+    } else {
       String selectedHour = "1";
       List<String> hours = List.generate(24, (index) => "${++index}");
       hours.add("Belirsiz");
@@ -313,8 +347,6 @@ class _DrawerCState extends State<DrawerC> {
               )
             ],
           )).show();
-    } else {
-      labiAcVeyaKapat("-1");
     }
   }
 
@@ -324,14 +356,12 @@ class _DrawerCState extends State<DrawerC> {
       DateTime now = DateTime.now();
       //Labı kapatırken
       if (hour == "-1") {
-        if (!checkUserForLabClose()) {
-          return;
-        }
         updateUserWeeklyLabOpenMinutes(now);
         await Provider.of<UserModel>(context, listen: false)
             .updateUser(currentUserC);
       }
-      resultAddLabOpen = await addLabOpen(now);
+      labOpen = await addLabOpen(now);
+      resultAddLabOpen = labOpen.acikMi!;
     } catch (e) {
       AwesomeDialog(
               context: context,
@@ -361,25 +391,8 @@ class _DrawerCState extends State<DrawerC> {
       setState(() {
         labAcik = resultAddLabOpen;
       });
+      getLabState();
     }
-  }
-
-  bool checkUserForLabClose() {
-    if (currentUserC.username == labOpen.userName!) {
-      return true;
-    }
-    AwesomeDialog(
-            context: context,
-            dialogType: DialogType.ERROR,
-            animType: AnimType.RIGHSLIDE,
-            headerAnimationLoop: true,
-            title: "Lab Açılırken Hata",
-            desc: "Labı açan kişi ile kapatan kişi aynı olmalıdır.",
-            btnOkOnPress: () {},
-            btnOkText: "Tamam",
-            btnOkColor: Colors.blue)
-        .show();
-    return false;
   }
 
   updateUserWeeklyLabOpenMinutes(DateTime closeTime) {
@@ -387,7 +400,7 @@ class _DrawerCState extends State<DrawerC> {
         closeTime.difference(labOpen.time!.toDate()).inMinutes;
   }
 
-  Future<bool> addLabOpen(DateTime now) async {
+  Future<LabOpen> addLabOpen(DateTime now) async {
     try {
       return await Provider.of<UserModel>(context, listen: false)
           .addLabOpen(!labAcik, now);
