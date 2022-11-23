@@ -358,7 +358,8 @@ class _DrawerCState extends State<DrawerC> {
       if (hour == "-1") {
         updateUserWeeklyLabOpenMinutes(now);
         await Provider.of<UserModel>(context, listen: false)
-            .updateUser(currentUserC);
+            .setOrUpdateLabOpenDuration(currentUserC.weeklyLabOpenMinutes!);
+        calculateLabOpenHours();
       }
       labOpen = await addLabOpen(now);
       resultAddLabOpen = labOpen.acikMi!;

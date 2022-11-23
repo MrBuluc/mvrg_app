@@ -35,6 +35,8 @@ class UserRepository implements AuthBase {
   final TelegramWebhookService _telegramWebhookService =
       locator<TelegramWebhookService>();
 
+  LabOpenDuration? labOpenDuration;
+
   @override
   Future<UserC?> createUserWithEmailandPassword(UserC newUser) async {
     newUser.weeklyLabOpenMinutes = 0;
@@ -57,12 +59,13 @@ class UserRepository implements AuthBase {
     UserC? userC = await _firebaseAuthService.currentUser();
     if (userC != null) {
       userC = await _firestoreService.readUser(userC.id!);
-      LabOpenDuration? labOpenDuration =
-          await _firestoreService.getLabOpenDuration(userC.id!);
-      if (labOpenDuration != null) {
-        userC.weeklyLabOpenMinutes = labOpenDuration.weeklyMinutes;
-      } else {
-        userC.weeklyLabOpenMinutes = 0;
+      if (userC.admin!) {
+        labOpenDuration = await _firestoreService.getLabOpenDuration(userC.id!);
+        if (labOpenDuration != null) {
+          userC.weeklyLabOpenMinutes = labOpenDuration!.weeklyMinutes;
+        } else {
+          userC.weeklyLabOpenMinutes = 0;
+        }
       }
       return userC;
     } else {
@@ -286,6 +289,17 @@ class UserRepository implements AuthBase {
 
   Future<LabOpen> addLabOpen(bool acikMi, DateTime now, String userName) async {
     return await _firestoreService.addLabOpen(acikMi, now, userName);
+  }
+
+  Future<bool> setOrUpdateLabOpenDuration(
+      String userId, String username, int newWeeklyMinutes) async {
+    if (labOpenDuration != null) {
+      return await _firestoreService.updateLabOpenDuration(
+          userId, newWeeklyMinutes);
+    } else {
+      return await _firestoreService.setLabOpenDuration(userId,
+          LabOpenDuration(username: username, weeklyMinutes: newWeeklyMinutes));
+    }
   }
 
   Future<bool> sendMessageToMvRG(String content) async {
