@@ -31,7 +31,7 @@ class _BadgesPageState extends State<BadgesPage> {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return const CenterText(text: "Something went wong");
+              return const CenterText(text: "Something went wrong");
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {

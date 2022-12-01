@@ -56,7 +56,7 @@ class _DrawerCState extends State<DrawerC> {
   Future currentUser() async {
     currentUserC = Provider.of<UserModel>(context, listen: false).user!;
     if (currentUserC.admin!) {
-      calculateLabOpenHours();
+      assignWeeklyHoursMinutes();
     }
     setState(() {
       name = currentUserC.name!;
@@ -67,10 +67,11 @@ class _DrawerCState extends State<DrawerC> {
     });
   }
 
-  calculateLabOpenHours() {
-    int weeklyLabOpenMinutes = currentUserC.weeklyLabOpenMinutes!;
-    weeklyLabOpenHours = (weeklyLabOpenMinutes / 60).floor().toString();
-    weeklyLabOpenMinutesStr = (weeklyLabOpenMinutes % 60).toString();
+  assignWeeklyHoursMinutes() {
+    List<String> hoursMinutes =
+        calculateLabOpenHours(currentUserC.weeklyLabOpenMinutes!);
+    weeklyLabOpenHours = hoursMinutes.elementAt(0);
+    weeklyLabOpenMinutesStr = hoursMinutes.elementAt(1);
   }
 
   Future labAcikMi() async {
@@ -359,7 +360,7 @@ class _DrawerCState extends State<DrawerC> {
         updateUserWeeklyLabOpenMinutes(now);
         await Provider.of<UserModel>(context, listen: false)
             .setOrUpdateLabOpenDuration(currentUserC.weeklyLabOpenMinutes!);
-        calculateLabOpenHours();
+        assignWeeklyHoursMinutes();
       }
       labOpen = await addLabOpen(now);
       resultAddLabOpen = labOpen.acikMi!;

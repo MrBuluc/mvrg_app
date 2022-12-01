@@ -157,3 +157,7 @@ Widget imageLoadingBuilder(
         : null,
   );
 }
+
+List<String> calculateLabOpenHours(int minutes) {
+  return [(minutes / 60).floor().toString(), (minutes % 60).toString()];
+}
