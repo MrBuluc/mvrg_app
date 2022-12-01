@@ -302,6 +302,9 @@ class UserRepository implements AuthBase {
     }
   }
 
+  Stream<QuerySnapshot> labOpenDurationStream() =>
+      _firestoreService.labOpenDurationStream();
+
   Future<bool> sendMessageToMvRG(String content) async {
     bool result = await _discordWebhookService.sendMessageToMvRGDc(content);
     if (result) {

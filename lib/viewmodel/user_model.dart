@@ -400,6 +400,15 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Stream<QuerySnapshot> labOpenDurationStream() {
+    try {
+      return _userRepository.labOpenDurationStream();
+    } catch (e) {
+      printError("labOpenDurationStream", e);
+      rethrow;
+    }
+  }
+
   Future<bool> sendMessageToMvRG(bool acikMi, String hour) async {
     try {
       return await _userRepository.sendMessageToMvRG(getContent(acikMi, hour));

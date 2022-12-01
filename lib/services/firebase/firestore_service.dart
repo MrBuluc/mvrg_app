@@ -472,6 +472,9 @@ class FirestoreService {
     }
   }
 
+  Stream<QuerySnapshot> labOpenDurationStream() =>
+      labOpenDurationRef.orderBy("weeklyMinutes", descending: true).snapshots();
+
   Future<bool> addTokenTransaction(String userId, int beforeToken,
       int afterToken, String walletAdd, int transferToken) async {
     try {

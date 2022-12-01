@@ -4,6 +4,7 @@ import 'package:mvrg_app/model/lab_open/lab_open.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
+import 'package:mvrg_app/ui/lab_open_page/lab_open_page.dart';
 import 'package:mvrg_app/ui/login/login_page.dart';
 import 'package:mvrg_app/ui/my_haves/my_badges.dart';
 import 'package:mvrg_app/ui/profil/user_detail_page.dart';
@@ -185,6 +186,13 @@ class _DrawerCState extends State<DrawerC> {
                         labAcik ? Icons.lock_open : Icons.lock,
                         "Metaverse Lab Açık Mı?",
                         labAcikMiSnackBar),
+                    buildListTileWithIcon(
+                        Icons.star,
+                        "Labı Açanlar Listesi",
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LabOpenPage()))),
                     divider,
                     ExpansionTile(
                       leading: const Icon(Icons.account_box),
