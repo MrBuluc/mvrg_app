@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/badges/holder.dart';
 import 'package:mvrg_app/model/events/participant.dart';
-import 'package:mvrg_app/model/lab_open/lab_open.dart';
-import 'package:mvrg_app/model/lab_open/lab_open_duration.dart';
+import 'package:mvrg_app/model/lab/lab_open.dart';
+import 'package:mvrg_app/model/lab/lab_open_duration.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/services/auth_base.dart';
 import 'package:mvrg_app/services/firebase/firebase_auth_service.dart';
@@ -19,6 +19,7 @@ import '../locator.dart';
 import '../model/badges/badgeHolder.dart';
 import '../model/events/event.dart';
 import '../model/events/event_participant.dart';
+import '../model/lab/in_lab.dart';
 import '../services/token_service.dart';
 import '../services/webhook_services/discord_webhook_service.dart';
 
@@ -304,6 +305,13 @@ class UserRepository implements AuthBase {
 
   Stream<QuerySnapshot> labOpenDurationStream() =>
       _firestoreService.labOpenDurationStream();
+
+  Future<InLab?> getInLab(String userId) async =>
+      _firestoreService.getInLab(userId);
+
+  Future<bool> setInLab(InLab inLab) async {
+    return await _firestoreService.setInLab(inLab);
+  }
 
   Future<bool> sendMessageToMvRG(String content) async {
     bool result = await _discordWebhookService.sendMessageToMvRGDc(content);

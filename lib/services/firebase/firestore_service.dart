@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
-import 'package:mvrg_app/model/lab_open/lab_open.dart';
-import 'package:mvrg_app/model/lab_open/lab_open_duration.dart';
+import 'package:mvrg_app/model/lab/in_lab.dart';
+import 'package:mvrg_app/model/lab/lab_open.dart';
+import 'package:mvrg_app/model/lab/lab_open_duration.dart';
 import 'package:mvrg_app/model/token_transaction.dart';
 import 'package:mvrg_app/model/userC.dart';
 
@@ -18,7 +19,8 @@ class FirestoreService {
       eventParticipantRef,
       labOpenRef,
       tokenTransactionRef,
-      labOpenDurationRef;
+      labOpenDurationRef,
+      inLabRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -59,6 +61,9 @@ class FirestoreService {
             fromFirestore: (snapshot, _) =>
                 LabOpenDuration.fromFirestore(snapshot.data()!),
             toFirestore: (labOpenDuration, _) => labOpenDuration.toFirestore());
+    inLabRef = _firestore.collection("InLab").withConverter<InLab>(
+        fromFirestore: ((snapshot, _) => InLab.fromFirestore(snapshot.data()!)),
+        toFirestore: (inLab, _) => inLab.toFirestore());
   }
 
   Future<UserC> readUser(String userId) async {
@@ -474,6 +479,21 @@ class FirestoreService {
 
   Stream<QuerySnapshot> labOpenDurationStream() =>
       labOpenDurationRef.orderBy("weeklyMinutes", descending: true).snapshots();
+
+  Future<InLab?> getInLab(String userId) async =>
+      (await inLabRef.doc(userId).get().then((snapshot) => snapshot.data()))
+          as InLab?;
+
+  Future<bool> setInLab(InLab inLab) async {
+    try {
+      inLab.arrivalTime = Timestamp.now();
+      await inLabRef.doc(inLab.userId!).set(inLab);
+      return true;
+    } catch (e) {
+      printError("setInLab", e);
+      rethrow;
+    }
+  }
 
   Future<bool> addTokenTransaction(String userId, int beforeToken,
       int afterToken, String walletAdd, int transferToken) async {

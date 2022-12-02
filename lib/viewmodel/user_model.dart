@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mvrg_app/model/badges/badge.dart';
 import 'package:mvrg_app/model/events/event_participant.dart';
-import 'package:mvrg_app/model/lab_open/lab_open.dart';
+import 'package:mvrg_app/model/lab/lab_open.dart';
 import 'package:mvrg_app/model/userC.dart';
 import 'package:mvrg_app/repository/user_repository.dart';
 import 'package:mvrg_app/services/auth_base.dart';
@@ -14,6 +14,7 @@ import '../model/badges/badgeHolder.dart';
 import '../model/badges/holder.dart';
 import '../model/events/event.dart';
 import '../model/events/participant.dart';
+import '../model/lab/in_lab.dart';
 
 enum ViewState { idle, busy }
 
@@ -405,6 +406,24 @@ class UserModel with ChangeNotifier implements AuthBase {
       return _userRepository.labOpenDurationStream();
     } catch (e) {
       printError("labOpenDurationStream", e);
+      rethrow;
+    }
+  }
+
+  Future<InLab?> getInLab(String userId) async {
+    try {
+      return await _userRepository.getInLab(userId);
+    } catch (e) {
+      printError("getInLab", e);
+      rethrow;
+    }
+  }
+
+  Future<bool> setInLab(InLab inLab) async {
+    try {
+      return await _userRepository.setInLab(inLab);
+    } catch (e) {
+      printError("setInLab", e);
       rethrow;
     }
   }

@@ -1,6 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:mvrg_app/model/lab_open/lab_open.dart';
+import 'package:mvrg_app/model/lab/in_lab.dart';
+import 'package:mvrg_app/model/lab/lab_open.dart';
 import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
@@ -47,11 +48,14 @@ class _DrawerCState extends State<DrawerC> {
 
   LabState labState = LabState.idle;
 
+  InLab? inLab;
+
   @override
   void initState() {
     super.initState();
     currentUser();
     labAcikMi();
+    getCurrentUserInLab();
   }
 
   Future currentUser() async {
@@ -59,13 +63,11 @@ class _DrawerCState extends State<DrawerC> {
     if (currentUserC.admin!) {
       assignWeeklyHoursMinutes();
     }
-    setState(() {
-      name = currentUserC.name!;
-      surname = currentUserC.surname!;
-      mail = currentUserC.mail!;
-      admin = currentUserC.admin!;
-      token = currentUserC.token!.toString();
-    });
+    name = currentUserC.name!;
+    surname = currentUserC.surname!;
+    mail = currentUserC.mail!;
+    admin = currentUserC.admin!;
+    token = currentUserC.token!.toString();
   }
 
   assignWeeklyHoursMinutes() {
@@ -77,9 +79,7 @@ class _DrawerCState extends State<DrawerC> {
 
   Future labAcikMi() async {
     labOpen = await Provider.of<UserModel>(context, listen: false).labAcikMi();
-    setState(() {
-      labAcik = labOpen.acikMi!;
-    });
+    labAcik = labOpen.acikMi!;
     getLabState();
   }
 
@@ -97,6 +97,14 @@ class _DrawerCState extends State<DrawerC> {
     } else {
       labState = LabState.noAdmin;
     }
+  }
+
+  Future getCurrentUserInLab() async {
+    InLab? inLabLocal = await Provider.of<UserModel>(context, listen: false)
+        .getInLab(currentUserC.id!);
+    setState(() {
+      inLab = inLabLocal;
+    });
   }
 
   @override
@@ -223,6 +231,11 @@ class _DrawerCState extends State<DrawerC> {
                                   : Icons.door_back_door,
                           labAcik ? "Labı Kapat" : "Labı Aç",
                           labiAcDialog),
+                    if (labState == LabState.labAcikFarkli)
+                      buildListTileWithIcon(
+                          inLab == null ? Icons.input : Icons.output,
+                          inLab == null ? "Labdayım" : "Labdan ayrıldım",
+                          iamInLabOrLeaving),
                     divider,
                     Row(
                       children: [
@@ -385,8 +398,8 @@ class _DrawerCState extends State<DrawerC> {
               btnOkColor: Colors.blue)
           .show();
     }
-    bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
-    if (resultSendMessageToMvRG) {
+    //bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
+    if (true) {
       AwesomeDialog(
               context: context,
               dialogType: DialogType.SUCCES,
@@ -447,6 +460,44 @@ class _DrawerCState extends State<DrawerC> {
               btnOkColor: Colors.blue)
           .show();
       return false;
+    }
+  }
+
+  Future iamInLabOrLeaving() async {
+    if (inLab == null) {
+      try {
+        inLab =
+            InLab(userId: currentUserC.id!, username: currentUserC.username);
+        bool result = await Provider.of<UserModel>(context, listen: false)
+            .setInLab(inLab!);
+        if (result) {
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.SUCCES,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: "İşlem Tamamlandı ✔✔",
+                  desc:
+                      "Labda olanlar listesine başarılı bir şekilde eklendiniz ",
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+          setState(() {});
+        }
+      } catch (e) {
+        AwesomeDialog(
+                context: context,
+                dialogType: DialogType.ERROR,
+                animType: AnimType.RIGHSLIDE,
+                headerAnimationLoop: true,
+                title: "Lab Listesine Eklenirken Hata",
+                desc: Exceptions.goster(e.toString()),
+                btnOkOnPress: () {},
+                btnOkText: "Tamam",
+                btnOkColor: Colors.blue)
+            .show();
+      }
     }
   }
 
