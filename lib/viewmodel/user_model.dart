@@ -391,10 +391,11 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
-  Future<bool> setOrUpdateLabOpenDuration(int newWeeklyMinutes) async {
+  Future<bool> setOrUpdateLabOpenDuration(
+      int newWeeklyMinutes, DateTime labCloseTime) async {
     try {
       return _userRepository.setOrUpdateLabOpenDuration(
-          _user!.id!, _user!.username, newWeeklyMinutes);
+          _user!.id!, _user!.username, newWeeklyMinutes, labCloseTime);
     } catch (e) {
       printError("setOrUpdateLabOpenDuration", e);
       rethrow;

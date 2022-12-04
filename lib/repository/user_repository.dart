@@ -292,15 +292,50 @@ class UserRepository implements AuthBase {
     return await _firestoreService.addLabOpen(acikMi, now, userName);
   }
 
-  Future<bool> setOrUpdateLabOpenDuration(
-      String userId, String username, int newWeeklyMinutes) async {
-    if (labOpenDuration != null) {
+  Future<bool> setOrUpdateLabOpenDuration(String userId, String username,
+      int newWeeklyMinutes, DateTime labCloseTime) async {
+    bool result = await updateLabOpenDurationAndDeleteInLabs(labCloseTime);
+    if (result) {
+      if (labOpenDuration != null) {
+        return await _firestoreService.updateLabOpenDuration(
+            userId, newWeeklyMinutes);
+      } else {
+        return await _firestoreService.setLabOpenDuration(
+            userId,
+            LabOpenDuration(
+                username: username, weeklyMinutes: newWeeklyMinutes));
+      }
+    }
+    return result;
+  }
+
+  Future<bool> updateLabOpenDuration(
+      String userId, String username, int newDuration) async {
+    LabOpenDuration? labOpenDurationLocal =
+        await _firestoreService.getLabOpenDuration(userId);
+    if (labOpenDurationLocal != null) {
+      int newWeeklyMinutes = labOpenDurationLocal.weeklyMinutes! + newDuration;
       return await _firestoreService.updateLabOpenDuration(
           userId, newWeeklyMinutes);
     } else {
       return await _firestoreService.setLabOpenDuration(userId,
-          LabOpenDuration(username: username, weeklyMinutes: newWeeklyMinutes));
+          LabOpenDuration(username: username, weeklyMinutes: newDuration));
     }
+  }
+
+  Future<bool> updateLabOpenDurationAndDeleteInLabs(
+      DateTime labCloseTime) async {
+    List<InLab> inLabs = await _firestoreService.getInLabs();
+    for (InLab inLab in inLabs) {
+      DateTime dateTime = inLab.arrivalTime!.toDate();
+      int duration = (labCloseTime.difference(dateTime)).inMinutes;
+      bool result =
+          await updateLabOpenDuration(inLab.userId!, inLab.username!, duration);
+      if (result) {
+        await _firestoreService.deleteInLab(inLab.userId!);
+      }
+    }
+    return true;
   }
 
   Stream<QuerySnapshot> labOpenDurationStream() =>

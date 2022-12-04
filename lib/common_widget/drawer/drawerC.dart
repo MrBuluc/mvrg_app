@@ -378,9 +378,22 @@ class _DrawerCState extends State<DrawerC> {
       DateTime now = DateTime.now();
       //Labı kapatırken
       if (hour == "-1") {
+        AwesomeDialog(
+          context: context,
+          animType: AnimType.LEFTSLIDE,
+          headerAnimationLoop: false,
+          dialogType: DialogType.INFO,
+          showCloseIcon: true,
+          title: "Lab Kapatılıyor...",
+          desc: "Lab kapatılırken lütfen bekleyiniz",
+          btnOkOnPress: () {},
+          btnOkText: "Tamam",
+        ).show();
+
         updateUserWeeklyLabOpenMinutes(now);
         await Provider.of<UserModel>(context, listen: false)
-            .setOrUpdateLabOpenDuration(currentUserC.weeklyLabOpenMinutes!);
+            .setOrUpdateLabOpenDuration(
+                currentUserC.weeklyLabOpenMinutes!, now);
         assignWeeklyHoursMinutes();
       }
       labOpen = await addLabOpen(now);
@@ -400,6 +413,9 @@ class _DrawerCState extends State<DrawerC> {
     }
     //bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
     if (true) {
+      if (hour == "-1") {
+        Navigator.pop(context);
+      }
       AwesomeDialog(
               context: context,
               dialogType: DialogType.SUCCES,

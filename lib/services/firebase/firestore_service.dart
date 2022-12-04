@@ -495,6 +495,27 @@ class FirestoreService {
     }
   }
 
+  Future<List<InLab>> getInLabs() async {
+    List<InLab> inLabs = [];
+    List<QueryDocumentSnapshot<InLab>> queryDocSnapshotList =
+        (await inLabRef.get()).docs as List<QueryDocumentSnapshot<InLab>>;
+    for (QueryDocumentSnapshot<InLab> queryDocumentSnapshot
+        in queryDocSnapshotList) {
+      inLabs.add(queryDocumentSnapshot.data());
+    }
+    return inLabs;
+  }
+
+  Future<bool> deleteInLab(String userId) async {
+    try {
+      await inLabRef.doc(userId).delete();
+      return true;
+    } catch (e) {
+      printError("deleteInLab", e);
+      rethrow;
+    }
+  }
+
   Future<bool> addTokenTransaction(String userId, int beforeToken,
       int afterToken, String walletAdd, int transferToken) async {
     try {
