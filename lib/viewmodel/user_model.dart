@@ -429,6 +429,16 @@ class UserModel with ChangeNotifier implements AuthBase {
     }
   }
 
+  Future<bool> updateLabOpenDurationAndDeleteInLab(int duration) async {
+    try {
+      return await _userRepository.updateLabOpenDurationAndDeleteInLab(
+          user!.id!, user!.username, duration);
+    } catch (e) {
+      printError("updateLabOpenDurationAndDeleteInLab", e);
+      rethrow;
+    }
+  }
+
   Future<bool> sendMessageToMvRG(bool acikMi, String hour) async {
     try {
       return await _userRepository.sendMessageToMvRG(getContent(acikMi, hour));

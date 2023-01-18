@@ -301,13 +301,13 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
 
             String transactionHash =
                     await userModel.sendToken(addressCnt.text, value),
-                etherscanUrl =
+                etherScanUrl =
                     "https://goerli.etherscan.io/tx/$transactionHash";
 
             userC.token = userC.token! - value;
             bool result = await userModel.updateUser(userC);
             if (result) {
-              if (await canLaunchUrlString(etherscanUrl)) {
+              if (await canLaunchUrlString(etherScanUrl)) {
                 AwesomeDialog(
                         context: context,
                         dialogType: DialogType.SUCCES,
@@ -318,7 +318,7 @@ class _TokenTransferPageState extends State<TokenTransferPage> {
                             "İsterseniz tamam butonuna basarak transactionın "
                             "etherscan adresine gidebilirsiniz.",
                         btnOkOnPress: () async {
-                          await launchUrlString(etherscanUrl);
+                          await launchUrlString(etherScanUrl);
                         },
                         btnOkText: "Tamam",
                         btnOkColor: Colors.blue)

@@ -502,19 +502,51 @@ class _DrawerCState extends State<DrawerC> {
           setState(() {});
         }
       } catch (e) {
-        AwesomeDialog(
-                context: context,
-                dialogType: DialogType.ERROR,
-                animType: AnimType.RIGHSLIDE,
-                headerAnimationLoop: true,
-                title: "Lab Listesine Eklenirken Hata",
-                desc: Exceptions.goster(e.toString()),
-                btnOkOnPress: () {},
-                btnOkText: "Tamam",
-                btnOkColor: Colors.blue)
-            .show();
+        showErrorAwesomeDialog("Lab Listesine Eklenirken Hata", e);
+      }
+    } else {
+      try {
+        DateTime now = DateTime.now();
+        int inLabDuration =
+            (now.difference(inLab!.arrivalTime!.toDate())).inMinutes;
+
+        bool result = await Provider.of<UserModel>(context, listen: false)
+            .updateLabOpenDurationAndDeleteInLab(inLabDuration);
+        if (result) {
+          AwesomeDialog(
+                  context: context,
+                  dialogType: DialogType.SUCCES,
+                  animType: AnimType.RIGHSLIDE,
+                  headerAnimationLoop: true,
+                  title: "İşlem Tamamlandı ✔✔",
+                  desc: "Labdan başarılı bir şekilde ayrıldınız",
+                  btnOkOnPress: () {},
+                  btnOkText: "Tamam",
+                  btnOkColor: Colors.blue)
+              .show();
+
+          setState(() {
+            inLab = null;
+          });
+        }
+      } catch (e) {
+        showErrorAwesomeDialog("Labdan Ayrılırken Hata", e);
       }
     }
+  }
+
+  showErrorAwesomeDialog(String title, Object error) {
+    AwesomeDialog(
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.RIGHSLIDE,
+            headerAnimationLoop: true,
+            title: title,
+            desc: Exceptions.goster(error.toString()),
+            btnOkOnPress: () {},
+            btnOkText: "Tamam",
+            btnOkColor: Colors.blue)
+        .show();
   }
 
   Future areYouSureForSignOut() async {

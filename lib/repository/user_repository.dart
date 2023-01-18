@@ -348,6 +348,15 @@ class UserRepository implements AuthBase {
     return await _firestoreService.setInLab(inLab);
   }
 
+  Future<bool> updateLabOpenDurationAndDeleteInLab(
+      String userId, String username, int duration) async {
+    bool result = await updateLabOpenDuration(userId, username, duration);
+    if (result) {
+      return await _firestoreService.deleteInLab(userId);
+    }
+    return false;
+  }
+
   Future<bool> sendMessageToMvRG(String content) async {
     bool result = await _discordWebhookService.sendMessageToMvRGDc(content);
     if (result) {
