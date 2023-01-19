@@ -390,11 +390,11 @@ class _DrawerCState extends State<DrawerC> {
           btnOkText: "Tamam",
         ).show();
 
-        updateUserWeeklyLabOpenMinutes(now);
+        await updateUserWeeklyMinutes(now, labOpen.time!.toDate());
+
         await Provider.of<UserModel>(context, listen: false)
             .setOrUpdateLabOpenDuration(
                 currentUserC.weeklyLabOpenMinutes!, now);
-        assignWeeklyHoursMinutes();
       }
       labOpen = await addLabOpen(now);
       resultAddLabOpen = labOpen.acikMi!;
@@ -435,9 +435,16 @@ class _DrawerCState extends State<DrawerC> {
     }
   }
 
-  updateUserWeeklyLabOpenMinutes(DateTime closeTime) {
+  updateUserWeeklyLabOpenMinutes(DateTime closeTime, DateTime openTime) {
     currentUserC.weeklyLabOpenMinutes = currentUserC.weeklyLabOpenMinutes! +
-        closeTime.difference(labOpen.time!.toDate()).inMinutes;
+        closeTime.difference(openTime).inMinutes;
+  }
+
+  Future updateUserWeeklyMinutes(DateTime closeTime, DateTime openTime) async {
+    updateUserWeeklyLabOpenMinutes(closeTime, openTime);
+    assignWeeklyHoursMinutes();
+    await Provider.of<UserModel>(context, listen: false)
+        .updateUser(currentUserC);
   }
 
   Future<LabOpen> addLabOpen(DateTime now) async {
@@ -507,9 +514,10 @@ class _DrawerCState extends State<DrawerC> {
       }
     } else {
       try {
-        DateTime now = DateTime.now();
-        int inLabDuration =
-            (now.difference(inLab!.arrivalTime!.toDate())).inMinutes;
+        DateTime now = DateTime.now(),
+            arrivalTime = inLab!.arrivalTime!.toDate();
+        int inLabDuration = (now.difference(arrivalTime)).inMinutes;
+        await updateUserWeeklyMinutes(now, arrivalTime);
 
         bool result = await Provider.of<UserModel>(context, listen: false)
             .updateLabOpenDurationAndDeleteInLab(inLabDuration);
