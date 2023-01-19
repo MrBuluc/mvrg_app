@@ -390,7 +390,7 @@ class _DrawerCState extends State<DrawerC> {
           btnOkText: "Tamam",
         ).show();
 
-        await updateUserWeeklyMinutes(now, labOpen.time!.toDate());
+        updateUserWeeklyMinutes(now, labOpen.time!.toDate());
 
         await Provider.of<UserModel>(context, listen: false)
             .setOrUpdateLabOpenDuration(
@@ -411,9 +411,8 @@ class _DrawerCState extends State<DrawerC> {
               btnOkColor: Colors.blue)
           .show();
     }
-    //Todo
-    //bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
-    if (true) {
+    bool resultSendMessageToMvRG = await sendMessageToMvRG(hour);
+    if (resultSendMessageToMvRG) {
       if (hour == "-1") {
         Navigator.pop(context);
       }
@@ -440,11 +439,9 @@ class _DrawerCState extends State<DrawerC> {
         closeTime.difference(openTime).inMinutes;
   }
 
-  Future updateUserWeeklyMinutes(DateTime closeTime, DateTime openTime) async {
+  updateUserWeeklyMinutes(DateTime closeTime, DateTime openTime) {
     updateUserWeeklyLabOpenMinutes(closeTime, openTime);
     assignWeeklyHoursMinutes();
-    await Provider.of<UserModel>(context, listen: false)
-        .updateUser(currentUserC);
   }
 
   Future<LabOpen> addLabOpen(DateTime now) async {
