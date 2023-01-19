@@ -258,7 +258,7 @@ class _CreateAndUpdateBadgePageState extends State<CreateAndUpdateBadgePage> {
                 (UserC userC) => DropdownMenuItem<String>(
                       value: userC.id,
                       child: Text(
-                        userC.name! + " " + userC.surname!,
+                        userC.username,
                         style: const TextStyle(color: Colors.black),
                       ),
                     ))

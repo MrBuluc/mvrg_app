@@ -161,7 +161,7 @@ class UserRepository implements AuthBase {
     for (BadgeHolder badgeHolder in badgeHolders) {
       Holder holder = Holder(rank: badgeHolder.rank);
       UserC userC = await _firestoreService.readUser(badgeHolder.userId!);
-      holder.name = userC.name! + " " + userC.surname!;
+      holder.name = userC.username;
       holder.badgeHolderId = badgeHolder.id;
       holders.add(holder);
     }
@@ -203,7 +203,7 @@ class UserRepository implements AuthBase {
       Participant participant =
           Participant(eventParticipantId: eventParticipant.id);
       UserC userC = await _firestoreService.readUser(eventParticipant.userId!);
-      participant.name = userC.name! + " " + userC.surname!;
+      participant.name = userC.username;
       participant.isCurrentUser = currentUserId == userC.id!;
       participants.add(participant);
     }
