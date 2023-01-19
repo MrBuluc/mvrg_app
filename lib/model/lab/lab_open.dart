@@ -8,6 +8,8 @@ class LabOpen {
 
   LabOpen({this.id, this.acikMi, this.time, this.userName});
 
+  LabOpen.empty() : this(acikMi: false);
+
   LabOpen.fromFirestore(Map<String, dynamic> map)
       : this(
             id: map["id"],

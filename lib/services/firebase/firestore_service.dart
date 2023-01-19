@@ -5,6 +5,7 @@ import 'package:mvrg_app/model/events/event_participant.dart';
 import 'package:mvrg_app/model/lab/in_lab.dart';
 import 'package:mvrg_app/model/lab/lab_open.dart';
 import 'package:mvrg_app/model/lab/lab_open_duration.dart';
+import 'package:mvrg_app/model/local_settings.dart';
 import 'package:mvrg_app/model/token_transaction.dart';
 import 'package:mvrg_app/model/userC.dart';
 
@@ -45,9 +46,12 @@ class FirestoreService {
                 EventParticipant.fromFirestore(snapshot.data()!),
             toFirestore: (eventParticipant, _) =>
                 eventParticipant.toFirestore());
-    labOpenRef = _firestore.collection("LabOpen").withConverter<LabOpen>(
-        fromFirestore: (snapshot, _) => LabOpen.fromFirestore(snapshot.data()!),
-        toFirestore: (labOpen, _) => labOpen.toFirestore());
+    labOpenRef = _firestore
+        .collection(LocalSettings.test ? "LabOpenTest" : "LabOpen")
+        .withConverter<LabOpen>(
+            fromFirestore: (snapshot, _) =>
+                LabOpen.fromFirestore(snapshot.data()!),
+            toFirestore: (labOpen, _) => labOpen.toFirestore());
     tokenTransactionRef = _firestore
         .collection("TokenTransaction")
         .withConverter<TokenTransaction>(
@@ -415,12 +419,15 @@ class FirestoreService {
       .snapshots();
 
   Future<LabOpen> labAcikMi() async {
-    return (await labOpenRef
-            .orderBy("time", descending: true)
-            .limit(1)
-            .get()
-            .then((snapshot) => snapshot.docs))[0]
-        .data() as LabOpen;
+    List<QueryDocumentSnapshot> labOpens = await labOpenRef
+        .orderBy("time", descending: true)
+        .limit(1)
+        .get()
+        .then((snapshot) => snapshot.docs);
+    if (labOpens.isNotEmpty) {
+      return labOpens[0].data() as LabOpen;
+    }
+    return LabOpen.empty();
   }
 
   Future<LabOpen> addLabOpen(bool acikMi, DateTime now, String userName) async {
