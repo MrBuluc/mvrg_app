@@ -59,19 +59,23 @@ class UserRepository implements AuthBase {
   Future<UserC?> currentUser() async {
     UserC? userC = await _firebaseAuthService.currentUser();
     if (userC != null) {
-      userC = await _firestoreService.readUser(userC.id!);
-      if (userC.admin!) {
-        labOpenDuration = await _firestoreService.getLabOpenDuration(userC.id!);
-        if (labOpenDuration != null) {
-          userC.weeklyLabOpenMinutes = labOpenDuration!.weeklyMinutes;
-        } else {
-          userC.weeklyLabOpenMinutes = 0;
-        }
-      }
-      return userC;
+      return await readUser(userC.id!);
     } else {
       return null;
     }
+  }
+
+  Future<UserC?> readUser(String userId) async {
+    UserC userC = await _firestoreService.readUser(userId);
+    if (userC.admin!) {
+      labOpenDuration = await _firestoreService.getLabOpenDuration(userC.id!);
+      if (labOpenDuration != null) {
+        userC.weeklyLabOpenMinutes = labOpenDuration!.weeklyMinutes;
+      } else {
+        userC.weeklyLabOpenMinutes = 0;
+      }
+    }
+    return userC;
   }
 
   @override
@@ -85,8 +89,8 @@ class UserRepository implements AuthBase {
     UserC? userC =
         await _firebaseAuthService.signInWithEmailandPassword(mail, password);
     if (userC != null) {
-      userC = await _firestoreService.readUser(userC.id!);
-      userC.password = password;
+      userC = await readUser(userC.id!);
+      userC!.password = password;
       return userC;
     } else {
       return null;

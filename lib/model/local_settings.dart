@@ -1,3 +1,3 @@
 class LocalSettings {
-  static bool test = false;
+  static bool test = true;
 }
