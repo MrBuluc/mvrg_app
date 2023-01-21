@@ -6,7 +6,6 @@ import 'package:mvrg_app/ui/Profil/update_password_page.dart';
 import 'package:mvrg_app/ui/badges_page/create_and_update_badge_page.dart';
 import 'package:mvrg_app/ui/clipper.dart';
 import 'package:mvrg_app/ui/lab_open_page/lab_open_page.dart';
-import 'package:mvrg_app/ui/login/login_page.dart';
 import 'package:mvrg_app/ui/my_haves/my_badges.dart';
 import 'package:mvrg_app/ui/profil/user_detail_page.dart';
 import 'package:mvrg_app/ui/token_transfer_page/token_transfer_page.dart';
@@ -16,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../app/exceptions.dart';
 import '../../model/userC.dart';
 import '../../ui/const.dart';
+import '../../ui/login/login_page.dart';
 import '../../ui/my_haves/my_events.dart';
 
 enum LabState { labAcikAyni, labAcikFarkli, labKapali, noAdmin, idle }
@@ -86,7 +86,7 @@ class _DrawerCState extends State<DrawerC> {
   getLabState() {
     if (admin) {
       if (labAcik) {
-        if (currentUserC.username == labOpen.userName!) {
+        if (currentUserC.username == labOpen.username!) {
           labState = LabState.labAcikAyni;
         } else {
           labState = LabState.labAcikFarkli;

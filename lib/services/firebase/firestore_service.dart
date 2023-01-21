@@ -19,9 +19,11 @@ class FirestoreService {
       eventsRef,
       eventParticipantRef,
       labOpenRef,
+      labLastState,
       tokenTransactionRef,
       labOpenDurationRef,
       inLabRef;
+  late DocumentReference labLastStateDocRef;
 
   FirestoreService() {
     usersRef = _firestore.collection("Users").withConverter<UserC>(
@@ -52,6 +54,10 @@ class FirestoreService {
             fromFirestore: (snapshot, _) =>
                 LabOpen.fromFirestore(snapshot.data()!),
             toFirestore: (labOpen, _) => labOpen.toFirestore());
+    labLastState = _firestore.collection("LabLastState").withConverter<LabOpen>(
+        fromFirestore: (snapshot, _) => LabOpen.fromFirestore(snapshot.data()!),
+        toFirestore: (labLastState, _) => labLastState.toFirestore());
+    labLastStateDocRef = labLastState.doc("1");
     tokenTransactionRef = _firestore
         .collection("TokenTransaction")
         .withConverter<TokenTransaction>(
@@ -418,22 +424,15 @@ class FirestoreService {
       .where("isDeleted", isEqualTo: false)
       .snapshots();
 
-  Future<LabOpen> labAcikMi() async {
-    List<QueryDocumentSnapshot> labOpens = await labOpenRef
-        .orderBy("time", descending: true)
-        .limit(1)
-        .get()
-        .then((snapshot) => snapshot.docs);
-    if (labOpens.isNotEmpty) {
-      return labOpens[0].data() as LabOpen;
-    }
-    return LabOpen.empty();
+  Future<LabOpen?> labAcikMi() async {
+    return (await labLastStateDocRef.get().then((snapshot) => snapshot.data()))
+        as LabOpen?;
   }
 
   Future<LabOpen> addLabOpen(bool acikMi, DateTime now, String userName) async {
     try {
       LabOpen labOpen = LabOpen(
-          acikMi: acikMi, time: Timestamp.fromDate(now), userName: userName);
+          acikMi: acikMi, time: Timestamp.fromDate(now), username: userName);
       String docId = (await labOpenRef.add(labOpen)).id;
       await updateLabOpen(docId, {"id": docId});
       labOpen.id = docId;
@@ -449,6 +448,16 @@ class FirestoreService {
       await labOpenRef.doc(id).update(updateMap);
     } catch (e) {
       printError("updateLabOpen", e);
+      rethrow;
+    }
+  }
+
+  Future<LabOpen> updateLabLastState(LabOpen labOpen) async {
+    try {
+      await labLastStateDocRef.update(labOpen.toFirestore());
+      return labOpen;
+    } catch (e) {
+      printError("updateLabLastState", e);
       rethrow;
     }
   }

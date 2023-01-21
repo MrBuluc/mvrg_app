@@ -4,9 +4,9 @@ class LabOpen {
   String? id;
   bool? acikMi;
   Timestamp? time;
-  String? userName;
+  String? username;
 
-  LabOpen({this.id, this.acikMi, this.time, this.userName});
+  LabOpen({this.id, this.acikMi, this.time, this.username});
 
   LabOpen.empty() : this(acikMi: false);
 
@@ -15,17 +15,17 @@ class LabOpen {
             id: map["id"],
             acikMi: map["acikMi"],
             time: map["time"],
-            userName: map["userName"]);
+            username: map["username"]);
 
   Map<String, dynamic> toFirestore() => {
         if (id != null) "id": id,
         if (acikMi != null) "acikMi": acikMi,
         if (time != null) "time": time,
-        if (userName != null) "userName": userName
+        if (username != null) "username": username
       };
 
   @override
   String toString() {
-    return 'LabOpen{id: $id, acikMi: $acikMi, time: $time, userName: $userName}';
+    return 'LabOpen{id: $id, acikMi: $acikMi, time: $time, username: $username}';
   }
 }
