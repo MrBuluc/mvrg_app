@@ -68,3 +68,23 @@ The MvRG Token created for this project is an ERC-20 token. Solidity software la
 
 <a name="Setup"></a>
 ## 8. Setup
+
+To get started, install [Flutter version: 3.3.10](https://docs.flutter.dev/release/archive?tab=windows) and clone the repository.
+
+To see if the conditions are met:
+```bash
+  flutter doctor
+```
+
+After the Flutter installation is done successfully, open the project in your favorite ide: [Android Studio](https://developer.android.com/studio) or [VS Code](https://code.visualstudio.com/download).
+
+To install the required packages, in the terminal under the project directory:
+```bash
+  flutter pub get
+```
+
+After completing the emulator installation, run your emulator. You can launch the app via your favorite ide:
+
+Android Studio -> Shift+F10
+
+VS Code -> F5
