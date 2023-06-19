@@ -17,7 +17,7 @@ This Project will provide the research groups with the necessary member motivati
 
 <a name="MvRGToken"></a>
 ## 2. MvRG Token
-The MvRG Token created for this project is an ERC-20 token. Solidity software language was used for the development of the token. While creating the token, the OpenZeppelin ERC-20 Token is based. This ERC-20 Token is inherited while the MvRG Token was created. Remix IDE was also used to test the token. The MvRG Token has been deployed to the Goerli testnet with hardhat. After deploying to Goerli, hardhat gave the token address and token abi where we can interact with this token.
+The MvRG Token created for this project is an ERC-20 token. Solidity software language was used for the development of the token. While creating the token, the [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/tree/v4.0.0) ERC-20 Token is based. This ERC-20 Token is inherited while the MvRG Token was created. Remix IDE was also used to test the token. The MvRG Token has been deployed to the Goerli testnet with hardhat. After deploying to Goerli, hardhat gave the token address and token abi where we can interact with this token.
 
 <a name="SystemModel"></a>
 ## 3. System Model
