@@ -9,6 +9,7 @@ This project is blockchain based member motivation system. With this project, a 
 5. [ Technologies ](#Technologies)
 6. [ Team Members ](#TeamMembers)
 7. [ Application Screenshots ](#Appss)
+8. [ Setup ](#Setup)
 
 <a name="ProjectDescription"></a>
 ## 1. Project Description
@@ -64,3 +65,6 @@ The MvRG Token created for this project is an ERC-20 token. Solidity software la
     <td><img src="https://github.com/MrBuluc/mvrg_app/assets/80323601/fadf4512-e262-431d-a3d4-3d2ad2162aa2"/></td>  
   </tr>  
 </table>
+
+<a name="Setup"></a>
+## 8. Setup
